@@ -1,0 +1,36 @@
+(deffacts car-facts
+ 	"Documentation"
+	(state
+	 	(id working)
+		(name "Works")
+		(faulty FALSE)
+	)
+	(state
+	 	(id broken)
+		(name "Broken")
+		(faulty TRUE)
+	)
+	(state
+	 	(id no-power)
+		(name "No Power")
+		(faulty TRUE)
+	)
+	(component
+		(id accu01)
+		(type accu)
+		(state broken)
+	)
+	(component
+	 	(id lamp01)
+		(type lamp)
+	)
+	(connection
+	 	(id draad01)
+		(in accu01)
+		(out lamp01)
+	)
+	(observable
+	 	(id lights-not-working)
+		(name "Lights don't work")
+	)
+)

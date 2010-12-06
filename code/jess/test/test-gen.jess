@@ -1,0 +1,64 @@
+(deftemplate component
+ 	(slot id)
+	(slot name)
+ 	(slot state)
+	(slot type)
+	(multislot connected-to)
+)
+(deftemplate connection
+ 	extends component
+	(slot in)
+	(slot out)
+)
+(deftemplate feature
+ 	(slot id)
+ 	(slot name)
+)
+(deftemplate observable
+	extends feature
+)
+(deftemplate state
+	extends feature
+	(slot faulty)
+)
+(deftemplate causes
+	(slot faulty-state)
+	(slot feature)
+)
+
+(deffacts car-facts
+ 	"Documentation"
+	(state
+	 	(id working)
+		(name "works")
+		(faulty FALSE)
+	)
+	(state
+	 	(id broken)
+		(name "broken")
+		(faulty TRUE)
+	)
+	(component
+		(id accu01)
+		(type lamp)
+		(state broken)
+	)
+	(connection
+	 	(id draad01)
+		(in accu01)
+	)
+)
+
+(defrule componet
+ 	(component
+		{type == lamp}
+		(id ?cid)
+	)
+	?c <- (connection
+	 	{in == ?cid}
+	)
+	=>
+	(modify ?c
+		(state broken)
+	)
+)

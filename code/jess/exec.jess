@@ -1,0 +1,3 @@
+(batch test-man.jess)
+(reset)
+(run)

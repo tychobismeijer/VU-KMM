@@ -1,0 +1,18 @@
+(deffacts causes-facts
+ 	"Docu"
+	(causes-to-wire
+		(faulty-comp-type accu)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type lamp)
+		(component-state no-power)
+	)
+ 	(causes-feature
+	 	(component-type lamp)
+		(component-state no-power)
+		(observable lights-not-working)
+	)
+)

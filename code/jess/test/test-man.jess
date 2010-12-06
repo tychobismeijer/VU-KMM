@@ -1,0 +1,14 @@
+(batch "car-templates.jess")
+(batch "car-facts.jess")
+(batch "rules-templates.jess")
+(batch "rules-facts.jess")
+(batch "manifestation-rules.jess")
+
+(defrule print-observable
+ 	(observable
+		{could-be-observed == TRUE}
+		(name ?oname)
+	)
+	=>
+	(printout t "You can observe: " ?oname crlf)
+)

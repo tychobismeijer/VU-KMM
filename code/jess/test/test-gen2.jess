@@ -1,0 +1,157 @@
+(deftemplate component
+ 	(slot id)
+	(slot name)
+ 	(slot state)
+	(slot type)
+	(multislot connected-to)
+)
+(deftemplate connection
+ 	extends component
+	(slot in)
+	(slot out)
+)
+(deftemplate feature
+ 	(slot id)
+ 	(slot name)
+)
+(deftemplate observable
+	extends feature
+	(slot could-be-observed)
+	(slot observed)
+)
+(deftemplate state
+	extends feature
+	(slot faulty)
+)
+(deftemplate causes-to-wire
+	(slot faulty-comp-type)
+	(slot faulty-comp-state)
+	(slot wire-state)
+)
+(deftemplate causes-from-wire
+ 	(slot faulty-wire-state)
+	(slot component-type)
+	(slot component-state)
+)
+(deftemplate causes-feature
+	(slot component-type)
+	(slot component-state)
+	(slot observable)
+)
+(deffacts car-facts
+ 	"Documentation"
+	(state
+	 	(id working)
+		(name "Works")
+		(faulty FALSE)
+	)
+	(state
+	 	(id broken)
+		(name "Broken")
+		(faulty TRUE)
+	)
+	(state
+	 	(id no-power)
+		(name "No Power")
+		(faulty TRUE)
+	)
+	(component
+		(id accu01)
+		(type accu)
+		(state broken)
+	)
+	(component
+	 	(id lamp01)
+		(type lamp)
+	)
+	(connection
+	 	(id draad01)
+		(in accu01)
+		(out lamp01)
+	)
+	(observable
+	 	(id lights-not-working)
+		(name "Lights don't work")
+	)
+)
+
+(deffacts causes-facts
+ 	"Docu"
+	(causes-to-wire
+		(faulty-comp-type accu)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type lamp)
+		(component-state no-power)
+	)
+ 	(causes-feature
+	 	(component-type lamp)
+		(component-state no-power)
+		(observable lights-not-working)
+	)
+)
+(defrule causes-to-wire1
+ 	(causes-to-wire
+	 	(faulty-comp-type ?fctype)
+		(faulty-comp-state ?fcstate)
+		(wire-state ?wstate)
+	)
+ 	(component
+		{type == ?fctype && state == ?fcstate}
+		(id ?cid)
+	)
+	?c <- (connection
+	 	{in == ?cid}
+	)
+	=>
+	(modify ?c
+		(state ?wstate)
+	)
+)
+(defrule causes-from-wire1
+ 	(causes-from-wire
+		(faulty-wire-state ?fwstate)
+		(component-type ?ctype)
+		(component-state ?cstate)
+	)
+ 	?c <- (component
+		{type == ?ctype}
+		(id ?cid)
+	)
+	(connection
+	 	{out == ?cid && state == ?fwstate}
+	)
+	=>
+	(modify ?c
+		(state ?cstate)
+	)
+)
+(defrule causes-observable1
+ 	(causes-feature
+	 	(component-type ?ctype)
+		(component-state ?cstate)
+		(observable ?oid)
+	)
+	(component
+	 	{type == ?ctype && state == ?cstate}
+	)
+	?o <- (observable
+		{id == ?oid}
+	)
+	=>
+	(modify ?o
+	 	(could-be-observed TRUE)
+	)
+)
+
+(defrule print-observable
+ 	(observable
+		{could-be-observed == TRUE}
+		(name ?oname)
+	)
+	=>
+	(printout t "You can observe: " ?oname crlf)
+)

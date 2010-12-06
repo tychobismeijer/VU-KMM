@@ -1,0 +1,10 @@
+(deftemplate causes-from-wire
+ 	(slot faulty-wire-state)
+	(slot component-type)
+	(slot component-state)
+)
+(deftemplate causes-feature
+	(slot component-type)
+	(slot component-state)
+	(slot observable)
+)
