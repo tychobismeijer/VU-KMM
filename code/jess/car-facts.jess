@@ -44,4 +44,9 @@
 		(name "Lights covered with dirt")
 		(observed FALSE) ; TEST verify
 	)
+	(observable
+		(id no-power#A)
+		(name "Wire A has no power")
+		(observed FALSE) ; TEST verify
+	)
 )
