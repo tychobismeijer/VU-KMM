@@ -1,5 +1,5 @@
 (deffacts car-facts
- 	"Documentation"
+ 	"Components of the car and their states"
 	(state
 	 	(id working)
 		(name "Works")

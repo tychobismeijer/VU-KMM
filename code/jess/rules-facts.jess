@@ -1,5 +1,5 @@
 (deffacts causes-facts
- 	"Docu"
+	"Causal relationships between components"
 	(causes-to-wire
 		(faulty-comp-type accu)
 		(faulty-comp-state broken)
