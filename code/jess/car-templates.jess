@@ -5,6 +5,7 @@
  	(slot state)
 	(slot type)
 	(multislot possible-states)
+	(multislot impossible-states)
 )
 
 (deftemplate connection

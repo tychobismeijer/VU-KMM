@@ -12,6 +12,7 @@
 	?c <- (component
 	 	{type == ?ctype}
 		(possible-states $?ps&~:(member$ ?cstate ?ps))
+		(impossible-states $?ips&~:(member$ ?cstate ?ips))
 	)
 	=>
 	(modify ?c
@@ -33,6 +34,7 @@
 	?fw <- (connection
 		{out == ?cid}
 		(possible-states $?fwps&~:(member$ ?fwstate ?fwps))
+		(impossible-states $?fwips&~:(member$ ?fwstate ?fwips))
 	)
 	=>
 	(modify ?fw
@@ -58,6 +60,7 @@
 	?fc <- (component
 		{id == ?fcid}
 		(possible-states $?fcps&~:(member$ ?fcstate ?fcps))
+		(impossible-states $?fcips&~:(member$ ?fcstate ?fcips))
 	)
 	=>
 	(modify ?fc

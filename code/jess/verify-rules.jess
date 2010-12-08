@@ -1,0 +1,22 @@
+(defrule causes-feature-specify
+	"If we have observed a contradicting observable, a state is impossible"
+	(observable
+		{observed == FALSE}
+		(id ?oid)
+	)
+ 	(causes-feature
+		{observable == ?oid}
+	 	(component-type ?ctype)
+		(component-state ?cstate)
+	)
+	?c <- (component
+	 	{type == ?ctype}
+		(possible-states $?ps&:(member$ ?cstate ?ps))
+		(impossible-states $?ips)
+	)
+	=>
+	(modify ?c
+		(possible-states (complement$ ?ps (create$ ?cstate)))
+		(impossible-states (create$ ?ips ?cstate))
+	)
+)
