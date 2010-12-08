@@ -1,6 +1,6 @@
 (defrule causes-feature-cover
-	""
-	(observable
+	"If a faulty state of a component causes a observed complaint, that component might be in that state"
+	(complaint
 		{observed == TRUE}
 		(id ?oid)
 	)
@@ -9,12 +9,58 @@
 	 	(component-type ?ctype)
 		(component-state ?cstate)
 	)
-	?com <- (component
+	?c <- (component
 	 	{type == ?ctype}
 		(possible-states $?ps&~:(member$ ?cstate ?ps))
 	)
 	=>
-	(modify ?com
+	(modify ?c
 		(possible-states (create$ ?ps ?cstate))
+	)
+)
+(defrule causes-from-wire-cover
+	"If a faulty state of a wire causes a possible component state, that wire might be in that state"
+	(component
+		(id ?cid)
+		(type ?ctype)
+		(possible-states $?cps)
+	)
+ 	(causes-from-wire
+		{component-type == ?ctype}
+		(component-state ?cstate&:(member$ ?cstate ?cps))
+		(faulty-wire-state ?fwstate)
+	)
+	?fw <- (connection
+		{out == ?cid}
+		(possible-states $?fwps&~:(member$ ?fwstate ?fwps))
+	)
+	=>
+	(modify ?fw
+		(possible-states (create$ ?fwps ?fwstate))
+	)
+)
+(defrule causes-to-wire-cover
+	"If a faulty state of a component causes a possible wire state, that component might be in that state"
+	(connection
+		(id ?wid)
+		(in ?fcid)
+		(possible-states $?wps)
+	)
+	(component
+		{id == ?fcid}
+		(type ?fctype)
+	)
+ 	(causes-to-wire
+	 	(faulty-comp-type ?fctype)
+		(faulty-comp-state ?fcstate)
+		(wire-state ?wstate&:(member$ ?wstate ?wps))
+	)
+	?fc <- (component
+		{id == ?fcid}
+		(possible-states $?fcps&~:(member$ ?fcstate ?fcps))
+	)
+	=>
+	(modify ?fc
+		(possible-states (create$ ?fcps ?fcstate))
 	)
 )

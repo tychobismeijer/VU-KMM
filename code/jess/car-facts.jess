@@ -35,7 +35,7 @@
 		(out lamp01)
 	)
 
-	(observable
+	(complaint
 	 	(id lights-not-working)
 		(name "Lights don't work")
 		(observed TRUE) ; TEST cover

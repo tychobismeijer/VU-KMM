@@ -25,6 +25,9 @@
 	(slot could-be-observed)
 	(slot observed)
 )
+(deftemplate complaint
+	extends observable
+	"An initial complaint")
 (deftemplate state
 	extends feature
 	"A state of a component. Can't be observed."
