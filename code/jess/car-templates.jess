@@ -4,8 +4,9 @@
 	(slot name)
  	(slot state)
 	(slot type)
-	(multislot connected-to)
+	(multislot possible-states)
 )
+
 (deftemplate connection
  	extends component
 	"A connection/wire between to components"

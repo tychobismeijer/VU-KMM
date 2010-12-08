@@ -1,3 +1,4 @@
-(batch test/test-man.jess)
+(batch test/test-cover.jess)
 (reset)
 (run)
+(facts)

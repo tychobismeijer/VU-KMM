@@ -1,0 +1,20 @@
+(defrule causes-feature-cover
+	""
+	(observable
+		{observed == TRUE}
+		(id ?oid)
+	)
+ 	(causes-feature
+		{observable == ?oid}
+	 	(component-type ?ctype)
+		(component-state ?cstate)
+	)
+	?com <- (component
+	 	{type == ?ctype}
+		(possible-states $?ps&~:(member$ ?cstate ?ps))
+	)
+	=>
+	(modify ?com
+		(possible-states (create$ ?ps ?cstate))
+	)
+)

@@ -1,4 +1,4 @@
-(defrule causes-to-wire1
+(defrule causes-to-wire-manifestation
 	"If a component doesn't work properly, a wire connected to it also doesn't work"
  	(causes-to-wire
 	 	(faulty-comp-type ?fctype)
@@ -17,7 +17,7 @@
 		(state ?wstate)
 	)
 )
-(defrule causes-from-wire1
+(defrule causes-from-wire-manifestation
 	"If a wire doesn't work propely, a component connected to it also doesn't work"
  	(causes-from-wire
 		(faulty-wire-state ?fwstate)
@@ -36,7 +36,7 @@
 		(state ?cstate)
 	)
 )
-(defrule causes-observable1
+(defrule causes-observable-manifestation
 	"If component is in a certain state, that can lead to an observable"
  	(causes-feature
 	 	(component-type ?ctype)

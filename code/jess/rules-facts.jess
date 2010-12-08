@@ -15,4 +15,9 @@
 		(component-state no-power)
 		(observable lights-not-working)
 	)
+ 	(causes-feature
+	 	(component-type lamp)
+		(component-state very-dirty)
+		(observable lights-not-working)
+	)
 )
