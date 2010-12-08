@@ -10,24 +10,20 @@
 		(component-type lamp)
 		(component-state no-power)
 	)
+
  	(causes-feature
-	 	(component-type lamp)
+	 	(component lamp01)
 		(component-state no-power)
 		(observable lights-not-working)
 	)
  	(causes-feature
-	 	(component-type lamp)
+	 	(component lamp01)
 		(component-state very-dirty)
 		(observable lights-not-working)
 	)
  	(causes-feature
-	 	(component-type lamp)
+	 	(component lamp01)
 		(component-state very-dirty)
 		(observable lights-dirty)
-	)
- 	(causes-feature
-	 	(component-type wire)
-		(component-state no-power)
-		(observable no-power)
 	)
 )

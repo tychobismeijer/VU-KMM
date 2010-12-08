@@ -39,12 +39,13 @@
 (defrule causes-observable-manifestation
 	"If component is in a certain state, that can lead to an observable"
  	(causes-feature
-	 	(component-type ?ctype)
+	 	(component ?cid)
 		(component-state ?cstate)
 		(observable ?oid)
 	)
 	(component
-	 	{type == ?ctype && state == ?cstate}
+	 	{type == ?cid &&
+		 state == ?cstate}
 	)
 	?o <- (observable
 		{id == ?oid}

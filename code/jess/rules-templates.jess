@@ -6,7 +6,7 @@
 )
 (deftemplate causes-feature
 	"Causal relationship from a component to a feature."
-	(slot component-type)
+	(slot component)
 	(slot component-state)
 	(slot observable)
 )

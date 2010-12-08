@@ -6,11 +6,11 @@
 	)
  	(causes-feature
 		{observable == ?oid}
-	 	(component-type ?ctype)
+	 	(component ?cid)
 		(component-state ?cstate)
 	)
 	?c <- (component
-	 	{type == ?ctype}
+	 	{id == ?cid}
 		(possible-states $?ps&~:(member$ ?cstate ?ps))
 		(impossible-states $?ips&~:(member$ ?cstate ?ips))
 	)
@@ -53,7 +53,7 @@
 		(type ?fctype)
 	)
  	(causes-to-wire
-	 	(faulty-comp-type ?fctype)
+	 	{faulty-comp-type == ?fctype}
 		(faulty-comp-state ?fcstate)
 		(wire-state ?wstate&:(member$ ?wstate ?wps))
 	)

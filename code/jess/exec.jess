@@ -1,4 +1,4 @@
 (batch test/test-verify.jess)
 (reset)
-(run 100)
+(run)
 (facts)
