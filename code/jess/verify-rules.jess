@@ -10,7 +10,7 @@
 		(component-state ?cstate)
 	)
 	?c <- (component
-	 	{type == ?cid}
+	 	{id == ?cid}
 		(possible-states $?ps&:(member$ ?cstate ?ps))
 		(impossible-states $?ips)
 	)

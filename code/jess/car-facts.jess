@@ -46,7 +46,7 @@
 	)
 	(observable
 		(id no-power#01)
-		(name "Lights covered with dirt")
+		(name "Wire 01 has now power")
 		(observed FALSE) ; TEST verify
 	)
 )
