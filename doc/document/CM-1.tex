@@ -1,0 +1,338 @@
+% 1,2,5
+\noindent
+\begin{tabular}{%
+       |>{\colleft}p{3cm}%
+       |>{\colleft}p{8.5cm}|}
+\hline
+{\bf Communication model} &
+   {\bf Transaction Description Worksheet CM-1} \\
+\hline
+\hline
+\sc Transaction identifier/name &
+	\emph{Transaction 1: Report complaint} \\
+
+   %{\rm
+   %A transaction is to be defined for each information object that is
+   %output from some leaf task in the task model or in the knowledge
+   %model (i.e., a transfer function), and that must be communicated to
+   %another agent for use in its own tasks. The name must reflect, in a
+   %user-understandable way, what is done with this information object
+   %by the transaction. In addition to the name, give a brief
+   %explanation here of the purpose of the transaction.
+   %} 
+\hline
+\sc Information object &
+	Transferring a complaint between the \emph{find complaint} and \emph{cover complaint} task. \\
+   %{\rm
+   %Indicate the (core) information object, and between which two
+   %tasks it is to be transmitted.
+   %} \\
+\hline
+\sc Agents involved &
+	\emph{Car repair assistant}: receiving the complaint;\newline
+	\emph{Hobbyist}: sending the complaint\\
+   %{\rm
+   %Indicate the agent that is sender of the information object,
+   %and the agent that is receiving it.
+   %} \\
+\hline
+\sc Communication plan &
+	CRA communication plan\\
+
+   %{\rm
+   %Indicate the communication plan of which this transaction is a
+   %component.
+   %} \\
+\hline
+\sc Constraints &
+	Before the transaction the car repair assistant must be ready to reiceve complaints\\
+
+   %{\rm
+   %Specify the requirements and (pre)conditions that must be fulfilled
+   %so that the transaction can be carried out. Sometimes, it is also
+   %useful to state post-conditions that are assumed to be valid after
+   %the transaction.
+   %} \\
+\hline
+\sc Information exchange specification &
+	See worksheet CM-2 below.\\
+
+   %{\rm
+   %Transactions can have an internal structure, in that they consist
+   %of several messages of different types, and/or handle additional
+   %supporting information objects such as explanation or help items.
+   %This is detailed in worksheet CM-2. At this point, only a reference
+   %or pointer needs to be given to a later info exchange spec.
+   %} \\
+\hline
+\end{tabular}
+
+
+\noindent
+\begin{tabular}{%
+       |>{\colleft}p{3cm}%
+       |>{\colleft}p{8.5cm}|}
+\hline
+{\bf Communication model} &
+   {\bf Transaction Description Worksheet CM-1} \\
+\hline
+\hline
+\sc Transaction identifier/name &
+	\emph{Transaction 2: Propose hypothesis} \\
+
+   %{\rm
+   %A transaction is to be defined for each information object that is
+   %output from some leaf task in the task model or in the knowledge
+   %model (i.e., a transfer function), and that must be communicated to
+   %another agent for use in its own tasks. The name must reflect, in a
+   %user-understandable way, what is done with this information object
+   %by the transaction. In addition to the name, give a brief
+   %explanation here of the purpose of the transaction.
+   %} 
+\hline
+\sc Information object &
+	Transfering sets of hypothesis between the \emph{propose hypothesis} and \emph{select hypothesis} task. \\
+   %{\rm
+   %Indicate the (core) information object, and between which two
+   %tasks it is to be transmitted.
+   %} \\
+\hline
+\sc Agents involved &
+	\emph{Hobbyist}: receiving the set of proposed hypothesis, sending a set of hypothesis (might be an empty set); \newline
+	\emph{Car repair assistant}: sending a set of proposed hypothesis; receiving a set of hypothesis\\
+   %{\rm
+   %Indicate the agent that is sender of the information object,
+   %and the agent that is receiving it.
+   %} \\
+\hline
+\sc Communication plan &
+	CRA communication plan\\
+
+   %{\rm
+   %Indicate the communication plan of which this transaction is a
+   %component.
+   %} \\
+\hline
+\sc Constraints &
+	Before the transaction the car repair assistant must have a set of hypothesis ready. As a post condition one hypothesis has to be selected.\\
+
+   %{\rm
+   %Specify the requirements and (pre)conditions that must be fulfilled
+   %so that the transaction can be carried out. Sometimes, it is also
+   %useful to state post-conditions that are assumed to be valid after
+   %the transaction.
+   %} \\
+\hline
+\sc Information exchange specification &
+	See worksheet CM-2 below.\\
+
+   %{\rm
+   %Transactions can have an internal structure, in that they consist
+   %of several messages of different types, and/or handle additional
+   %supporting information objects such as explanation or help items.
+   %This is detailed in worksheet CM-2. At this point, only a reference
+   %or pointer needs to be given to a later info exchange spec.
+   %} \\
+\hline
+\end{tabular}
+
+\noindent
+\begin{tabular}{%
+       |>{\colleft}p{3cm}%
+       |>{\colleft}p{8.5cm}|}
+\hline
+{\bf Communication model} &
+   {\bf Transaction Description Worksheet CM-1} \\
+\hline
+\hline
+\sc Transaction identifier/name &
+	\emph{Transaction 3: Negotiate observable} \\
+
+   %{\rm
+   %A transaction is to be defined for each information object that is
+   %output from some leaf task in the task model or in the knowledge
+   %model (i.e., a transfer function), and that must be communicated to
+   %another agent for use in its own tasks. The name must reflect, in a
+   %user-understandable way, what is done with this information object
+   %by the transaction. In addition to the name, give a brief
+   %explanation here of the purpose of the transaction.
+   %} 
+\hline
+\sc Information object &
+	Transferring observation instructions between the \emph{specify observable} and \emph{determine whether going to do observation} task. \\
+   %{\rm
+   %Indicate the (core) information object, and between which two
+   %tasks it is to be transmitted.
+   %} \\
+\hline
+\sc Agents involved &
+	\emph{Car repair assistant}: sending observation instructions;\newline
+	\emph{Hobbyist}: receiving observation instructions\\
+   %{\rm
+   %Indicate the agent that is sender of the information object,
+   %and the agent that is receiving it.
+   %} \\
+\hline
+\sc Communication plan &
+	CRA communication plan\\
+
+   %{\rm
+   %Indicate the communication plan of which this transaction is a
+   %component.
+   %} \\
+\hline
+\sc Constraints &
+	Before the transaction the car repair assistant must have a set of observables ready. As a post condition one observable must be excepted.\\
+
+   %{\rm
+   %Specify the requirements and (pre)conditions that must be fulfilled
+   %so that the transaction can be carried out. Sometimes, it is also
+   %useful to state post-conditions that are assumed to be valid after
+   %the transaction.
+   %} \\
+\hline
+\sc Information exchange specification &
+	See worksheet CM-2 below.\\
+
+   %{\rm
+   %Transactions can have an internal structure, in that they consist
+   %of several messages of different types, and/or handle additional
+   %supporting information objects such as explanation or help items.
+   %This is detailed in worksheet CM-2. At this point, only a reference
+   %or pointer needs to be given to a later info exchange spec.
+   %} \\
+\hline
+\end{tabular}
+
+
+\noindent
+\begin{tabular}{%
+       |>{\colleft}p{3cm}%
+       |>{\colleft}p{8.5cm}|}
+\hline
+{\bf Communication model} &
+   {\bf Transaction Description Worksheet CM-1} \\
+\hline
+\hline
+\sc Transaction identifier/name &
+	\emph{Transaction 4: Report observable} \\
+
+   %{\rm
+   %A transaction is to be defined for each information object that is
+   %output from some leaf task in the task model or in the knowledge
+   %model (i.e., a transfer function), and that must be communicated to
+   %another agent for use in its own tasks. The name must reflect, in a
+   %user-understandable way, what is done with this information object
+   %by the transaction. In addition to the name, give a brief
+   %explanation here of the purpose of the transaction.
+   %} 
+\hline
+\sc Information object &
+	Transferring observation result between the \emph{perform observation} and \emph{verify} task. \\
+   %{\rm
+   %Indicate the (core) information object, and between which two
+   %tasks it is to be transmitted.
+   %} \\
+\hline
+\sc Agents involved &
+	\emph{Hobbyist}: sending observation result;			\newline
+	\emph{Car repair assistant}: receiving observation result	\\
+   %{\rm
+   %Indicate the agent that is sender of the information object,
+   %and the agent that is receiving it.
+   %} \\
+\hline
+\sc Communication plan &
+	CRA communication plan\\
+
+   %{\rm
+   %Indicate the communication plan of which this transaction is a
+   %component.
+   %} \\
+\hline
+\sc Constraints &
+	Before the transaction the hobbyist must have carried out the observation instructions and remembered there results.\\
+   %{\rm
+   %Specify the requirements and (pre)conditions that must be fulfilled
+   %so that the transaction can be carried out. Sometimes, it is also
+   %useful to state post-conditions that are assumed to be valid after
+   %the transaction.
+   %} \\
+\hline
+\sc Information exchange specification &
+	See worksheet CM-2 below.\\
+
+   %{\rm
+   %Transactions can have an internal structure, in that they consist
+   %of several messages of different types, and/or handle additional
+   %supporting information objects such as explanation or help items.
+   %This is detailed in worksheet CM-2. At this point, only a reference
+   %or pointer needs to be given to a later info exchange spec.
+   %} \\
+\hline
+\end{tabular}
+
+\noindent
+\begin{tabular}{|>{\colleft}p{3cm}|>{\colleft}p{8.5cm}|}
+\hline
+{\bf Communication model} &
+   {\bf Transaction Description Worksheet CM-1} \\
+\hline
+\hline
+\sc Transaction identifier/name &
+	\emph{Transaction 5: Report hypothesis} \\
+
+   %{\rm
+   %A transaction is to be defined for each information object that is
+   %output from some leaf task in the task model or in the knowledge
+   %model (i.e., a transfer function), and that must be communicated to
+   %another agent for use in its own tasks. The name must reflect, in a
+   %user-understandable way, what is done with this information object
+   %by the transaction. In addition to the name, give a brief
+   %explanation here of the purpose of the transaction.
+   %} 
+\hline
+\sc Information object &
+	Transferring hypothesis result between the \emph{verify} and \emph{repair car} task. \\
+   %{\rm
+   %Indicate the (core) information object, and between which two
+   %tasks it is to be transmitted.
+   %} \\
+\hline
+\sc Agents involved &
+	\emph{Car repair assistant}: sending hypothesis;	\newline
+	\emph{Hobbyist}: receiving hypothesis			\\
+   %{\rm
+   %Indicate the agent that is sender of the information object,
+   %and the agent that is receiving it.
+   %} \\
+\hline
+\sc Communication plan &
+	CRA communication plan\\
+
+   %{\rm
+   %Indicate the communication plan of which this transaction is a
+   %component.
+   %} \\
+\hline
+\sc Constraints &
+	Before the transaction the car repair assistant must have either no observations left or he has one or less hypothesis left.\\
+   %{\rm
+   %Specify the requirements and (pre)conditions that must be fulfilled
+   %so that the transaction can be carried out. Sometimes, it is also
+   %useful to state post-conditions that are assumed to be valid after
+   %the transaction.
+   %} \\
+\hline
+\sc Information exchange specification &
+	See worksheet CM-2 below.\\
+
+   %{\rm
+   %Transactions can have an internal structure, in that they consist
+   %of several messages of different types, and/or handle additional
+   %supporting information objects such as explanation or help items.
+   %This is detailed in worksheet CM-2. At this point, only a reference
+   %or pointer needs to be given to a later info exchange spec.
+   %} \\
+\hline
+\end{tabular}

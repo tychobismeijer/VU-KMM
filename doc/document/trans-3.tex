@@ -1,0 +1,92 @@
+\begin{tabular}{ %
+       |>{\colleft}p{4cm}%
+       |>{\colleft}p{8.5cm}|}
+\hline
+{\bf Communication model} & {\bf Information Exchange Specification Worksheet CM-2} \\
+\hline
+\hline
+{\sc Transaction} &
+%   Give the transaction identifier and the name of which this information
+%   exchange specification is a part.
+Transaction 2: Negotiate Observable
+ \\
+\hline
+{\sc Agents involved} &
+1. {\bf Sender}
+%agent sending the information item(s)
+CRA send a request for an obervation, and an explanation of that observation
+\newline
+2. {\bf Receiver}:
+The hobbyist receives the request for an observation, and an explanation.
+%agent receiving the information item(s)
+\\
+\hline
+{\sc Information items} &
+There is two information objects, the name of the obervation to be done, and an
+explanation of that obervation. 
+%   List all information items that are to be transmitted in this
+%   transaction. This includes the (`core') information object the
+%   transfer of which is the purpose of the transaction. However, it may contain
+%   other, supporting, information items, that, for example, provide help
+%   or explanation. For each information item, describe the following:
+   \\
+&  1. {\bf Role}: The name of the observation is core, while the explanation is
+support.
+%whether it is a core object, or a support item.
+   \\
+&  2. {\bf Form}: The name of the observation is a string. The explanation is
+canned rich text.
+     % the syntactic form in which it transmitted to
+     % another agent , e.g., data string, canned text, a certain type of
+     % diagram, 2D or 3D plot.
+   \\
+&  3. {\bf Medium}: The name of the observation can be selected in a menu. The
+explanation can be shown in a text box.
+     % the medium through which it is handled in the
+     % agent-agent interaction, e.g., a pop-up window, navigation and
+     % selection within a menu, command-line interface, human
+     % intervention.
+   \\
+\hline
+{\sc Message specifications} & \\
+{\sc 1. REQUEST-OBSERVATION} &
+   {\bf Communication type}: REQUEST\\
+&  {\bf Content}: Request for some observation\\
+&  {\bf From}: CRA\\
+&  {\bf To}: The hobbyist\\
+   \\
+{\sc 2. OFFER-OBSERVATION} &
+   {\bf Communication type}: OFFER\\
+&  {\bf Content}: The Hobbyist wants to do a certain observation\\
+&  {\bf From}: The hobbyist\\
+&  {\bf To}: CRA\\
+   \\
+{\sc 3. DO-OBSERVATION} &
+   {\bf Communication type}: ORDER\\
+&  {\bf Content}: explanation and observation the hobbyist needs to make\\
+&  {\bf From}: CRA\\
+&  {\bf To}: The hobbyist\\
+   \\
+{\sc 4. REJECT-OBSERVATION-REQUEST} &
+   {\bf Communication type}: REJECT-ta\\
+&  {\bf Content}: Don't want to do this observation\\
+&  {\bf From}: The hobbyist\\
+&  {\bf To}: CRA\\
+   \\
+{\sc 5. REJECT-OBSERVATION-OFFER} &
+   {\bf Communication type}: REJECT-td\\
+&  {\bf Content}: Explanation why that observation is not needed\\
+&  {\bf From}: CRA\\
+&  {\bf To}: The hobbyist\\
+   \\
+\hline
+\sc Control over messages &
+    % Give, if necessary, a control specification over the messages
+    % within the transaction. This can be done in pseudocode format or
+    % in a state-transition diagram, similar to how the control over
+    % transaction within the communication plan is specified. The
+    % difference is just the level of detail.
+    See figure 
+   \\
+\hline
+\end{tabular}

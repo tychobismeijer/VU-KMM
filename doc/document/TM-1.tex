@@ -1,0 +1,51 @@
+\noindent
+\begin{tabular} {|>{\colleft}p{2.5cm}|>{\colleft}p{9cm}|} \hline
+{\bf Task Model} 			& 	{\bf Task Analysis Worksheet TM-1} 											\\ \hline \hline
+\sc Task 				& 	Car diagnoses task													\\ \hline
+\sc Organization 			& 	This task is not part of an organization and is executed by a hobbyist.					\\ \hline
+\sc Goal and value 		& 	To find the cause of an observed problem. Once the cause is know it might 
+						be possible to repair the problem or bring the car tho a garage so they can fix the problem.	\\ \hline
+\sc Dependency and flow 	&	{\em Input tasks}: None													\newline
+   						{\em Output tasks}: Car repair task 										\\ \hline
+\sc Objects handled 		&	{\em Input objects}: An observed problem, type of car.							\newline
+   						{\em Output objects}: Cause(s) of the observed problem.							\newline
+   						{\em Internal objects}: General car knowledge, specific car knowledge					\\ \hline
+\sc Timing and control		& 	The task is performed only when a problem is observed, which is expected to be very infrequent.
+						The task might take from about 15 min to a few hours. 							\newline
+						{\em preconditions} There must be an observed problem. 							\newline
+						{\em postconditions} One or more causes for the observed problem are reported or the system 
+						reports it could not find the problem.										\newline
+						{\em constraints} The system needs access to the car knowledge of the specified car.		\\ \hline
+\sc Agents 				&	The hobbyist, the car diagnoses system										\\ \hline
+\sc Knowledge and competence 	& 	The hobbyist needs to be able to preform certain tests, interpret the results correctly and give
+						them to the car diagnoses system. 											\\ \hline
+\sc Resources 			& 	The task will consume the time of the person performing it. In addition, depending on the 
+						problem being diagnosed, some measuring equipment and/or spare parts might be needed. 		\\ \hline
+\sc Quality and performance 	& 	The quality measure will be that the identified cause is the real cause of the problem. The 
+						performance will be measured by the time it takes to diagnose the problem.				\\ \hline
+\end{tabular}
+
+\noindent
+\begin{tabular} {|>{\colleft}p{2.5cm}|>{\colleft}p{9cm}|} \hline
+{\bf Task Model} 			& 	{\bf Task Analysis Worksheet TM-1} 											\\ \hline \hline
+\sc Task 				& 	Car repair task														\\ \hline
+\sc Organization 			& 	This task is not part of an organization and is executed by a hobbyist.					\\ \hline
+\sc Goal and value 		& 	To repair the observed cause.	If successful then the car functions properly again, saving 
+						repair costs														\\ \hline
+\sc Dependency and flow 	&	{\em Input tasks}: Car diagnoses task										\newline
+   						{\em Output tasks}: None												\\ \hline
+\sc Objects handled 		&	{\em Input objects}: A cause for a problem, type of car.							\newline
+   						{\em Output objects}: Confirmation if the task was successful						\newline
+   						{\em Internal objects}: General car knowledge, specific car knowledge, repair knowledge		\\ \hline
+\sc Timing and control		& 	The task is performed only when a problem is observed, which is expected to be very infrequent.
+						The task might take from about 15 min to a few hours. 							\newline
+						{\em preconditions} A cause for a problem must be identified						\newline
+						{\em postconditions} The problem is either fixed or it is known that the repair failed		\newline
+						{\em constraints} The system needs access to the car knowledge of the specified car.		\\ \hline
+\sc Agents 				&	The hobbyist														\\ \hline
+\sc Knowledge and competence 	& 	The hobbyist needs to be able to preform the necessary repairs						\\ \hline
+\sc Resources 			& 	The task will consume the time of the person performing it. In addition, depending on the 
+						repair, some tools and/or parts might be needed. 								\\ \hline
+\sc Quality and performance 	& 	The quality measure will be that the problem is fixed by taking away the cause. The 
+						performance will be measured by the time it takes to perform the repair.				\\ \hline
+\end{tabular}
