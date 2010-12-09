@@ -1,3 +1,4 @@
-(batch test-man.jess)
+(batch test/test-verify.jess)
 (reset)
 (run)
+(facts)

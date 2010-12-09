@@ -1,0 +1,71 @@
+(defrule causes-feature-specify
+	"If we have observed a contradicting observable, a state is impossible"
+	(observable
+		{observed == FALSE}
+		(id ?oid)
+	)
+ 	(causes-feature
+		{observable == ?oid}
+	 	(component ?cid)
+		(component-state ?cstate)
+	)
+	?c <- (component
+	 	{id == ?cid}
+		(possible-states $?ps&:(member$ ?cstate ?ps))
+		(impossible-states $?ips)
+	)
+	=>
+	(modify ?c
+		(possible-states (complement$ ?ps (create$ ?cstate)))
+		(impossible-states (create$ ?ips ?cstate))
+	)
+)
+(defrule causes-from-wire-specify
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(component
+		(id ?cid)
+		(type ?ctype)
+		(impossible-states $?cips)
+	)
+ 	(causes-from-wire
+		{component-type == ?ctype}
+		(component-state ?cistate&:(member$ ?cistate ?cips))
+		(faulty-wire-state ?wstate)
+	)
+	?w <- (connection
+		{out == ?cid}
+		(possible-states $?wps&:(member$ ?wstate ?wps))
+		(impossible-states $?wips)
+	)
+	=>
+	(modify ?w
+		(possible-states (complement$ ?wps (create$ ?wstate)))
+		(impossible-states (create$ ?wips ?wstate))
+	)
+)
+(defrule causes-to-wire-specify
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(connection
+		(in ?cid)
+		(impossible-states $?wips)
+	)
+	(component
+		{id == ?cid}
+		(type ?ctype)
+	)
+ 	(causes-to-wire
+	 	(faulty-comp-type ?ctype)
+		(faulty-comp-state ?cstate)
+		(wire-state ?wistate&:(member$ ?wistate ?wips))
+	)
+	?c <- (component
+		{id == ?cid}
+		(possible-states $?cps&:(member$ ?cstate ?cps))
+		(impossible-states $?cips)
+	)
+	=>
+	(modify ?c
+		(possible-states (complement$ ?cps (create$ ?cstate)))
+		(impossible-states (create$ ?cips ?cstate))
+	)
+)

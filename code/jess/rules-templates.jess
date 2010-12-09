@@ -1,10 +1,18 @@
 (deftemplate causes-from-wire
+	"Causal relationship from a wire to a component."
  	(slot faulty-wire-state)
 	(slot component-type)
 	(slot component-state)
 )
 (deftemplate causes-feature
-	(slot component-type)
+	"Causal relationship from a component to a feature."
+	(slot component)
 	(slot component-state)
 	(slot observable)
+)
+(deftemplate causes-to-wire
+	"Causal relationship from a component to a wire."
+	(slot faulty-comp-type)
+	(slot faulty-comp-state)
+	(slot wire-state)
 )

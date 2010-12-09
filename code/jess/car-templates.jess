@@ -1,30 +1,36 @@
 (deftemplate component
+	"A high level electrical component."	
  	(slot id)
 	(slot name)
  	(slot state)
 	(slot type)
-	(multislot connected-to)
+	(multislot possible-states)
+	(multislot impossible-states)
 )
+
 (deftemplate connection
  	extends component
+	"A connection/wire between to components"
 	(slot in)
 	(slot out)
 )
+
 (deftemplate feature
+	"A feature."
  	(slot id)
  	(slot name)
 )
 (deftemplate observable
 	extends feature
+	"A feature that can be observed."
 	(slot could-be-observed)
 	(slot observed)
 )
+(deftemplate complaint
+	extends observable
+	"An initial complaint")
 (deftemplate state
 	extends feature
+	"A state of a component. Can't be observed."
 	(slot faulty)
-)
-(deftemplate causes-to-wire
-	(slot faulty-comp-type)
-	(slot faulty-comp-state)
-	(slot wire-state)
 )
