@@ -27,7 +27,7 @@
 		(observable lights-dirty)
 	)
  	(causes-feature
-	 	(component wire01)
+	 	(component draad01)
 		(component-state no-power)
 		(observable no-power#01)
 	)
