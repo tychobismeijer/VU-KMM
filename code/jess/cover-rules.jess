@@ -19,6 +19,7 @@
 		(possible-states (create$ ?ps ?cstate))
 	)
 )
+
 (defrule causes-from-wire-cover
 	"If a faulty state of a wire causes a possible component state, that wire might be in that state"
 	(component
@@ -39,6 +40,70 @@
 	=>
 	(modify ?fw
 		(possible-states (create$ ?fwps ?fwstate))
+	)
+)
+(defrule causes-from-2wires-cover1
+	"If a faulty state of 2 wires causes a possible component state, one of those wires might be in that state"
+	(component
+		(id ?cid)
+		(type ?ctype)
+		(possible-states $?cps)
+	)
+ 	(causes-from-2wires
+		{component-type == ?ctype}
+		(component-state ?cstate&:(member$ ?cstate ?cps))
+		(faulty-wire1-state ?fwstate1)
+		(faulty-wire2-state ?fwstate2)
+	)
+	?fw1 <- (connection
+		{out == ?cid}
+		(possible-states $?fwps1)
+		(impossible-states $?fwips1)
+	)
+	?fw2 <- (connection
+		{out == ?cid}
+		(possible-states $?fwps2)
+		(impossible-states $?fwips2)
+	)
+	(test (not (or
+		(member$ ?fwstate1 ?fwps1)
+		(member$ ?fwstate1 ?fwips1)
+	)))
+	=>
+	(modify ?fw1
+		(possible-states (create$ ?fwps1 ?fwstate1))
+	)
+)
+(defrule causes-from-2wires-cover2
+	"If a faulty state of 2 wires causes a possible component state, one of those wires might be in that state"
+	(component
+		(id ?cid)
+		(type ?ctype)
+		(possible-states $?cps)
+	)
+ 	(causes-from-2wires
+		{component-type == ?ctype}
+		(component-state ?cstate&:(member$ ?cstate ?cps))
+		(faulty-wire1-state ?fwstate1)
+		(faulty-wire2-state ?fwstate2)
+	)
+	?fw1 <- (connection
+		{out == ?cid}
+		(possible-states $?fwps1)
+		(impossible-states $?fwips1)
+	)
+	?fw2 <- (connection
+		{out == ?cid}
+		(possible-states $?fwps2)
+		(impossible-states $?fwips2)
+	)
+	(test (not (or
+		(member$ ?fwstate2 ?fwps2)
+		(member$ ?fwstate2 ?fwips2)
+	)))
+	=>
+	(modify ?fw2
+		(possible-states (create$ ?fwps2 ?fwstate2))
 	)
 )
 (defrule causes-to-wire-cover

@@ -4,6 +4,13 @@
 	(slot component-type)
 	(slot component-state)
 )
+(deftemplate causes-from-2wires
+	"Causal relationship from 2 wires to a component."
+ 	(slot faulty-wire1-state)
+ 	(slot faulty-wire2-state)
+	(slot component-type)
+	(slot component-state)
+)
 (deftemplate causes-feature
 	"Causal relationship from a component to a feature."
 	(slot component)

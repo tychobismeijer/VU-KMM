@@ -4,3 +4,14 @@
 (batch "rules-facts.jess")
 (batch "cover-rules.jess")
 (batch "verify-rules.jess")
+(reset)
+(run)
+(assert
+	(observable
+		(id no-power#01)
+		(name "Wire 01 has now power")
+		(observed FALSE) ; TEST verify
+	)
+)
+(run)
+(facts)

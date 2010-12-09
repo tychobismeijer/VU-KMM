@@ -37,16 +37,11 @@
 	(complaint
 		(id lights-not-working)
 		(name "Lights don't work")
-		(observed TRUE) ; TEST cover verify
+;		(observed TRUE) ; TEST cover verify
 	)
 	(observable
 		(id lights-dirty)
 		(name "Lights covered with dirt")
-		(observed FALSE) ; TEST verify
-	)
-	(observable
-		(id no-power#01)
-		(name "Wire 01 has now power")
-		(observed FALSE) ; TEST verify
+;		(observed FALSE) ; TEST verify
 	)
 )
