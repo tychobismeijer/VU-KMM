@@ -1,0 +1,109 @@
+% Knowledge Management and Modelling exercise 3
+% Tycho Bismeijer
+% 21 September 2010
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{array}
+\usepackage{lmodern}
+\usepackage{graphicx}
+
+% Voor de CommonKADS worksheets
+\def\pbs#1{\let\temp=\\#1\let\\=\temp}
+\def\colleft{\pbs\raggedright\hspace{0pt}}
+
+\title{The Car Repair Assistant}
+\author{
+Joost Huizinga (1557017)\\
+Tycho Bismeier (1615440)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+Cars are probably the most important vehicle of our century. Where most people would use cars only for transport some have turned their car in a hobby. For these hobbyist performing minor upgrades and repairs on there cars is about as important as driving the car.
+
+Unfortunately its is sometimes difficult to find the right information to perform these repairs and upgrades. For this problem we developed the car repair assistant. The car repair assistant is a knowledge system that helps with the identification and repair of various problems a car might have.
+
+Because car repair is a very wide problem area we have narrowed it down to only the electrical system. Most of our models nevertheless assume the complete car repair assistant. It are the domain specific models that only consider the electrical system of the car. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Context model}
+This section contains the tables OM-1, OM-2, OM-5, TM-1, TM-2, AM-1. Since our problem is based on a single person that repairs his car in its own time there is no organization. This makes organizational structures or flows quite impossible to create. Nevertheless, most parts of the forms that concern the organizational model are still relevant.
+
+\subsection{Organizational model}
+\input{OM-1}
+\input{OM-2}
+\input{OM-5}
+
+\subsection{Task and agent models}
+\input{TM-1}
+\input{TM-2}
+\input{AM-1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Knowledge model}
+\subsection{Domain knowledge}
+This section contains an initial knowledge model. The domain model is shown in figures~\ref{fig:DS} and~\ref{fig:IS}. Since we will only consider the electrical system this model only concerns electrical components. It is also modeled to support a specific car and, if this knowledge is not available, general car templates.
+
+Thus far we have not modified the diagnoses task template. Our inference structure, shown in figure~\ref{fig:InferenceModel} is thus far exactly the same as that of the standard diagnoses task. It has been annotated to show how it can be used in our domain.
+
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{domainSchema.pdf}
+	\caption{Domain schema for the car diagnoses task}
+	\label{fig:DS}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{ruleTypes.jpg}
+	\caption{More domain schema}
+	\label{fig:IS}
+\end{figure}
+
+
+\subsection{Inference knowledge}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{InferenceModel.png}
+	\label{fig:InferenceModel}
+\end{figure}
+
+
+\subsection{Task knowledge}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{taskDecomposition.png}
+	\caption{Task-decomposistion diagram for the diagnoses task}
+	\label{fig:taskDecomposition}
+\end{figure}
+
+
+
+\section{Communication model}
+\subsection{CRA communication plan}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{dialogueDiagram.png}
+	\caption{Dialogue diagram of the diagnoses task}
+	\label{fig:dialogueDiagram}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{communicationPlan.png}
+	\caption{The communication plan of the diagnoses task.}
+	\label{fig:communicationPlan}
+\end{figure}
+
+
+
+\subsection{CRA transactions}
+\input{CM-1}
+\input{CM-2}
+
+\end{document}
