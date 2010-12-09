@@ -1,0 +1,34 @@
+(deffacts causes-facts
+	"Causal relationships between components"
+	(causes-to-wire
+		(faulty-comp-type accu)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type lamp)
+		(component-state no-power)
+	)
+
+ 	(causes-feature
+	 	(component lamp01)
+		(component-state no-power)
+		(observable lights-not-working)
+	)
+ 	(causes-feature
+	 	(component lamp01)
+		(component-state very-dirty)
+		(observable lights-not-working)
+	)
+ 	(causes-feature
+	 	(component lamp01)
+		(component-state very-dirty)
+		(observable lights-dirty)
+	)
+ 	(causes-feature
+	 	(component wire01)
+		(component-state no-power)
+		(observable no-power#01)
+	)
+)

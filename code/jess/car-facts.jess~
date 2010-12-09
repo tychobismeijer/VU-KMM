@@ -1,0 +1,52 @@
+(deffacts car-facts
+ 	"Components of the car and their states"
+	(state
+	 	(id working)
+		(name "Works")
+		(faulty FALSE)
+	)
+	(state
+	 	(id broken)
+		(name "Broken")
+		(faulty TRUE)
+	)
+	(state
+	 	(id no-power)
+		(name "No Power")
+		(faulty TRUE)
+	)
+	(state
+	 	(id very-dirty)
+		(name "Very Dirty")
+		(faulty TRUE)
+	)
+
+	(component
+		(id accu01)
+		(type accu)
+	)
+	(component
+	 	(id lamp01)
+		(type lamp)
+	)
+	(connection
+	 	(id draad01)
+		(in accu01)
+		(out lamp01)
+	)
+	(complaint
+		(id lights-not-working)
+		(name "Lights don't work")
+		(observed TRUE) ; TEST cover verify
+	)
+	(observable
+		(id lights-dirty)
+		(name "Lights covered with dirt")
+		(observed FALSE) ; TEST verify
+	)
+	(observable
+		(id no-power#01)
+		(name "Wire 01 has now power")
+		(observed FALSE) ; TEST verify
+	)
+)

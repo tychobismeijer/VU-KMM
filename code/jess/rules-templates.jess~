@@ -5,7 +5,7 @@
 	(slot component-state)
 )
 (deftemplate causes-from-2wires
-	"Causal relationship from 2 wires to a component."
+	"Causal relationship from 2 wire to a component."
  	(slot faulty-wire1-state)
  	(slot faulty-wire2-state)
 	(slot component-type)
