@@ -1,34 +1,516 @@
 (deffacts causes-facts
-	"Causal relationships between components"
+"Causal relationships between components"
+;battery	
 	(causes-to-wire
-		(faulty-comp-type accu)
+		(faulty-comp-type battery)
+		(faulty-comp-state empty)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type battery)
 		(faulty-comp-state broken)
 		(wire-state no-power)
 	)
+;dynamo
+	(causes-to-wire
+		(faulty-comp-type dynamo)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type dynamo)
+		(faulty-comp-state not-turning)
+		(wire-state no-power)
+	)
+;fuse
+	(causes-to-wire
+		(faulty-comp-type fuse)
+		(faulty-comp-state blown)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type fuse)
+		(faulty-comp-state no-power)
+		(wire-state no-power)
+	)
+	
+;merge
+	(causes-to-wire
+		(faulty-comp-type merge)
+		(faulty-comp-state no-power)
+		(wire-state no-power)
+	)
+	
+;switch
+	(causes-to-wire
+		(faulty-comp-type switch)
+		(faulty-comp-state off)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type switch)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type switch)
+		(faulty-comp-state no-power)
+		(wire-state no-power)
+	)
+	
+;coil
+	(causes-to-wire
+		(faulty-comp-type coil)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type coil)
+		(faulty-comp-state no-power)
+		(wire-state no-power)
+	)
+	
+;distributor
+	(causes-to-wire
+		(faulty-comp-type distributor)
+		(faulty-comp-state broken)
+		(wire-state no-power)
+	)
+	(causes-to-wire
+		(faulty-comp-type distributor)
+		(faulty-comp-state no-power)
+		(wire-state no-power)
+	)
+	
+	
+;--------Causes from wire-----------
+;light
 	(causes-from-wire
 	 	(faulty-wire-state no-power)
-		(component-type lamp)
+		(component-type light)
 		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type light)
+		(component-state no-power)
+	)
+	
+;fuse
+    (causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type fuse)
+		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type fuse)
+		(component-state no-power)
+	)
+;switch
+    (causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type switch)
+		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type switch)
+		(component-state no-power)
+	)
+;coil
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type coil)
+		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type coil)
+		(component-state no-power)
+	)
+;distributor
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type distributor)
+		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type distributor)
+		(component-state no-power)
+	)
+;spark-plug
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type spark-plug)
+		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type spark-plug)
+		(component-state no-power)
+	)
+;spark-plug
+	(causes-from-wire
+	 	(faulty-wire-state no-power)
+		(component-type starter)
+		(component-state no-power)
+	)
+	(causes-from-wire
+	 	(faulty-wire-state broken)
+		(component-type starter)
+		(component-state no-power)
+	)
+;--------Causes from 2 wires-----------
+;merge
+	(causes-from-2wires
+ 	    (faulty-wire1-state no-power)
+ 	    (faulty-wire2-state no-power)
+ 	    (component-type merge)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state no-power)
+ 	    (faulty-wire2-state broken)
+ 	    (component-type merge)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state broken)
+ 	    (faulty-wire2-state no-power)
+ 	    (component-type merge)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state broken)
+ 	    (faulty-wire2-state broken)
+ 	    (component-type merge)
+ 	    (component-state no-power)
 	)
 
- 	(causes-feature
-	 	(component lamp01)
+;charge-indicator
+	(causes-from-2wires
+ 	    (faulty-wire1-state no-power)
+ 	    (faulty-wire2-state no-power)
+ 	    (component-type charge-indicator)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state no-power)
+ 	    (faulty-wire2-state broken)
+ 	    (component-type charge-indicator)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state broken)
+ 	    (faulty-wire2-state no-power)
+ 	    (component-type charge-indicator)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state broken)
+ 	    (faulty-wire2-state broken)
+ 	    (component-type charge-indicator)
+ 	    (component-state no-power)
+	)
+	(causes-from-2wires
+ 	    (faulty-wire1-state working)
+ 	    (faulty-wire2-state working)
+ 	    (component-type charge-indicator)
+ 	    (component-state no-power)
+	)
+	
+;--------Causes feature-----------
+;lights
+	(causes-feature
+	 	(component head-light-left)
 		(component-state no-power)
-		(observable lights-not-working)
+		(observable head-light-left-no-light)
 	)
- 	(causes-feature
-	 	(component lamp01)
-		(component-state very-dirty)
-		(observable lights-not-working)
+	(causes-feature
+	 	(component head-light-left)
+		(component-state broken)
+		(observable head-light-left-no-light)
 	)
- 	(causes-feature
-	 	(component lamp01)
-		(component-state very-dirty)
-		(observable lights-dirty)
-	)
- 	(causes-feature
-	 	(component draad01)
+	(causes-feature
+	 	(component head-light-right)
 		(component-state no-power)
-		(observable no-power#01)
+		(observable head-light-right-no-light)
 	)
+	(causes-feature
+	 	(component head-light-right)
+		(component-state broken)
+		(observable head-light-right-no-light)
+	)
+	(causes-feature
+	 	(component beam-light-left)
+		(component-state no-power)
+		(observable beam-light-left-no-light)
+	)
+	(causes-feature
+	 	(component beam-light-left)
+		(component-state broken)
+		(observable beam-light-left-no-light)
+	)
+	(causes-feature
+	 	(component beam-light-right)
+		(component-state no-power)
+		(observable beam-light-right-no-light)
+	)
+	(causes-feature
+	 	(component beam-light-right)
+		(component-state broken)
+		(observable beam-light-right-no-light)
+	)
+	(causes-feature
+	 	(component charge-indicator)
+		(component-state no-power)
+		(observable charge-indicator-no-light)
+	)
+	(causes-feature
+	 	(component charge-indicator)
+		(component-state broken)
+		(observable charge-indicator-no-light)
+	)
+	(causes-feature
+	 	(component head-light-indicator)
+		(component-state no-power)
+		(observable head-light-indicator-no-light)
+	)
+	(causes-feature
+	 	(component head-light-indicator)
+		(component-state broken)
+		(observable head-light-indicator-no-light)
+	)
+;engine
+    (causes-feature
+	 	(component spark-plug)
+		(component-state no-power)
+		(observable engine-does-not-start)
+	)
+	(causes-feature
+	 	(component spark-plug)
+		(component-state broken)
+		(observable engine-does-not-start)
+	)
+	(causes-feature
+	 	(component starter)
+		(component-state no-power)
+		(observable engine-does-not-start)
+	)
+	(causes-feature
+	 	(component starter)
+		(component-state broken)
+		(observable engine-does-not-start)
+	)
+	
+;fuse
+    (causes-feature
+	 	(component fuse-head-light-left)
+		(component-state blown)
+		(observable fuse-head-light-left-blown)
+	)
+	(causes-feature
+	 	(component fuse-head-light-right)
+		(component-state blown)
+		(observable fuse-head-light-right-blown)
+	)
+	(causes-feature
+	 	(component fuse-beam-light-left)
+		(component-state blown)
+		(observable fuse-beam-light-left-blown)
+	)
+	(causes-feature
+	 	(component fuse-beam-light-right)
+		(component-state blown)
+		(observable fuse-beam-light-right-blown)
+	)
+	(causes-feature
+	 	(component dynamo-fuse)
+		(component-state blown)
+		(observable dynamo-fuse-blown)
+	)
+	(causes-feature
+	 	(component battery-fuse)
+		(component-state blown)
+		(observable battery-fuse-blown)
+	)
+	
+;wires
+	(causes-feature
+	 	(component wire01)
+		(component-state broken)
+		(observable wire01-broken)
+	)
+	(causes-feature
+	 	(component wire02)
+		(component-state broken)
+		(observable wire02-broken)
+	)
+	(causes-feature
+	 	(component wire03)
+		(component-state broken)
+		(observable wire03-broken)
+	)
+	(causes-feature
+	 	(component wire04)
+		(component-state broken)
+		(observable wire04-broken)
+	)
+	(causes-feature
+	 	(component wire05)
+		(component-state broken)
+		(observable wire05-broken)
+	)
+	(causes-feature
+	 	(component wire06)
+		(component-state broken)
+		(observable wire06-broken)
+	)
+	(causes-feature
+	 	(component wire07)
+		(component-state broken)
+		(observable wire07-broken)
+	)
+	(causes-feature
+	 	(component wire08)
+		(component-state broken)
+		(observable wire08-broken)
+	)
+	(causes-feature
+	 	(component wire09)
+		(component-state broken)
+		(observable wire09-broken)
+	)
+	(causes-feature
+	 	(component wire10)
+		(component-state broken)
+		(observable wire10-broken)
+	)
+	(causes-feature
+	 	(component wire11)
+		(component-state broken)
+		(observable wire11-broken)
+	)
+	(causes-feature
+	 	(component wire12)
+		(component-state broken)
+		(observable wire12-broken)
+	)
+	(causes-feature
+	 	(component wire13)
+		(component-state broken)
+		(observable wire13-broken)
+	)
+	(causes-feature
+	 	(component wire14)
+		(component-state broken)
+		(observable wire14-broken)
+	)
+	(causes-feature
+	 	(component wire15)
+		(component-state broken)
+		(observable wire15-broken)
+	)
+	(causes-feature
+	 	(component wire16)
+		(component-state broken)
+		(observable wire16-broken)
+	)
+	(causes-feature
+	 	(component wire17)
+		(component-state broken)
+		(observable wire17-broken)
+	)
+	(causes-feature
+	 	(component wire18)
+		(component-state broken)
+		(observable wire18-broken)
+	)
+	(causes-feature
+	 	(component wire19)
+		(component-state broken)
+		(observable wire19-broken)
+	)
+	(causes-feature
+	 	(component wire20)
+		(component-state broken)
+		(observable wire20-broken)
+	)
+	(causes-feature
+	 	(component wire21)
+		(component-state broken)
+		(observable wire21-broken)
+	)
+	(causes-feature
+	 	(component wire22)
+		(component-state broken)
+		(observable wire22-broken)
+	)
+	(causes-feature
+	 	(component wire23)
+		(component-state broken)
+		(observable wire23-broken)
+	)
+	(causes-feature
+	 	(component wire24)
+		(component-state broken)
+		(observable wire24-broken)
+	)
+	(causes-feature
+	 	(component wire25)
+		(component-state broken)
+		(observable wire25-broken)
+	)
+	(causes-feature
+	 	(component wire26)
+		(component-state broken)
+		(observable wire26-broken)
+	)
+	(causes-feature
+	 	(component wire27)
+		(component-state broken)
+		(observable wire27-broken)
+	)
+	(causes-feature
+	 	(component wire28)
+		(component-state broken)
+		(observable wire28-broken)
+	)
+	
+;switches
+	(causes-feature
+	 	(component ignition)
+		(component-state off)
+		(observable ignition-off)
+	)
+	(causes-feature
+	 	(component signal-switch)
+		(component-state off)
+		(observable signal-switch-off)
+	)
+	(causes-feature
+	 	(component light-switch)
+		(component-state off)
+		(observable light-switch-off)
+	)
+	(causes-feature
+	 	(component beam-switch)
+		(component-state off)
+		(observable beam-switch-off)
+	)
+
+;battery
+	(causes-feature
+	 	(component battery)
+		(component-state empty)
+		(observable battery-no-power)
+	)
+	(causes-feature
+	 	(component battery)
+		(component-state broken)
+		(observable battery-no-power)
+	)
+
 )
