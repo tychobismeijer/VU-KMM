@@ -27,9 +27,13 @@
 	(slot observed)
 	(slot complaint)
 )
+;(deftemplate complaint
+;	extends observable
+;	"An initial complaint")
+
 (deftemplate state
 	extends feature
 	"A state of a component. Can't be observed."
-	(slot faulty) ; Not a working state
-	(slot broken) ; This is a good as a hypothesis
+	(slot broken)
+	(slot faulty)
 )
