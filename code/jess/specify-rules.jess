@@ -38,7 +38,7 @@
 )
 (defrule causes-from-2wires-specify
 	"If 2 wires doesn't work propely, a component connected to it also doesn't work"
- 	(causes-from-2wires
+ 	(causes-from-wire
 		(faulty-wire1-state ?fw1state)
 		(faulty-wire2-state ?fw2state)
 		(component-type ?ctype)
@@ -50,10 +50,9 @@
 	)
 	(connection
 	 	{out == ?cid && state == ?fw1state}
-		(id ?c1id)
 	)
 	(connection
-	 	{out == ?cid && state == ?fw2state && id <> ?c1id}
+	 	{out == ?cid && state == ?fw2state}
 	)
 	=>
 	(modify ?c
@@ -68,7 +67,8 @@
 		(observable ?oid)
 	)
 	(component
-	 	{id == ?cid && state == ?cstate}
+	 	{type == ?cid &&
+		 state == ?cstate}
 	)
 	?o <- (observable
 		{id == ?oid}

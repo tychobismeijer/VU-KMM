@@ -2,7 +2,7 @@
 (batch "car-facts.jess")
 (batch "rules-templates.jess")
 (batch "rules-facts.jess")
-(batch "specify-rules.jess")
+(batch "manifestation-rules.jess")
 
 (defrule print-observable
  	(observable
