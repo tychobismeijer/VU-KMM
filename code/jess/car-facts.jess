@@ -17,7 +17,6 @@
 	 	(id no-power)
 		(name "No Power")
 		(faulty TRUE)
-		(broken TRUE)
 	)
 	(state
 	 	(id blown)
