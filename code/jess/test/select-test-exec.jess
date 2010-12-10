@@ -1,5 +1,6 @@
 (batch jess/test/select-test.jess)
 (reset)
+
 (run)
 (facts)
 (bind ?result (run-query* search-hypothesis))

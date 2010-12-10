@@ -3,5 +3,9 @@
 		(id ?component)
 		(possible-states $? ?state $?)
 	)
+	(state
+		(id ?state)
+		(broken TRUE)
+	)
 )
 		

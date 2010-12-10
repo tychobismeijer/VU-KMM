@@ -30,5 +30,6 @@
 (deftemplate state
 	extends feature
 	"A state of a component. Can't be observed."
-	(slot faulty)
+	(slot faulty) ; Not a working state
+	(slot broken) ; This is a good as a hypothesis
 )
