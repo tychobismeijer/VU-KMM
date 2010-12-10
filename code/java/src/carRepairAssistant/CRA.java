@@ -9,10 +9,10 @@ public class CRA {
     private Rete jess;
     private Console c;
 
-    private void askObservable() {
-        c.printf("You observed what?");
+    private void askComplaint() {
+        c.printf("Your complaint is?\n");
         String observable = c.readLine();
-        String fact = "(observed " + observable + " TRUE)";
+        String fact = "(complaint " + observable + " TRUE)";
         try {
             jess.assertString(fact);
         } catch (JessException ex) {
@@ -38,7 +38,7 @@ public class CRA {
             jess.batch("jess/test/jessfromjavatest.jess");
             jess.reset();
             printFacts();
-            askObservable();
+            askComplaint();
             printFacts();
             jess.run();
         } catch (JessException ex) {

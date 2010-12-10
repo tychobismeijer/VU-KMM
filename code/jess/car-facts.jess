@@ -34,10 +34,11 @@
 		(in accu01)
 		(out lamp01)
 	)
-	(complaint
+	(observable
 		(id lights-not-working)
 		(name "Lights don't work")
 ;		(observed TRUE) ; TEST cover verify
+;		(complaint TRUE) ; TEST
 	)
 	(observable
 		(id lights-dirty)
