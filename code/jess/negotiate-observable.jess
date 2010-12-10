@@ -1,0 +1,20 @@
+(defquery search-observable
+	(observable 
+		(id ?observable)
+		(observed nil)
+		(could-be-observed TRUE)
+	)
+)
+(defrule try-hypothesis
+	(hypothesis
+		?cid
+		?state
+	)
+	?c <- (component
+		(id ?cid)
+	)
+	=>
+	(modify ?c
+		(state ?state)
+	)
+)

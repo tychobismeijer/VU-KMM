@@ -11,6 +11,7 @@
 	)
 	?c <- (connection
 	 	{in == ?cid}
+		(state nil)
 	)
 	=>
 	(modify ?c
@@ -27,6 +28,7 @@
  	?c <- (component
 		{type == ?ctype}
 		(id ?cid)
+		(state nil)
 	)
 	(connection
 	 	{out == ?cid && state == ?fwstate}
@@ -47,6 +49,7 @@
  	?c <- (component
 		{type == ?ctype}
 		(id ?cid)
+		(state nil)
 	)
 	(connection
 	 	{out == ?cid && state == ?fw1state}
@@ -72,6 +75,7 @@
 	)
 	?o <- (observable
 		{id == ?oid}
+		(could-be-observed nil)
 	)
 	=>
 	(modify ?o

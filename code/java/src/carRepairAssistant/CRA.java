@@ -2,6 +2,7 @@ package carRepairAssistant;
 
 import jess.Rete;
 import jess.JessException;
+import jess.WorkingMemoryMarker;
 import java.io.Console;
 
 public class CRA {
@@ -33,6 +34,58 @@ public class CRA {
         } else { return false; }
     }
 
+    private void negotiateObservable() throws JessException {
+	WorkingMemoryMarker beforeHypothesis = jess.mark();
+        c.printf("Trying hypothesis\n");
+        jess.assertString(
+            "(hypothesis " +
+            currentHypothesisComponent + " " + 
+            currentHypothesisState + ")"
+        );
+        jess.run();
+        //printFacts();
+        c.printf("Querying Observables\n");
+	jess.QueryResult observables =
+	    jess.runQueryStar("search-observable", new jess.ValueVector());
+        String answer = "no";
+	while (observables.next() && answer.equals("no")) {
+            String observable = observables.getString("observable");
+            c.printf(
+                "You want to observe " +
+                observable + "? true/false/no\n"
+            );
+            boolean noAnswer = true;
+            while (noAnswer) {
+                answer = c.readLine();
+                if (answer.equals("true")) {
+                    jess.resetToMark(beforeHypothesis);
+                    jess.assertString(
+                        "(observed " +
+                        observable + 
+                        " TRUE)"
+                    );
+                    jess.run();
+                    return;
+                } else if (answer.equals("false")) {
+                    jess.resetToMark(beforeHypothesis);
+                    jess.assertString(
+                        "(observed " +
+                        observable + 
+                        " FALSE)"
+                    );
+                    jess.run();
+                    return;
+                } else if (answer.equals("no")) {
+                    //
+                } else {
+                    c.printf("try again: true/false/no\n");
+                    continue;
+                }
+                noAnswer = false;
+            }
+	}
+	c.printf("No observables for this hypothesis \n");
+    }
     private void printHypothesis() {
         c.printf(
             "The hypothesis is that " +
@@ -57,18 +110,19 @@ public class CRA {
         jess = new Rete();
         c = System.console();
         try {
-            jess.batch("jess/test/select-test.jess");
+            jess.batch("jess/test/negotiate-test.jess");
             jess.reset();
             //printFacts();
             askComplaint();
             //printFacts();
             jess.run();
-            selectHypothesis();
-            printHypothesis();
+            while(selectHypothesis()) {
+                printHypothesis();
+                negotiateObservable();
+            }
         } catch (JessException ex) {
             System.err.println(ex);
         }
-        //printFacts();
     }
     
     public static void main(String[] arg) {
