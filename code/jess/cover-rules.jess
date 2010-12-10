@@ -1,6 +1,6 @@
 (defrule causes-feature-cover
 	"If a faulty state of a component causes a observed complaint, that component might be in that state"
-	(complaint
+	(observable
 		{observed == TRUE}
 		(id ?oid)
 	)

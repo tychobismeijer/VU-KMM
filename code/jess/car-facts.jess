@@ -4,21 +4,44 @@
 	 	(id working)
 		(name "Works")
 		(faulty FALSE)
+		(broken FALSE)
 	)
 	(state
 	 	(id broken)
 		(name "Broken")
 		(faulty TRUE)
+		(broken TRUE)
 	)
+	
 	(state
 	 	(id no-power)
 		(name "No Power")
 		(faulty TRUE)
+		(broken TRUE)
 	)
 	(state
-	 	(id very-dirty)
-		(name "Very Dirty")
+	 	(id blown)
+		(name "Blown")
 		(faulty TRUE)
+		(broken TRUE)
+	)
+	(state
+	 	(id off)
+		(name "Off")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	(state
+	 	(id empty)
+		(name "Empty")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	(state
+	 	(id not-turning)
+		(name "Not turning")
+		(faulty TRUE)
+		(broken TRUE)
 	)
 	
 	(component
