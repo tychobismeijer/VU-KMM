@@ -8,7 +8,9 @@ public class CRA {
 
     private Rete jess;
     private Console c;
-    private String current_hypothesis;
+    private String
+        currentHypothesisComponent,
+        currentHypothesisState;
 
     private void askComplaint() {
         c.printf("Your complaint is?\n");
@@ -21,17 +23,23 @@ public class CRA {
         }
     }
 
-    private void selectHypothesis() throws JessException {
+    private boolean selectHypothesis() throws JessException {
         jess.QueryResult hypothesis =
             jess.runQueryStar("search-hypothesis", new jess.ValueVector());
-        c.printf("It could be that:\n");
-        while (hypothesis.next()) {
-            c.printf(
-                hypothesis.getString("component") + " " +
-                hypothesis.getString("state") + "\n"
-            );
-        }
+        if (hypothesis.next()) {
+            currentHypothesisComponent = hypothesis.getString("component");
+            currentHypothesisState = hypothesis.getString("state");
+            return true;
+        } else { return false; }
+    }
 
+    private void printHypothesis() {
+        c.printf(
+            "The hypothesis is that " +
+            currentHypothesisComponent +
+            " is " + 
+            currentHypothesisState + "\n"
+        );
     }
 
     private void printFacts() {
@@ -56,6 +64,7 @@ public class CRA {
             //printFacts();
             jess.run();
             selectHypothesis();
+            printHypothesis();
         } catch (JessException ex) {
             System.err.println(ex);
         }
