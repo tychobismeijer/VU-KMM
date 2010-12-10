@@ -37,8 +37,8 @@
 	(observable
 		(id lights-not-working)
 		(name "Lights don't work")
-;		(observed TRUE) ; TEST cover verify
-;		(complaint TRUE) ; TEST
+		(observed TRUE) ; TEST cover verify select
+		(complaint TRUE) ; TEST ?? select
 	)
 	(observable
 		(id lights-dirty)

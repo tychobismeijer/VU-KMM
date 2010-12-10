@@ -1,0 +1,7 @@
+(defquery search-hypothesis
+	(component 
+		(id ?component)
+		(possible-states $? ?state $?)
+	)
+)
+		
