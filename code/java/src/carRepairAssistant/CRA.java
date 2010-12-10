@@ -8,6 +8,7 @@ public class CRA {
 
     private Rete jess;
     private Console c;
+    private String current_hypothesis;
 
     private void askComplaint() {
         c.printf("Your complaint is?\n");
@@ -18,6 +19,19 @@ public class CRA {
         } catch (JessException ex) {
             System.err.println(ex);
         }
+    }
+
+    private void selectHypothesis() throws JessException {
+        jess.QueryResult hypothesis =
+            jess.runQueryStar("search-hypothesis", new jess.ValueVector());
+        c.printf("It could be that:\n");
+        while (hypothesis.next()) {
+            c.printf(
+                hypothesis.getString("component") + " " +
+                hypothesis.getString("state") + "\n"
+            );
+        }
+
     }
 
     private void printFacts() {
@@ -35,16 +49,17 @@ public class CRA {
         jess = new Rete();
         c = System.console();
         try {
-            jess.batch("jess/test/jessfromjavatest.jess");
+            jess.batch("jess/test/select-test.jess");
             jess.reset();
-            printFacts();
+            //printFacts();
             askComplaint();
-            printFacts();
+            //printFacts();
             jess.run();
+            selectHypothesis();
         } catch (JessException ex) {
             System.err.println(ex);
         }
-        printFacts();
+        //printFacts();
     }
     
     public static void main(String[] arg) {
