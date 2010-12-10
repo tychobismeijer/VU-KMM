@@ -1,3 +1,5 @@
+package carRepairAssistant;
+
 import jess.Rete;
 import jess.JessException;
 import java.io.Console;
