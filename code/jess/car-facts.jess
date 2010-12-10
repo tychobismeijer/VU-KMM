@@ -9,6 +9,7 @@
 	 	(id broken)
 		(name "Broken")
 		(faulty TRUE)
+		(broken TRUE)
 	)
 	(state
 	 	(id no-power)
@@ -19,6 +20,7 @@
 	 	(id very-dirty)
 		(name "Very Dirty")
 		(faulty TRUE)
+		(broken TRUE)
 	)
 
 	(component
@@ -34,10 +36,11 @@
 		(in accu01)
 		(out lamp01)
 	)
-	(complaint
+	(observable
 		(id lights-not-working)
 		(name "Lights don't work")
-;		(observed TRUE) ; TEST cover verify
+		(observed TRUE) ; TEST cover verify select
+		(complaint TRUE) ; TEST ?? select
 	)
 	(observable
 		(id lights-dirty)

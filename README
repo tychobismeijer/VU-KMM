@@ -1,0 +1,8 @@
+To build and run:
+
+mkdir build
+mkdir lib
+cp ?/jess.jar lib/jess.jar
+ln -s code/jess ./
+./build
+./run

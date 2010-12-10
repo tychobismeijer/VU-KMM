@@ -5,3 +5,4 @@
 (batch "jess/cover-rules.jess")
 (batch "jess/verify-rules.jess")
 (batch "jess/report-complaint.jess")
+(batch "jess/select.jess")
