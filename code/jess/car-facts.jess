@@ -287,201 +287,242 @@
 		(out fuse-head-light-right)
 	)
 
-;	(complaint
-;		(id head-light-right-no-light)
-;		(name "the right head light gives only beam light")
-;		(observed TRUE) ; TEST cover verify
-;	)
 ;lights
 	(observable 
 		(id head-light-left-no-light)
 		(name "the left head light gives only beam light")
+		(likely-as-complaint TRUE)
 	)
 	(observable 
 		(id head-light-right-no-light)
 		(name "the right head light gives only beam light")
+		(likely-as-complaint TRUE)
 	)
 	(observable 
 		(id beam-light-left-no-light)
 		(name "the left head light gives no light")
+		(likely-as-complaint TRUE)
 	)
 	(observable 
 		(id beam-light-right-no-light)
 		(name "the right head light gives no light")
+		(likely-as-complaint TRUE)
 	)
 	(observable 
 		(id charge-indicator-no-light)
 		(name "the charge indicator is off")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id head-light-indicator-no-light)
 		(name "the head light indicator is off")
+		(likely-as-complaint FALSE)
 	)
 ;engine
 	(observable 
 		(id engine-does-not-start)
 		(name "the engine does not start")
+		(likely-as-complaint TRUE)
 	)
 ;fuse
 	(observable 
 		(id fuse-head-light-left-blown)
 		(name "the fuse of the left head light is blown")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id fuse-head-light-right-blown)
 		(name "the fuse of the right head light is blown")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id fuse-beam-light-left-blown)
 		(name "the fuse of the left beam light is blown")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id fuse-beam-light-right-blown)
 		(name "the fuse of the right beam light is blown")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id dynamo-fuse-blown)
 		(name "the fuse right after the dynamo is blown")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id battery-fuse-blown)
 		(name "the fuse right after the battery is blown")
+		(likely-as-complaint FALSE)
 	)
 ;wires
 	(observable 
 		(id wire01-broken)
 		(name "wire 1 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire02-broken)
 		(name "wire 2 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire03-broken)
 		(name "wire 3 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire04-broken)
 		(name "wire 4 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable
 		(id wire05-broken)
 		(name "wire 5 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire06-broken)
 		(name "wire 6 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable
 		(id	wire07-broken)
 		(name "wire 7 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire08-broken)
 		(name "wire 8 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire09-broken)
 		(name "wire 9 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire10-broken)
 		(name "wire 10 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire11-broken)
 		(name "wire 11 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire12-broken)
 		(name "wire 12 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire13-broken)
 		(name "wire 13 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire14-broken)
 		(name "wire 14 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire15-broken)
 		(name "wire 15 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire16-broken)
 		(name "wire 16 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire17-broken)
 		(name "wire 17 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire18-broken)
 		(name "wire 18 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire19-broken)
 		(name "wire 19 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire20-broken)
 		(name "wire 20 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire21-broken)
 		(name "wire 21 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire22-broken)
 		(name "wire 22 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire23-broken)
 		(name "wire 23 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire24-broken)
 		(name "wire 24 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire25-broken)
 		(name "wire 25 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire26-broken)
 		(name "wire 26 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire27-broken)
 		(name "wire 27 is broken")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id wire28-broken)
 		(name "wire 28 is broken")
+		(likely-as-complaint FALSE)
 	)
 	
 ;switches
 	(observable 
 		(id ignition-off)
 		(name "the ignition is switched off")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id signal-switch-off)
 		(name "the signal switch is switched off")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id light-switch-off)
 		(name "the light switch is switched off")
+		(likely-as-complaint FALSE)
 	)
 	(observable 
 		(id beam-switch-off)
 		(name "the beam switch is switched off")
+		(likely-as-complaint FALSE)
 	)
 	
 ;battery
 	(observable 
 		(id battery-no-power)
 		(name "there is no power on the battery")
+		(likely-as-complaint FALSE)
 	)
 )

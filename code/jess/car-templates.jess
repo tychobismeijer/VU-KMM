@@ -26,6 +26,10 @@
 	(slot could-be-observed)
 	(slot observed)
 	(slot complaint)
+	(slot likely-as-complaint) 
+	;Not all observables are likely as a complaint
+	;This slot enables the system to make suggestion 
+	;towards possible complaints and not list wireX-broken or light-switch-off in there
 )
 ;(deftemplate complaint
 ;	extends observable
