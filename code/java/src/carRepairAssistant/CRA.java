@@ -4,6 +4,8 @@ import jess.Rete;
 import jess.JessException;
 import jess.WorkingMemoryMarker;
 import java.io.Console;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CRA {
 
@@ -26,7 +28,7 @@ public class CRA {
 
     private void askAvailableHypothesis() throws JessException{
         String[][] allHypothesis = allHypothesis();
-        c.printf("Choose an hypothesis:\n");
+        c.printf("Choose an alternative hypothesis or push enter:\n");
         for(int i=0; i<allHypothesis.length; i++){
             c.printf(i + " " + allHypothesis[i][0] + " is " + allHypothesis[i][1] + "\n");
         }
@@ -54,31 +56,24 @@ public class CRA {
     }
 
     private String[][] allHypothesis() throws JessException{
-        int nrHypothesis = countHypothesis();
-        String[][] result = new String[nrHypothesis][2];
+        List<String[]> result = new ArrayList<String[]>();
         jess.QueryResult hypothesis = generateHypothesis();
-        for(int i = 0; i<nrHypothesis; i++){
-            selectHypothesis(hypothesis);
-            result[i][0] = currentHypothesisComponent;
-            result[i][1] = currentHypothesisState;
+        int i = 0;
+        while (hypothesis.next()) {
+            String[] h = new String[2];
+            h[0] = hypothesis.getString("component");
+            h[1] = hypothesis.getString("state");
+            result.add(h);
         }
-        return result;
-    }
-
-    private int countHypothesis() throws JessException{
-        int result = 0;
-        jess.QueryResult hypothesis = generateHypothesis();
-        while(selectHypothesis(hypothesis)){
-            result++;
-        }
-        return result;
+        return result.toArray(new String[2][1]);
     }
 
     private jess.QueryResult generateHypothesis() throws JessException {
         return jess.runQueryStar("search-hypothesis", new jess.ValueVector());
     }
 
-    private boolean selectHypothesis(jess.QueryResult hypothesis) throws JessException {
+    private boolean selectHypothesis() throws JessException {
+        jess.QueryResult hypothesis = generateHypothesis();
         if (hypothesis.next()) {
             currentHypothesisComponent = hypothesis.getString("component");
             currentHypothesisState = hypothesis.getString("state");
@@ -158,7 +153,6 @@ public class CRA {
 	}
 	c.printf("No observables for this hypothesis \n");
     }
-
     public CRA() {
         jess = new Rete();
         c = new ConsoleCheat();
@@ -169,10 +163,9 @@ public class CRA {
             askComplaint();
             //printFacts();
             jess.run();
-            jess.QueryResult hypothesis = generateHypothesis();
-            while(selectHypothesis(hypothesis)) {
-                askAvailableHypothesis();
+            while(selectHypothesis()) {
                 printHypothesis();
+                askAvailableHypothesis();
                 negotiateObservable();
             }
         } catch (JessException ex) {
