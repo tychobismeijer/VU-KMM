@@ -62,7 +62,6 @@
 	(component
 	 	(id battery-fuse)
 		(type fuse)
-		(state blown)
 	)
 	(component
 	 	(id ignition)
