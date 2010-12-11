@@ -5,7 +5,7 @@ import jess.JessException;
 import jess.WorkingMemoryMarker;
 import java.io.Console;
 
-public class CRAjoost {
+public class CRA {
 
     private Rete jess;
     private ConsoleCheat c;
@@ -158,32 +158,14 @@ public class CRAjoost {
 	}
 	c.printf("No observables for this hypothesis \n");
     }
-    private void printHypothesis() {
-         c.printf(
-             "The hypothesis is that " +
-             currentHypothesisComponent +
-             " is " + 
-             currentHypothesisState + "\n"
-         );
-     }
- 
-     private void printFacts() {
-         try {
-             java.io.Writer co = new java.io.PrintWriter(System.out);
-             co.write("-----------------------------------\n");
-             jess.ppFacts(co);
-             co.flush();
-         } catch (java.io.IOException ex) {
-             System.err.println(ex);
-         }
-     }
-    public CRAjoost() {
+
+    public CRA() {
         jess = new Rete();
         c = new ConsoleCheat();
         try {
             jess.batch("jess/test/negotiate-test.jess");
             jess.reset();
-            //printFacts();
+            printFacts();
             askComplaint();
             //printFacts();
             jess.run();
@@ -199,6 +181,6 @@ public class CRAjoost {
     }
 
     public static void main(String[] arg) {
-        new CRAjoost();
+        new CRA();
     }
 }
