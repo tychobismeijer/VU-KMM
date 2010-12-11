@@ -23,14 +23,47 @@ public class CRA {
             System.err.println(ex);
         }
     }
+	
+	private void askLikelyComplaint() throws JessException{
+        String observable, choice;
+        String[][] allComplaints = allComplaints();
+        //Print
+        c.printf("Likely complaints are:\n");
+        for(int i=0; i<allComplaints.length; i++){
+            c.printf(i + ": " + allComplaints[i][1] + " (id: " + allComplaints[i][0] + ")\n");
+        }
+        c.printf("Your complaint is?\n");
+
+        //Receive input
+        choice = c.readLine();
+        choice = choice.trim();
+        if (isNumber(choice)){
+            int nrChoice = Integer.parseInt(choice);
+            observable = allComplaints[nrChoice][0];
+        } else {
+            observable = choice;
+        }
+
+        //Assert complaint
+        String fact = "(complaint " + observable + " TRUE)";
+        try {
+            jess.assertString(fact);
+        } catch (JessException ex) {
+            System.err.println(ex);
+        }
+    }
 
     private void askAvailableHypothesis(List<String[]> allHypothesis) throws JessException{
-        c.printf("Choose an hypothesis or push enter:\n");
+        //Print
+        c.printf("Available hypothesis are:\n");
         for(int i=0; i<allHypothesis.size(); i++){
             c.printf(i + " " + allHypothesis.get(i)[0] + " is " + allHypothesis.get(i)[1] + "\n");
         }
-        String choice = c.readLine();
+		c.printf("We suggest: " + currentHypothesis[0] + " is " + currentHypothesis[1] + "\n");
+        c.printf("Do you have an other suggestion (no/nr/id)?\n");
 
+		//Receive input
+        String choice = c.readLine();
         choice = choice.trim();
         if (isNumber(choice)){
             int nrChoice = Integer.parseInt(choice);
@@ -65,6 +98,28 @@ public class CRA {
         }
         return result;
     }
+	
+	private String[][] allComplaints() throws JessException {
+        int nrComplaints = countQueryResult(jess.runQueryStar("search-likely-complaints", new jess.ValueVector()));
+        String[][] result = new String[nrComplaints][2];
+        jess.QueryResult likely_complaints = jess.runQueryStar("search-likely-complaints", new jess.ValueVector());
+
+        for(int i=0; i<nrComplaints; i++){
+            likely_complaints.next();
+            result[i][0] = likely_complaints.getString("observable");
+            result[i][1] = likely_complaints.getString("name");
+        }
+
+        return result;
+    }
+	
+	private int countQueryResult(jess.QueryResult queryResult) throws JessException{
+        int result = 0;
+        while(queryResult.next()){
+            result++;
+        }
+        return result;
+    }
 
     private jess.QueryResult generateHypothesis() throws JessException {
         return jess.runQueryStar("search-hypothesis", new jess.ValueVector());
@@ -77,7 +132,6 @@ public class CRA {
         } else {
             return false;
         }
-
     }
 
     private void printHypothesis() {
@@ -101,7 +155,7 @@ public class CRA {
     }
 
     private boolean negotiateObservable() throws JessException {
-	WorkingMemoryMarker beforeHypothesis = jess.mark();
+		WorkingMemoryMarker beforeHypothesis = jess.mark();
         c.printf("Trying hypothesis\n");
         jess.assertString(
             "(hypothesis " +
@@ -148,18 +202,19 @@ public class CRA {
                     continue;
                 }
             }
-	}
-	c.printf("No observables for this hypothesis \n");
+		}
+		c.printf("No observables for this hypothesis \n");
         return false;
     }
+	
     public CRA() {
         jess = new Rete();
         c = new ConsoleCheat();
         try {
-            jess.batch("jess/test/negotiate-test.jess");
+            jess.batch("jess/test/test-likely-complaints.jess");
             jess.reset();
             printFacts();
-            askComplaint();
+            askLikelyComplaint();
             //printFacts();
             jess.run();
             boolean found_hypothesis;
