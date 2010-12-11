@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class CRA {
+    private final static int    COMPONENT =0,
+                                STATE =1,
+                                COMPLAINT = 0,
+                                NAME =1;
 
     private Rete jess;
     private ConsoleCheat c;
@@ -23,14 +27,14 @@ public class CRA {
             System.err.println(ex);
         }
     }
-	
-	private void askLikelyComplaint() throws JessException{
+
+    private void askLikelyComplaint() throws JessException{
         String observable, choice;
-        String[][] allComplaints = allComplaints();
+        List<String[]> allComplaints = allComplaints();
         //Print
         c.printf("Likely complaints are:\n");
-        for(int i=0; i<allComplaints.length; i++){
-            c.printf(i + ": " + allComplaints[i][1] + " (id: " + allComplaints[i][0] + ")\n");
+        for(int i=0; i<allComplaints.size(); i++){
+            c.printf(i + ": " + allComplaints.get(i)[NAME] + " (id: " + allComplaints.get(i)[COMPLAINT] + ")\n");
         }
         c.printf("Your complaint is?\n");
 
@@ -39,7 +43,7 @@ public class CRA {
         choice = choice.trim();
         if (isNumber(choice)){
             int nrChoice = Integer.parseInt(choice);
-            observable = allComplaints[nrChoice][0];
+            observable = allComplaints.get(nrChoice)[COMPLAINT];
         } else {
             observable = choice;
         }
@@ -57,9 +61,9 @@ public class CRA {
         //Print
         c.printf("Available hypothesis are:\n");
         for(int i=0; i<allHypothesis.size(); i++){
-            c.printf(i + " " + allHypothesis.get(i)[0] + " is " + allHypothesis.get(i)[1] + "\n");
+            c.printf(i + " " + allHypothesis.get(i)[COMPONENT] + " is " + allHypothesis.get(i)[STATE] + "\n");
         }
-		c.printf("We suggest: " + currentHypothesis[0] + " is " + currentHypothesis[1] + "\n");
+		c.printf("We suggest: " + currentHypothesis[COMPONENT] + " is " + currentHypothesis[STATE] + "\n");
         c.printf("Do you have an other suggestion (no/nr/id)?\n");
 
 		//Receive input
@@ -69,8 +73,8 @@ public class CRA {
             int nrChoice = Integer.parseInt(choice);
             currentHypothesis = allHypothesis.remove(nrChoice);
         } else if(choice.contains(" is ")) {
-            currentHypothesis[0] = choice.substring(0, choice.indexOf(" "));
-            currentHypothesis[1] = choice.substring(choice.lastIndexOf(" ")+1, choice.length());
+            currentHypothesis[COMPONENT] = choice.substring(0, choice.indexOf(" "));
+            currentHypothesis[STATE] = choice.substring(choice.lastIndexOf(" ")+1, choice.length());
         } else {
             currentHypothesis = allHypothesis.remove(allHypothesis.size()-1);
         }
@@ -89,31 +93,31 @@ public class CRA {
     private List<String[]> allHypothesis() throws JessException{
         List<String[]> result = new ArrayList<String[]>();
         jess.QueryResult hypothesis = generateHypothesis();
-        int i = 0;
+
         while (hypothesis.next()) {
             String[] h = new String[2];
-            h[0] = hypothesis.getString("component");
-            h[1] = hypothesis.getString("state");
+            h[COMPONENT] = hypothesis.getString("component");
+            h[STATE] = hypothesis.getString("state");
             result.add(h);
         }
         return result;
     }
-	
-	private String[][] allComplaints() throws JessException {
-        int nrComplaints = countQueryResult(jess.runQueryStar("search-likely-complaints", new jess.ValueVector()));
-        String[][] result = new String[nrComplaints][2];
+
+    private List<String[]> allComplaints() throws JessException {
+        List<String[]> result = new ArrayList<String[]>();
         jess.QueryResult likely_complaints = jess.runQueryStar("search-likely-complaints", new jess.ValueVector());
 
-        for(int i=0; i<nrComplaints; i++){
-            likely_complaints.next();
-            result[i][0] = likely_complaints.getString("observable");
-            result[i][1] = likely_complaints.getString("name");
+        while (likely_complaints.next()){
+            String[] h = new String[2];
+            h[COMPLAINT] = likely_complaints.getString("observable");
+            h[NAME] = likely_complaints.getString("name");
+            result.add(h);
         }
 
         return result;
     }
-	
-	private int countQueryResult(jess.QueryResult queryResult) throws JessException{
+
+    private int countQueryResult(jess.QueryResult queryResult) throws JessException{
         int result = 0;
         while(queryResult.next()){
             result++;
@@ -137,9 +141,9 @@ public class CRA {
     private void printHypothesis() {
         c.printf(
             "The hypothesis is that " +
-            currentHypothesis[0] +
+            currentHypothesis[COMPONENT] +
             " is " + 
-            currentHypothesis[1] + "\n"
+            currentHypothesis[STATE] + "\n"
         );
     }
 
@@ -159,8 +163,8 @@ public class CRA {
         c.printf("Trying hypothesis\n");
         jess.assertString(
             "(hypothesis " +
-            currentHypothesis[0] + " " +
-            currentHypothesis[1] + ")"
+            currentHypothesis[COMPONENT] + " " +
+            currentHypothesis[STATE] + ")"
         );
         jess.run();
         //printFacts();
@@ -206,7 +210,7 @@ public class CRA {
 		c.printf("No observables for this hypothesis \n");
         return false;
     }
-	
+
     public CRA() {
         jess = new Rete();
         c = new ConsoleCheat();
