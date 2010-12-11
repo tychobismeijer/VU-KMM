@@ -1,4 +1,4 @@
-(defrule causes-feature-specify
+(defrule causes-feature-verify
 	"If we have observed a contradicting observable, a state is impossible"
 	(observable
 		{observed == FALSE}
@@ -11,39 +11,39 @@
 	)
 	?c <- (component
 	 	{id == ?cid}
-		(possible-states $?ps&:(member$ ?cstate ?ps))
-		(impossible-states $?ips)
+		(impossible-states $?ips&:(not (member$ ?cstate ?ips)))
 	)
 	=>
 	(modify ?c
-		(possible-states (complement$ ?ps (create$ ?cstate)))
 		(impossible-states (create$ ?ips ?cstate))
 	)
 )
-(defrule causes-from-wire-specify
+
+(defrule causes-from-wire-verify
 	"If we know a contradicting conclusion of a state, that state is impossible"
 	(component
 		(id ?cid)
 		(type ?ctype)
 		(impossible-states $?cips)
 	)
- 	(causes-from-wire
+	(causes-from-wire
 		{component-type == ?ctype}
 		(component-state ?cistate&:(member$ ?cistate ?cips))
 		(faulty-wire-state ?wstate)
 	)
 	?w <- (connection
 		{out == ?cid}
-		(possible-states $?wps&:(member$ ?wstate ?wps))
-		(impossible-states $?wips)
+		;(possible-states $?wps&:(member$ ?wstate ?wps))
+		(impossible-states $?wips&:(not (member$ ?wstate ?wips)))
 	)
 	=>
 	(modify ?w
-		(possible-states (complement$ ?wps (create$ ?wstate)))
+		;(possible-states (complement$ ?wps (create$ ?wstate)))
 		(impossible-states (create$ ?wips ?wstate))
 	)
 )
-(defrule causes-to-wire-specify
+
+(defrule causes-to-wire-verify
 	"If we know a contradicting conclusion of a state, that state is impossible"
 	(connection
 		(in ?cid)
@@ -60,12 +60,26 @@
 	)
 	?c <- (component
 		{id == ?cid}
-		(possible-states $?cps&:(member$ ?cstate ?cps))
-		(impossible-states $?cips)
+		(impossible-states $?cips&:(not (member$ ?cstate ?cips)))
 	)
 	=>
 	(modify ?c
-		(possible-states (complement$ ?cps (create$ ?cstate)))
 		(impossible-states (create$ ?cips ?cstate))
+	)
+)
+
+(defrule possible-to-impossible
+	"If a state is is impossible it is no longer possible"
+	(component
+		(id ?cid)
+		(possible-states $?first ?cstate $?last)
+		(impossible-states $?cips&:(member$ ?cstate ?cips))
+	)
+	?c <- (component
+		{id == ?cid}
+	)
+	=>
+	(modify ?c
+		(possible-states (create$ ?first ?last))
 	)
 )
