@@ -10,3 +10,12 @@
 (batch "jess/negotiate-observable.jess");
 (batch "jess/obtain-rules.jess");
 (batch "jess/search-likely-complaints.jess");
+
+(defquery search-components
+	(component 
+		(id ?component)
+		(state ?state)
+		(possible-states $?possible-states)
+		(impossible-states $?impossible-states)
+	)
+)

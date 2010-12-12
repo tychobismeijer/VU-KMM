@@ -3,9 +3,11 @@ package carRepairAssistant;
 import jess.Rete;
 import jess.JessException;
 import jess.WorkingMemoryMarker;
+import java.util.Iterator;
 import java.io.Console;
 import java.util.List;
 import java.util.ArrayList;
+import jess.RU;
 
 public class CRA {
     private final static int    COMPONENT =0,
@@ -58,6 +60,8 @@ public class CRA {
     }
 
     private void askAvailableHypothesis(List<String[]> allHypothesis) throws JessException{
+        //our sugestion
+        currentHypothesis = allHypothesis.get(allHypothesis.size()-1);
         //Print
         c.printf("Available hypothesis are:\n");
         for(int i=0; i<allHypothesis.size(); i++){
@@ -117,12 +121,14 @@ public class CRA {
         return result;
     }
 
-    private int countQueryResult(jess.QueryResult queryResult) throws JessException{
-        int result = 0;
-        while(queryResult.next()){
-            result++;
+    private void printAllComponents() throws JessException {
+        jess.QueryResult components = jess.runQueryStar("search-components", new jess.ValueVector());
+
+        while (components.next()){
+            c.printf(components.getString("component") + "\t state: ");
+            c.printf(components.get("state") + "\t impossible-states: ");
+            c.printf(components.get("impossible-states").toString() + "\n");
         }
-        return result;
     }
 
     private jess.QueryResult generateHypothesis() throws JessException {
@@ -158,8 +164,31 @@ public class CRA {
         }
     }
 
+    private void reset() throws JessException{
+        jess.Value nil = new jess.Value("nil", RU.SYMBOL);
+        jess.Fact fact;
+        Iterator<jess.Fact> facts = jess.listFacts();
+        while(facts.hasNext()){
+            fact = facts.next();
+            //Reset all states to nill before trying a new hypothesis
+            if (fact.getDeftemplate().getSlotIndex("state")>0){
+                jess.modify(fact, "state", nil);
+            }
+            //Reset all could-be-observed to nil before trying a new hypothesis
+            if (fact.getDeftemplate().getSlotIndex("could-be-observed")>0){
+                jess.modify(fact, "could-be-observed", nil);
+            }
+            //Retract all old hypothesis
+            if (fact.getName().equals("MAIN::hypothesis")){
+                jess.retract(fact);
+            }
+        }
+
+    }
+
     private boolean negotiateObservable() throws JessException {
-		WorkingMemoryMarker beforeHypothesis = jess.mark();
+	WorkingMemoryMarker beforeHypothesis = jess.mark();
+        reset();    //Does what reset to mark was supposed to do
         c.printf("Trying hypothesis\n");
         jess.assertString(
             "(hypothesis " +
@@ -167,15 +196,17 @@ public class CRA {
             currentHypothesis[STATE] + ")"
         );
         jess.run();
+        //printAllComponents();
         //printFacts();
+        //c.readLine();
         c.printf("Querying Observables\n");
-		jess.QueryResult observables =
-	    jess.runQueryStar("search-observable", new jess.ValueVector());
+	jess.QueryResult observables =
+	jess.runQueryStar("search-observable", new jess.ValueVector());
         String answer = "no";
-		while (observables.next() && answer.equals("no")) {
+        while (observables.next() && answer.equals("no")) {
             String observable = observables.getString("observable");
             c.printf(
-                "You want to observe " +
+                "Do you want to observe " +
                 observable + "? true/false/no\n"
             );
             boolean noAnswer = true;
@@ -192,6 +223,8 @@ public class CRA {
                     return true;
                 } else if (answer.equals("false")) {
                     jess.resetToMark(beforeHypothesis);
+                    //printFacts();
+                    //c.readLine();
                     jess.assertString(
                         "(observed " +
                         observable +
@@ -206,8 +239,8 @@ public class CRA {
                     continue;
                 }
             }
-		}
-		c.printf("No observables for this hypothesis \n");
+	}
+	c.printf("No observables for this hypothesis \n");
         return false;
     }
 
@@ -217,12 +250,13 @@ public class CRA {
         try {
             jess.batch("jess/test/test-likely-complaints.jess");
             jess.reset();
-            printFacts();
+            //printFacts();
             askLikelyComplaint();
             //printFacts();
             jess.run();
             boolean found_hypothesis;
             do {
+                //printAllComponents();
                 List<String[]> hypothesis = allHypothesis();
                 found_hypothesis = (hypothesis.size() > 0);
                 boolean observed = false;
