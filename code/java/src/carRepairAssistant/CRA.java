@@ -186,6 +186,14 @@ public class CRA {
 
     }
 
+    private void reportHypothesis() throws JessException {
+        List<String[]> hypothesis = allHypothesis();
+        c.printf("It could be that:\n");
+        for (String[] h : hypothesis) {
+            c.printf(h[0] + " is " + h[1] + "\n");
+        }
+    }
+
     private boolean negotiateObservable() throws JessException {
 	WorkingMemoryMarker beforeHypothesis = jess.mark();
         reset();    //Does what reset to mark was supposed to do
@@ -267,6 +275,7 @@ public class CRA {
                 }
                 if (!observed) break;
             } while (found_hypothesis);
+            reportHypothesis();
         } catch (JessException ex) {
             System.err.println(ex);
         }

@@ -1,2 +1,2 @@
 #!/bin/sh
-javac -d build -cp lib/jess.jar code/java/src/carRepairAssistant/*.java
+javac -Xlint:unchecked -d build -cp lib/jess.jar code/java/src/carRepairAssistant/*.java
