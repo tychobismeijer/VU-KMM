@@ -107,6 +107,7 @@
 		(possible-states (create$ ?fwps2 ?fwstate2))
 	)
 )
+
 (defrule causes-to-wire-cover
 	"If a faulty state of a component causes a possible wire state, that component might be in that state"
 	(connection

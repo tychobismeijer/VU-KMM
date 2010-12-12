@@ -23,3 +23,10 @@
 	(slot faulty-comp-state)
 	(slot wire-state)
 )
+(deftemplate reasoning-trace
+	"An unsure trace of reasoning"
+	(multislot sources)
+	(multislot differentiator)
+	(slot component)
+	(slot impossible-state)
+)

@@ -68,7 +68,151 @@
 	)
 )
 
-(defrule possible-to-impossible
+(defrule causes-from-2wires-verify
+	""
+	(component
+		(id ?cid)
+		(type ?ctype)
+		(impossible-states $?cips)
+	)
+ 	(causes-from-2wires
+		(faulty-wire1-state ?fw1state)
+		(faulty-wire2-state ?fw2state)
+		{component-type == ?ctype}
+		(component-state ?cstate&:(member$ ?cstate ?cips))
+	)
+ 	
+	(connection
+		(id ?wid1)
+	 	{out == ?cid}
+	)
+	(connection
+		(id ?wid2)
+	 	{out == ?cid && id <> ?wid1}
+	)
+	=>
+	(assert (reasoning-trace (sources (str-cat ?cid ?wid1 ?fw1state ?wid2 ?fw2state))(differentiator trace1) (component ?wid1)(impossible-state ?fw1state)))
+	(assert (reasoning-trace (sources (str-cat ?cid ?wid1 ?fw1state ?wid2 ?fw2state))(differentiator trace2) (component ?wid2)(impossible-state ?fw2state)))
+)
+
+(defrule causes-from-2wires-verify-trace
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(reasoning-trace
+		(sources $?sourceid)
+		(differentiator $?dif)
+		(component ?cid)
+		(impossible-state ?cstate)
+	)
+	(component
+		(id ?cid)
+		(type ?ctype)
+	)
+	(causes-from-2wires
+		(faulty-wire1-state ?fw1state)
+		(faulty-wire2-state ?fw2state)
+		{component-type == ?ctype}
+		(component-state ?cstate)
+	)
+	(connection
+		(id ?wid1)
+	 	{out == ?cid}
+	)
+	(connection
+		(id ?wid2)
+	 	{out == ?cid && id <> ?wid1}
+	)
+	=>
+	(assert (reasoning-trace (sources (create$ (str-cat ?cid ?wid1 ?fw1state ?wid2 ?fw2state) $?sourceid))(differentiator (create$ trace1 $?dif)) (component ?wid1)(impossible-state ?fw1state)))
+	(assert (reasoning-trace (sources (create$ (str-cat ?cid ?wid1 ?fw1state ?wid2 ?fw2state) $?sourceid))(differentiator (create$ trace2 $?dif)) (component ?wid2)(impossible-state ?fw2state)))
+)
+
+(defrule causes-from-wire-verify-trace
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(reasoning-trace
+		(sources $?sourceid)
+		(differentiator $?dif)
+		(component ?cid)
+		(impossible-state ?cstate)
+	)
+	(component
+		(id ?cid)
+		(type ?ctype)
+	)
+	(causes-from-wire
+		{component-type == ?ctype && component-state == ?cstate}
+		(faulty-wire-state ?wstate)
+	)
+	(connection
+		(id ?wid)
+		{out == ?cid}
+	)
+	=>
+	(assert (reasoning-trace (sources $?sourceid)(differentiator $?dif)(component ?wid)(impossible-state ?wstate)))
+)
+
+(defrule causes-to-wire-verify-trace
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(reasoning-trace
+		(sources $?sourceid)
+		(differentiator $?dif)
+		(component ?wid)
+		(impossible-state ?wstate)
+	)
+	(connection
+		{id == ?wid}
+		(in ?cid)
+	)
+	(causes-to-wire
+	 	(faulty-comp-type ?ctype)
+		(faulty-comp-state ?cstate)
+		(wire-state ?wstate)
+	)
+	(component
+		{id == ?cid}
+		(type ?ctype)
+	)
+	=>
+	(assert (reasoning-trace (sources $?sourceid)(differentiator $?dif)(component ?cid)(impossible-state ?cstate)))
+)
+
+(defrule verify-trace-merge
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(reasoning-trace
+		(sources ?headsource $?sourceid)
+		(differentiator trace1 $?dif)
+		(component ?cid)
+		(impossible-state ?cstate)
+	)
+	(reasoning-trace
+		(sources ?headsource $?sourceid)
+		(differentiator trace2 $?dif)
+		(component ?cid)
+		(impossible-state ?cstate)
+	)
+	=>
+	(assert (reasoning-trace (sources $?sourceid)(differentiator $?dif)(component ?cid)(impossible-state ?cstate)))
+)
+
+(defrule verify-trace-to-fact
+	"If we know a contradicting conclusion of a state, that state is impossible"
+	(reasoning-trace
+		(sources )
+		(differentiator )
+		(component ?cid)
+		(impossible-state ?cstate)
+	)
+	?c <- (component
+		{id == ?cid}
+		(impossible-states $?cips&:(not (member$ ?cstate ?cips)))
+	)
+	
+	=>
+	(modify ?c
+		(impossible-states (create$ ?cstate ?cips))
+	)
+)
+
+(defrule possible-to-impossible-verify
 	"If a state is is impossible it is no longer possible"
 	(component
 		(id ?cid)
