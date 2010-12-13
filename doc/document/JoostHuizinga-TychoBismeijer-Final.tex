@@ -68,7 +68,7 @@ The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' el
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{ruleTypes.jpg}
+		\includegraphics[width=1.00\textwidth]{rule-types.pdf}
 	\caption{Rule types}
 	\label{fig:IS}
 \end{figure}
@@ -92,6 +92,7 @@ KNOWLEDGE-BASE causal-model;
       B.state = no-power
 \end{verbatim}
 
+\noindent
 The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in a state that makes them unable to pass on power then this device will be unpowered. A seperate rule exists for the combination of every wire state that makes the wire unable to pass on power and every device type.
 
 \begin{verbatim}
@@ -103,7 +104,8 @@ The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in 
       B.state = no-power
 \end{verbatim}
 
-The CAUSES-FEATURE rules map states of actual devices to observables. A seperate rule exists for the combination of every device with all of its possible states that cause an observable. Note that these rules are not general and are dependend on the car. Thus these rules represent specific car knowledge.
+\noindent
+The CAUSES-FEATURE rules map states of actual devices to observables. A separate rule exists for the combination of every device with all of its possible states that cause an observable. Note that these rules are not general and are dependend on the car. Thus these rules represent specific car knowledge.
 
 \begin{verbatim}
       A.name = head-light-left
@@ -115,33 +117,35 @@ END KNOWLEDGE-BASE causal-model;
 
 
 \subsubsection{Example of a car}
-Figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem} show a graphical representation of an example car according to our model. This car consists of several electrical components. Normal electrical components are shown as objects in boxes with underlined text. Connections are, altough they are objects as well, represented by arrows that show which components they connect. High level electrical components are shown as large boxes that contain other electrical components. Altough the are represented in these diagrams they are not used in the reasoning process.
+Figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem} show a graphical representation of an example car according to our model. This car consists of several electrical components. Normal electrical components are shown as objects in boxes with underlined text. Connections are, altough they are objects as well, represented by arrows that show which components they connect. High level electrical components are shown as large boxes that contain other electrical components. Although the are represented in these diagrams they are not used in the reasoning process.
 
 Note that the car is incomplete. It lacks, for example rear lights. The representation is based on a general notion of how cars work but it is not a (partial) representation of an existing car.
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{ChargeSystem.pdf}
-	\caption{Rule types}
+	\caption{The charge system of our example car}
 	\label{fig:ChargeSystem}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{LightSystem.pdf}
-	\caption{Rule types}
+	\caption{The light system of our example car}
 	\label{fig:LightSystem}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{StartAndIgnitionSystem.pdf}
-	\caption{Rule types}
+	\caption{The start and the ignition system of our example car}
 	\label{fig:StartAndIgnitionSystem}
 \end{figure}
 
 
 \subsection{Inference knowledge}
+The inference model is shown in figure~\ref{fig:InferenceModel}. This inference model is almost exactly the same as the template shown in the common cads book. The only difference is an additional interaction with the user `obtain possible selection'. This interaction was added because our user would greatly like to influence the reasoning process by proposing his own hypothesis. The model is annotated with a simple example of how the system could work.
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{InferenceModel.pdf}
@@ -151,6 +155,8 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 
 
 \subsection{Task knowledge}
+In our context analysis we identified to major task shown in the TM-1 tables. For this project we decided to focus only on the diagnoses task. The task model of the diagnoses task is shown in figure~\ref{fig:taskDecomposition}. The task model shows that the diagnoses task simply consists of the inference and interactions of the template diagnoses task plus the `obtain possible selection' interaction that we added to the template.
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth, trim = 0 130 0 0, clip = true]{taskDecomposition.pdf}
@@ -159,8 +165,9 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 \end{figure}
 
 
-
 \section{Communication model}
+Since our system is highly interactive the communication model is very important. Figure~\ref{fig:dialogueDiagram} shows all the transaction that exist between the system and the user. Most transaction are pretty straight forward consisting of just some data being send from one to the other. The negotiate observable transaction is more complex and it therefore has its own flow control shown in figure~\ref{fig:trans3-control}. More details about these transactions are shown in tables TM-1 and TM-2.
+
 \subsection{CRA communication plan}
 \begin{figure}[htbp]
 	\centering
@@ -169,14 +176,16 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 	\label{fig:dialogueDiagram}
 \end{figure}
 
+The control flow of the communication is shown in the communication plan (figure~\ref{fig:communicationPlan}). Because communication is so important in our system this plan is almost identical to the control flow of the CRA itself. 
+
+As can be seen there is the need for a complaint at the start of the plan. Once this need is satisfied the state of the system will run in circles alternating between needing hypothesis, needing observables, found covering observations and observed observation until there are either no hypothesis or no observables left. At that point the plan is finished, either successful or unsuccessful.
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{communicationPlan.pdf}
 	\caption{The communication plan of the diagnoses task.}
 	\label{fig:communicationPlan}
 \end{figure}
-
-
 
 \subsection{CRA transactions}
 \input{CM-1}
