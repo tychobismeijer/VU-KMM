@@ -4,32 +4,29 @@ import jess.Rete;
 import jess.JessException;
 import jess.WorkingMemoryMarker;
 import java.util.Iterator;
-import java.io.Console;
 import java.util.List;
 import java.util.ArrayList;
 import jess.RU;
 
 public class CRA {
-    private final static int    COMPONENT =0,
-                                STATE =1,
-                                COMPLAINT = 0,
-                                NAME =1;
+    private final static int
+        COMPONENT =0,
+        STATE =1,
+        COMPLAINT = 0,
+        NAME =1;
 
     private Rete jess;
-    private ConsoleCheat c;
+    private Console c;
     private String[] currentHypothesis = {"", ""};
 
-    private void askComplaint() {
-        c.printf("Your complaint is?\n");
-        String observable = c.readLine();
-        String fact = "(complaint " + observable + " TRUE)";
-        try {
-            jess.assertString(fact);
-        } catch (JessException ex) {
-            System.err.println(ex);
-        }
-    }
+    /* CONTROL */
 
+    /**
+     * Asks for a complaint. Prints a list of likely complaint and offers the
+     * user a choice between them. Also asserts the fact in the model in Jess.
+     *
+     * Transaction: Report Complaint
+     */
     private void askLikelyComplaint() throws JessException{
         String observable, choice;
         List<String[]> allComplaints = allComplaints();
@@ -52,13 +49,15 @@ public class CRA {
 
         //Assert complaint
         String fact = "(complaint " + observable + " TRUE)";
-        try {
-            jess.assertString(fact);
-        } catch (JessException ex) {
-            System.err.println(ex);
-        }
+        jess.assertString(fact);
     }
 
+    /**
+     * Selects all possible hypothesis, and offers the user a choice to select one from them
+     * or selects one itself.
+     *
+     * Transaction: Propose Hypothesis
+     */
     private void askAvailableHypothesis(List<String[]> allHypothesis) throws JessException{
         //our sugestion
         currentHypothesis = allHypothesis.get(allHypothesis.size()-1);
@@ -84,119 +83,15 @@ public class CRA {
         }
     }
 
-    private boolean isNumber(String string){
-        try{
-            Integer.parseInt(string);
-            return true;
-        }
-        catch(NumberFormatException nfe){
-            return false;
-        }
-    }
-
-    private List<String[]> allHypothesis() throws JessException{
-        List<String[]> result = new ArrayList<String[]>();
-        jess.QueryResult hypothesis = generateHypothesis();
-
-        while (hypothesis.next()) {
-            String[] h = new String[2];
-            h[COMPONENT] = hypothesis.getString("component");
-            h[STATE] = hypothesis.getString("state");
-            result.add(h);
-        }
-        return result;
-    }
-
-    private List<String[]> allComplaints() throws JessException {
-        List<String[]> result = new ArrayList<String[]>();
-        jess.QueryResult likely_complaints = jess.runQueryStar("search-likely-complaints", new jess.ValueVector());
-
-        while (likely_complaints.next()){
-            String[] h = new String[2];
-            h[COMPLAINT] = likely_complaints.getString("observable");
-            h[NAME] = likely_complaints.getString("name");
-            result.add(h);
-        }
-
-        return result;
-    }
-
-    private void printAllComponents() throws JessException {
-        jess.QueryResult components = jess.runQueryStar("search-components", new jess.ValueVector());
-
-        while (components.next()){
-            c.printf(components.getString("component") + "\t state: ");
-            c.printf(components.get("state") + "\t impossible-states: ");
-            c.printf(components.get("impossible-states").toString() + "\n");
-        }
-    }
-
-    private jess.QueryResult generateHypothesis() throws JessException {
-        return jess.runQueryStar("search-hypothesis", new jess.ValueVector());
-    }
-
-    private boolean selectHypothesis(List<String[]> hypothesis) throws JessException {
-        if(hypothesis.size() != 0) {
-            currentHypothesis = hypothesis.get(0);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void printHypothesis() {
-        c.printf(
-            "The hypothesis is that " +
-            currentHypothesis[COMPONENT] +
-            " is " + 
-            currentHypothesis[STATE] + "\n"
-        );
-    }
-
-    private void printFacts() {
-        try {
-            java.io.Writer co = new java.io.PrintWriter(System.out);
-            co.write("-----------------------------------\n");
-            jess.ppFacts(co);
-            co.flush();
-        } catch (java.io.IOException ex) {
-            System.err.println(ex);
-        }
-    }
-
-    private void reset() throws JessException{
-        jess.Value nil = new jess.Value("nil", RU.SYMBOL);
-        jess.Fact fact;
-        Iterator<jess.Fact> facts = jess.listFacts();
-        while(facts.hasNext()){
-            fact = facts.next();
-            //Reset all states to nill before trying a new hypothesis
-            if (fact.getDeftemplate().getSlotIndex("state")>0){
-                jess.modify(fact, "state", nil);
-            }
-            //Reset all could-be-observed to nil before trying a new hypothesis
-            if (fact.getDeftemplate().getSlotIndex("could-be-observed")>0){
-                jess.modify(fact, "could-be-observed", nil);
-            }
-            //Retract all old hypothesis
-            if (fact.getName().equals("MAIN::hypothesis")){
-                jess.retract(fact);
-            }
-        }
-
-    }
-
-    private void reportHypothesis() throws JessException {
-        List<String[]> hypothesis = allHypothesis();
-        c.printf("It could be that:\n");
-        for (String[] h : hypothesis) {
-            c.printf(h[0] + " is " + h[1] + "\n");
-        }
-    }
-
+    /**
+     * Negotiates an observable with the user. Asks the user wether he wants to
+     * observe an observable, one observable after another, until he/she reports
+     * an observation. Asserts that observation in the model in Jess.
+     *
+     * Transactions: Negotiate Observable, Report Observable
+     */
     private boolean negotiateObservable() throws JessException {
-	WorkingMemoryMarker beforeHypothesis = jess.mark();
-        reset();    //Does what reset to mark was supposed to do
+        reset();
         c.printf("Trying hypothesis\n");
         jess.assertString(
             "(hypothesis " +
@@ -204,9 +99,6 @@ public class CRA {
             currentHypothesis[STATE] + ")"
         );
         jess.run();
-        //printAllComponents();
-        //printFacts();
-        //c.readLine();
         c.printf("Querying Observables\n");
 	jess.QueryResult observables =
 	jess.runQueryStar("search-observable", new jess.ValueVector());
@@ -221,7 +113,6 @@ public class CRA {
             while (noAnswer) {
                 answer = c.readLine();
                 if (answer.equals("true")) {
-                    jess.resetToMark(beforeHypothesis);
                     jess.assertString(
                         "(observed " +
                         observable +
@@ -230,9 +121,6 @@ public class CRA {
                     jess.run();
                     return true;
                 } else if (answer.equals("false")) {
-                    jess.resetToMark(beforeHypothesis);
-                    //printFacts();
-                    //c.readLine();
                     jess.assertString(
                         "(observed " +
                         observable +
@@ -252,25 +140,173 @@ public class CRA {
         return false;
     }
 
+    /**
+     * Reports all possible hypothesis at the moment.
+     *
+     * Transaction: Report Hypothesis
+     */
+    private void reportHypothesis() throws JessException {
+        List<String[]> hypothesis = allHypothesis();
+        c.printf("It could be that:\n");
+        for (String[] h : hypothesis) {
+            c.printf(h[0] + " is " + h[1] + "\n");
+        }
+    }
+
+    /* MODEL */
+
+    /**
+     * Makes a list of all possible hypothesis.
+     */
+    private List<String[]> allHypothesis() throws JessException{
+        List<String[]> result = new ArrayList<String[]>();
+        jess.QueryResult hypothesis = jess.runQueryStar("search-hypothesis", new jess.ValueVector());
+
+        while (hypothesis.next()) {
+            String[] h = new String[2];
+            h[COMPONENT] = hypothesis.getString("component");
+            h[STATE] = hypothesis.getString("state");
+            result.add(h);
+        }
+        return result;
+    }
+    
+    /**
+     * Makes a list of all likely complaints.
+     */
+    private List<String[]> allComplaints() throws JessException {
+        List<String[]> result = new ArrayList<String[]>();
+        jess.QueryResult likely_complaints = jess.runQueryStar("search-likely-complaints", new jess.ValueVector());
+
+        while (likely_complaints.next()){
+            String[] h = new String[2];
+            h[COMPLAINT] = likely_complaints.getString("observable");
+            h[NAME] = likely_complaints.getString("name");
+            result.add(h);
+        }
+
+        return result;
+    }
+    
+    /*
+     * Selects one hypothesis from the list of hypothesis without user
+     * interaction
+     */
+    private boolean selectHypothesis(List<String[]> hypothesis) throws JessException {
+        if(hypothesis.size() != 0) {
+            currentHypothesis = hypothesis.get(0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    
+
+    /**
+     * Removes all hypothosized states of components.
+     */
+    private void reset() throws JessException{
+        jess.Value nil = new jess.Value("nil", RU.SYMBOL);
+        jess.Fact fact;
+        Iterator<jess.Fact> facts = jess.listFacts();
+        while(facts.hasNext()){
+            fact = facts.next();
+            //Reset all states to nill before trying a new hypothesis
+            if (fact.getDeftemplate().getSlotIndex("state")>0){
+                jess.modify(fact, "state", nil);
+            }
+            //Reset all could-be-observed to nil before trying a new hypothesis
+            if (fact.getDeftemplate().getSlotIndex("could-be-observed")>0){
+                jess.modify(fact, "could-be-observed", nil);
+            }
+            //Retract all old hypothesis
+            if (fact.getName().equals("MAIN::hypothesis")){
+                jess.retract(fact);
+            }
+        }
+    }
+    
+    /**
+     * Tests wether a String can be interpreted as a String
+     */
+    private boolean isNumber(String string){
+        try{
+            Integer.parseInt(string);
+            return true;
+        }
+        catch(NumberFormatException nfe){
+            return false;
+        }
+    }
+
+    
+
+    /* SUPPORT */
+
+    /**
+     * Prints the current hypothesis to the console.
+     *
+     */
+    private void printCurrentHypothesis() {
+        c.printf(
+            "The hypothesis is that " +
+            currentHypothesis[COMPONENT] +
+            " is " + 
+            currentHypothesis[STATE] + "\n"
+        );
+    }
+    
+
+    /**
+     * Print all components.
+     * DEBUG method
+     * requires test jess file
+     */
+    private void printAllComponents() throws JessException {
+        jess.QueryResult components = jess.runQueryStar("search-components", new jess.ValueVector());
+
+        while (components.next()){
+            c.printf(components.getString("component") + "\t state: ");
+            c.printf(components.get("state") + "\t impossible-states: ");
+            c.printf(components.get("impossible-states").toString() + "\n");
+        }
+    }
+
+    /**
+     * Prints the current facts in the model in Jess to the console.
+     * DEBUG Method
+     */
+    private void printFacts() {
+        try {
+            java.io.Writer co = new java.io.PrintWriter(System.out);
+            co.write("-----------------------------------\n");
+            jess.ppFacts(co);
+            co.flush();
+        } catch (java.io.IOException ex) {
+            System.err.println(ex);
+        }
+    }
+
     public CRA() {
         jess = new Rete();
-        c = new ConsoleCheat();
+        c = new Console();
         try {
-            jess.batch("jess/test/test-likely-complaints.jess");
+            jess.batch("engine/run-from-java.jess");
             jess.reset();
-            //printFacts();
             askLikelyComplaint();
-            //printFacts();
             jess.run();
             boolean found_hypothesis;
             do {
-                //printAllComponents();
+                // Keep an updated list of possible hypothesis
                 List<String[]> hypothesis = allHypothesis();
                 found_hypothesis = (hypothesis.size() > 0);
                 boolean observed = false;
                 while(!observed && hypothesis.size() > 0) {
+                    // Keep asking questions about hypothesis, until we receive an
+                    // answer.
                     askAvailableHypothesis(hypothesis);
-                    printHypothesis();
+                    printCurrentHypothesis();
                     observed = negotiateObservable();
                 }
                 if (!observed) break;

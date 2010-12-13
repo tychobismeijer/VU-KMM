@@ -1,7 +1,0 @@
-(defquery search-likely-complaints
-	(observable 
-		(id ?observable)
-		(name ?name)
-		(likely-as-complaint TRUE)
-	)
-)
