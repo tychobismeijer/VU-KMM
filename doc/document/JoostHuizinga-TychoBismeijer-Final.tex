@@ -45,11 +45,19 @@ This section contains the tables OM-1, OM-2, OM-5, TM-1, TM-2, AM-1. Since our p
 \input{AM-1}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Knowledge model}
+
+
 \subsection{Domain knowledge}
-This section contains an initial knowledge model. The domain model is shown in figures~\ref{fig:DS} and~\ref{fig:IS}. Since we will only consider the electrical system this model only concerns electrical components. It is also modeled to support a specific car and, if this knowledge is not available, general car templates.
+In our context analysis we identified four different kinds of knowledge shown in tables TM-2. This knowledge is all domain knowledge but they are represented in different ways in out model. The general car knowledge would be a car template, a concept that is part of our domain schema. Because we did not implement the ability for our system to reason with car templates we do not have an instantion of such a template.
 
-Thus far we have not modified the diagnoses task template. Our inference structure, shown in figure~\ref{fig:InferenceModel} is thus far exactly the same as that of the standard diagnoses task. It has been annotated to show how it can be used in our domain.
+A simplefied instantiation of specific car knowledge is shown in figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem}. These figures show exactly which components exist and how they are connected in our example car. A part of this knowledge is also present in our knowledge base since the components since the mappings between component states and observables can be different for every car. There exist many different cars and every car would have its own scheme. Modeling them is beyond the scope of this project.
 
+Component knowledge is contained in our knowledge base. These are the rules that state exactly what happens when two components are connected. Note that these rules do not specify specific components and they are thus independent of the actual car.
+
+Car repair knowledge is not present in our model. This is because our system does not use car repair knowledge for reasoning. Adding car repair knowledge could enhance the system by enabeling it to propose observables that are easy to observe first.
+
+\subsubsection{Domain schema}
+The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' electrical parts and that these parts can be of several types. Connections are special because they are electrical components that connect other components. The rule types shown in figure~\ref{fig:IS} define the rules that exist between these concepts. 
 
 \begin{figure}[htbp]
 	\centering
@@ -61,8 +69,75 @@ Thus far we have not modified the diagnoses task template. Our inference structu
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{ruleTypes.jpg}
-	\caption{More domain schema}
+	\caption{Rule types}
 	\label{fig:IS}
+\end{figure}
+
+\subsubsection{Knowledge base}
+Below is a general overview of our knowledge base. Because all rules together create a single causal model all rules are contained in a single knowledge base. Not all rules are shown. Instead we show one instance of every kind of rule and explain how the other rules look. This is done because the complete knowledge base is very large.
+
+The CAUSES-TO-WIRE rules state that if a device is generating or passing through power and this device is in a state that makes it unable to perform this function then all wires leading from it will be unpowered. A seperate rule exists for the combinations of each device type with every possible state that would make it unable to power the wire.
+
+\begin{verbatim}
+KNOWLEDGE-BASE causal-model;
+   USES:
+      Component-knowledge
+      Car-specific-knowledge
+   EXPRESSIONS:
+      A.state = empty
+      A.type = battery
+      B.type = connection
+      B.comp1 = A
+      CAUSES-TO-WIRE
+      B.state = no-power
+\end{verbatim}
+
+The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in a state that makes them unable to pass on power then this device will be unpowered. A seperate rule exists for the combination of every wire state that makes the wire unable to pass on power and every device type.
+
+\begin{verbatim}
+      A.state = empty
+      A.type = battery
+      B.type = connection
+      B.comp1 = A
+      CAUSES-FROM-WIRE
+      B.state = no-power
+\end{verbatim}
+
+The CAUSES-FEATURE rules map states of actual devices to observables. A seperate rule exists for the combination of every device with all of its possible states that cause an observable. Note that these rules are not general and are dependend on the car. Thus these rules represent specific car knowledge.
+
+\begin{verbatim}
+      A.name = head-light-left
+      A.state = no-power
+      CAUSES-FEATURE
+      observable = head-light-left-no-light
+END KNOWLEDGE-BASE causal-model;
+\end{verbatim}
+
+
+\subsubsection{Example of a car}
+Figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem} show a graphical representation of an example car according to our model. This car consists of several electrical components. Normal electrical components are shown as objects in boxes with underlined text. Connections are, altough they are objects as well, represented by arrows that show which components they connect. High level electrical components are shown as large boxes that contain other electrical components. Altough the are represented in these diagrams they are not used in the reasoning process.
+
+Note that the car is incomplete. It lacks, for example rear lights. The representation is based on a general notion of how cars work but it is not a (partial) representation of an existing car.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{ChargeSystem.pdf}
+	\caption{Rule types}
+	\label{fig:ChargeSystem}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{LightSystem.pdf}
+	\caption{Rule types}
+	\label{fig:LightSystem}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{StartAndIgnitionSystem.pdf}
+	\caption{Rule types}
+	\label{fig:StartAndIgnitionSystem}
 \end{figure}
 
 
@@ -106,5 +181,8 @@ Thus far we have not modified the diagnoses task template. Our inference structu
 \subsection{CRA transactions}
 \input{CM-1}
 \input{CM-2}
+
+\section{Reflection}
+
 
 \end{document}
