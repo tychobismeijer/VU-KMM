@@ -1,0 +1,12 @@
+(batch "engine/car-templates.jess")
+(batch "car-knowledge/car-facts.jess")
+(batch "engine/rules-templates.jess")
+(batch "car-knowledge/rules-facts.jess")
+(batch "engine/cover-rules.jess")
+(batch "engine/verify-rules.jess")
+(batch "engine/specify-rules.jess")
+(batch "engine/report-complaint.jess")
+(batch "engine/select.jess")
+(batch "engine/negotiate-observable.jess");
+(batch "engine/obtain.jess");
+(batch "engine/report-complaint.jess");

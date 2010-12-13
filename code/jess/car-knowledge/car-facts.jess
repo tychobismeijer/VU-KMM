@@ -1,0 +1,527 @@
+(deffacts car-facts
+ 	"Components of the car and their states"
+	(state
+	 	(id working)
+		(name "Works")
+		(faulty FALSE)
+		(broken FALSE)
+	)
+	(state
+	 	(id broken)
+		(name "Broken")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	
+	(state
+	 	(id no-power)
+		(name "No Power")
+		(faulty TRUE)
+	)
+	(state
+	 	(id blown)
+		(name "Blown")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	(state
+	 	(id off)
+		(name "Off")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	(state
+	 	(id empty)
+		(name "Empty")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	(state
+	 	(id not-turning)
+		(name "Not turning")
+		(faulty TRUE)
+		(broken TRUE)
+	)
+	
+	(component
+		(id dynamo)
+		(type dynamo)
+	)
+	(component
+		(id battery)
+		(type battery)
+	)
+	(component
+	 	(id dynamo-fuse)
+		(type fuse)
+	)
+	(component
+	 	(id battery-dynamo-merge)
+		(type merge)
+	)
+	(component
+	 	(id battery-fuse)
+		(type fuse)
+	)
+	(component
+	 	(id ignition)
+		(type switch)
+	)
+	(component
+	 	(id charge-indicator)
+		(type charge-indicator)
+	)
+	(component
+	 	(id coil)
+		(type coil)
+	)
+	(component
+	 	(id distributor)
+		(type distributor)
+	)
+	(component
+	 	(id spark-plugs)
+		(type spark-plug)
+	)
+	(component
+	 	(id starter)
+		(type starter)
+	)
+	(component
+	 	(id signal-switch)
+		(type switch)
+	)
+	(component
+	 	(id beam-switch)
+		(type switch)
+	)
+	(component
+	 	(id light-switch)
+		(type switch)
+	)
+	(component
+	 	(id merge-light-left)
+		(type merge)
+	)
+	(component
+	 	(id merge-light-right)
+		(type merge)
+	)
+	(component
+	 	(id head-light-indicator)
+		(type light)
+	)
+	(component
+	 	(id fuse-head-light-left)
+		(type fuse)
+	)
+	(component
+	 	(id fuse-head-light-right)
+		(type fuse)
+	)
+	(component
+	 	(id fuse-beam-light-left)
+		(type fuse)
+	)
+	(component
+	 	(id fuse-beam-light-right)
+		(type fuse)
+	)
+	(component
+	 	(id head-light-left)
+		(type light)
+	)
+	(component
+	 	(id beam-light-left)
+		(type light)
+	)
+	(component
+	 	(id head-light-right)
+		(type light)
+	)
+	(component
+	 	(id beam-light-right)
+		(type light)
+	)
+
+
+	(connection
+	 	(id wire01)
+		(in dynamo)
+		(out charge-indicator)
+	)
+	(connection
+	 	(id wire02)
+		(in dynamo)
+		(out dynamo-fuse)
+	)
+	(connection
+	 	(id wire03)
+		(in dynamo-fuse)
+		(out battery)
+	)
+	(connection
+	 	(id wire04)
+		(in dynamo-fuse)
+		(out battery-dynamo-merge)
+	)
+	(connection
+	 	(id wire05)
+		(in battery)
+		(out battery-dynamo-merge)
+	)
+	(connection
+	 	(id wire06)
+		(in battery-dynamo-merge)
+		(out battery-fuse)
+	)
+	(connection
+	 	(id wire07)
+		(in battery-fuse)
+		(out ignition)
+	)
+	(connection
+	 	(id wire08)
+		(in ignition)
+		(out charge-indicator)
+	)
+	(connection
+	 	(id wire09)
+		(in ignition)
+		(out starter)
+	)
+	(connection
+	 	(id wire10)
+		(in ignition)
+		(out coil)
+	)
+	(connection
+	 	(id wire11)
+		(in coil)
+		(out distributor)
+	)
+	(connection
+	 	(id wire12)
+		(in distributor)
+		(out spark-plugs)
+	)
+	(connection
+	 	(id wire13)
+		(in ignition)
+		(out signal-switch)
+	)
+	(connection
+	 	(id wire14)
+		(in signal-switch)
+		(out merge-light-left)
+	)
+	(connection
+	 	(id wire15)
+		(in signal-switch)
+		(out merge-light-right)
+	)
+	(connection
+	 	(id wire16)
+		(in fuse-head-light-left)
+		(out head-light-indicator)
+	)
+	(connection
+	 	(id wire17)
+		(in fuse-head-light-left)
+		(out head-light-left)
+	)
+	(connection
+	 	(id wire18)
+		(in fuse-head-light-right)
+		(out head-light-right)
+	)
+	(connection
+	 	(id wire19)
+		(in battery-fuse)
+		(out light-switch)
+	)
+	(connection
+	 	(id wire20)
+		(in light-switch)
+		(out beam-switch)
+	)
+	(connection
+	 	(id wire21)
+		(in light-switch)
+		(out fuse-beam-light-left)
+	)
+	(connection
+	 	(id wire22)
+		(in light-switch)
+		(out fuse-beam-light-right)
+	)
+	(connection
+	 	(id wire23)
+		(in beam-switch)
+		(out merge-light-left)
+	)
+	(connection
+	 	(id wire24)
+		(in beam-switch)
+		(out merge-light-right)
+	)
+	(connection
+	 	(id wire25)
+		(in fuse-beam-light-left)
+		(out beam-light-left)
+	)
+	(connection
+	 	(id wire26)
+		(in fuse-beam-light-right)
+		(out beam-light-right)
+	)
+	(connection
+	 	(id wire27)
+		(in merge-light-left)
+		(out fuse-head-light-left)
+	)
+	(connection
+	 	(id wire28)
+		(in merge-light-right)
+		(out fuse-head-light-right)
+	)
+
+;lights
+	(observable 
+		(id head-light-left-no-light)
+		(name "the left head light gives only beam light")
+		(likely-as-complaint TRUE)
+	)
+	(observable 
+		(id head-light-right-no-light)
+		(name "the right head light gives only beam light")
+		(likely-as-complaint TRUE)
+	)
+	(observable 
+		(id beam-light-left-no-light)
+		(name "the left head light gives no light")
+		(likely-as-complaint TRUE)
+	)
+	(observable 
+		(id beam-light-right-no-light)
+		(name "the right head light gives no light")
+		(likely-as-complaint TRUE)
+	)
+	(observable 
+		(id charge-indicator-no-light)
+		(name "the charge indicator is off")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id head-light-indicator-no-light)
+		(name "the head light indicator is off")
+		(likely-as-complaint FALSE)
+	)
+;engine
+	(observable 
+		(id engine-does-not-start)
+		(name "the engine does not start")
+		(likely-as-complaint TRUE)
+	)
+;fuse
+	(observable 
+		(id fuse-head-light-left-blown)
+		(name "the fuse of the left head light is blown")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id fuse-head-light-right-blown)
+		(name "the fuse of the right head light is blown")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id fuse-beam-light-left-blown)
+		(name "the fuse of the left beam light is blown")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id fuse-beam-light-right-blown)
+		(name "the fuse of the right beam light is blown")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id dynamo-fuse-blown)
+		(name "the fuse right after the dynamo is blown")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id battery-fuse-blown)
+		(name "the fuse right after the battery is blown")
+		(likely-as-complaint FALSE)
+	)
+;wires
+	(observable 
+		(id wire01-broken)
+		(name "wire 1 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire02-broken)
+		(name "wire 2 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire03-broken)
+		(name "wire 3 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire04-broken)
+		(name "wire 4 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable
+		(id wire05-broken)
+		(name "wire 5 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire06-broken)
+		(name "wire 6 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable
+		(id	wire07-broken)
+		(name "wire 7 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire08-broken)
+		(name "wire 8 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire09-broken)
+		(name "wire 9 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire10-broken)
+		(name "wire 10 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire11-broken)
+		(name "wire 11 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire12-broken)
+		(name "wire 12 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire13-broken)
+		(name "wire 13 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire14-broken)
+		(name "wire 14 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire15-broken)
+		(name "wire 15 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire16-broken)
+		(name "wire 16 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire17-broken)
+		(name "wire 17 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire18-broken)
+		(name "wire 18 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire19-broken)
+		(name "wire 19 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire20-broken)
+		(name "wire 20 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire21-broken)
+		(name "wire 21 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire22-broken)
+		(name "wire 22 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire23-broken)
+		(name "wire 23 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire24-broken)
+		(name "wire 24 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire25-broken)
+		(name "wire 25 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire26-broken)
+		(name "wire 26 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire27-broken)
+		(name "wire 27 is broken")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id wire28-broken)
+		(name "wire 28 is broken")
+		(likely-as-complaint FALSE)
+	)
+	
+;switches
+	(observable 
+		(id ignition-off)
+		(name "the ignition is switched off")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id signal-switch-off)
+		(name "the signal switch is switched off")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id light-switch-off)
+		(name "the light switch is switched off")
+		(likely-as-complaint FALSE)
+	)
+	(observable 
+		(id beam-switch-off)
+		(name "the beam switch is switched off")
+		(likely-as-complaint FALSE)
+	)
+	
+;battery
+	(observable 
+		(id battery-no-power)
+		(name "there is no power on the battery")
+		(likely-as-complaint FALSE)
+	)
+)
