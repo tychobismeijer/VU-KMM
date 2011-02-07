@@ -48,27 +48,27 @@ This section contains the tables OM-1, OM-2, OM-5, TM-1, TM-2, AM-1. Since our p
 
 
 \subsection{Domain knowledge}
-In our context analysis we identified four different kinds of knowledge shown in tables TM-2. This knowledge is all domain knowledge but they are represented in different ways in out model. The general car knowledge would be a car template, a concept that is part of our domain schema. Because we did not implement the ability for our system to reason with car templates we do not have an instantion of such a template.
+In our context analysis we identified four different kinds of knowledge shown in tables TM-2. This knowledge is all domain knowledge but they are represented in different ways in out model. The general car knowledge would be a car template, a concept that is part of our domain schema. Because we did not implement the ability for our system to reason with car templates we do not have an instantiation of such a template.
 
-A simplefied instantiation of specific car knowledge is shown in figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem}. These figures show exactly which components exist and how they are connected in our example car. A part of this knowledge is also present in our knowledge base since the components since the mappings between component states and observables can be different for every car. There exist many different cars and every car would have its own scheme. Modeling them is beyond the scope of this project.
+A simplified instantiation of specific car knowledge is shown in figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem}. These figures show exactly which components exist and how they are connected in our example car. A part of this knowledge is also present in our knowledge base since the components since the mappings between component states and observables can be different for every car. There exist many different cars and every car would have its own scheme. Modeling them is beyond the scope of this project.
 
 Component knowledge is contained in our knowledge base. These are the rules that state exactly what happens when two components are connected. Note that these rules do not specify specific components and they are thus independent of the actual car.
 
-Car repair knowledge is not present in our model. This is because our system does not use car repair knowledge for reasoning. Adding car repair knowledge could enhance the system by enabeling it to propose observables that are easy to observe first.
+Car repair knowledge is not present in our model. This is because our system does not use car repair knowledge for reasoning. Adding car repair knowledge could enhance the system by enabling it to propose observables that are easy to observe first.
 
 \subsubsection{Domain schema}
 The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' electrical parts and that these parts can be of several types. Connections are special because they are electrical components that connect other components. The rule types shown in figure~\ref{fig:IS} define the rules that exist between these concepts. 
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{domainSchema.pdf}
+		\includegraphics[width=1.00\textwidth]{DomainSchema.jpg}
 	\caption{Domain schema for the car diagnoses task}
 	\label{fig:DS}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{ruleTypes.jpg}
+		\includegraphics[width=1.00\textwidth]{rule-types.pdf}
 	\caption{Rule types}
 	\label{fig:IS}
 \end{figure}
@@ -76,7 +76,7 @@ The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' el
 \subsubsection{Knowledge base}
 Below is a general overview of our knowledge base. Because all rules together create a single causal model all rules are contained in a single knowledge base. Not all rules are shown. Instead we show one instance of every kind of rule and explain how the other rules look. This is done because the complete knowledge base is very large.
 
-The CAUSES-TO-WIRE rules state that if a device is generating or passing through power and this device is in a state that makes it unable to perform this function then all wires leading from it will be unpowered. A seperate rule exists for the combinations of each device type with every possible state that would make it unable to power the wire.
+The CAUSES-TO-WIRE rules state that if a device is generating or passing through power and this device is in a state that makes it unable to perform this function then all wires leading from it will not be powered. A separate rule exists for the combinations of each device type with every possible state that would make it unable to power the wire.
 
 \begin{verbatim}
 KNOWLEDGE-BASE causal-model;
@@ -92,7 +92,8 @@ KNOWLEDGE-BASE causal-model;
       B.state = no-power
 \end{verbatim}
 
-The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in a state that makes them unable to pass on power then this device will be unpowered. A seperate rule exists for the combination of every wire state that makes the wire unable to pass on power and every device type.
+\noindent
+The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in a state that makes them unable to pass on power then this device will not be powered. A separate rule exists for the combination of every wire state that makes the wire unable to pass on power and every device type.
 
 \begin{verbatim}
       A.state = empty
@@ -103,7 +104,8 @@ The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in 
       B.state = no-power
 \end{verbatim}
 
-The CAUSES-FEATURE rules map states of actual devices to observables. A seperate rule exists for the combination of every device with all of its possible states that cause an observable. Note that these rules are not general and are dependend on the car. Thus these rules represent specific car knowledge.
+\noindent
+The CAUSES-FEATURE rules map states of actual devices to observables. A separate rule exists for the combination of every device with all of its possible states that cause an observable. Note that these rules are not general and are dependend on the car. Thus these rules represent specific car knowledge.
 
 \begin{verbatim}
       A.name = head-light-left
@@ -115,33 +117,35 @@ END KNOWLEDGE-BASE causal-model;
 
 
 \subsubsection{Example of a car}
-Figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem} show a graphical representation of an example car according to our model. This car consists of several electrical components. Normal electrical components are shown as objects in boxes with underlined text. Connections are, altough they are objects as well, represented by arrows that show which components they connect. High level electrical components are shown as large boxes that contain other electrical components. Altough the are represented in these diagrams they are not used in the reasoning process.
+Figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem} show a graphical representation of an example car according to our model. This car consists of several electrical components. Normal electrical components are shown as objects in boxes with underlined text. Connections are, although they are objects as well, represented by arrows that show which components they connect. High level electrical components are shown as large boxes that contain other electrical components. Although the are represented in these diagrams they are not used in the reasoning process.
 
 Note that the car is incomplete. It lacks, for example rear lights. The representation is based on a general notion of how cars work but it is not a (partial) representation of an existing car.
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{ChargeSystem.pdf}
-	\caption{Rule types}
+	\caption{The charge system of our example car}
 	\label{fig:ChargeSystem}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{LightSystem.pdf}
-	\caption{Rule types}
+	\caption{The light system of our example car}
 	\label{fig:LightSystem}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{StartAndIgnitionSystem.pdf}
-	\caption{Rule types}
+	\caption{The start and the ignition system of our example car}
 	\label{fig:StartAndIgnitionSystem}
 \end{figure}
 
 
 \subsection{Inference knowledge}
+The inference model is shown in figure~\ref{fig:InferenceModel}. This inference model is almost exactly the same as the template shown in the common cads book. The only difference is an additional interaction with the user `obtain possible selection'. This interaction was added because our user would greatly like to influence the reasoning process by proposing his own hypothesis. The model is annotated with a simple example of how the system could work.
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{inferenceModel.pdf}
@@ -151,6 +155,8 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 
 
 \subsection{Task knowledge}
+In our context analysis we identified to major task shown in the TM-1 tables. For this project we decided to focus only on the diagnoses task. The task model of the diagnoses task is shown in figure~\ref{fig:taskDecomposition}. The task model shows that the diagnoses task simply consists of the inference and interactions of the template diagnoses task plus the `obtain possible selection' interaction that we added to the template.
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth, trim = 0 130 0 0, clip = true]{taskDecomposition.pdf}
@@ -159,8 +165,9 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 \end{figure}
 
 
-
 \section{Communication model}
+Since our system is highly interactive the communication model is very important. Figure~\ref{fig:dialogueDiagram} shows all the transaction that exist between the system and the user. Most transaction are pretty straight forward consisting of just some data being send from one to the other. The negotiate observable transaction is more complex and it therefore has its own flow control shown in figure~\ref{fig:trans3-control}. More details about these transactions are shown in tables TM-1 and TM-2.
+
 \subsection{CRA communication plan}
 \begin{figure}[htbp]
 	\centering
@@ -169,6 +176,10 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 	\label{fig:dialogueDiagram}
 \end{figure}
 
+The control flow of the communication is shown in the communication plan (figure~\ref{fig:communicationPlan}). Because communication is so important in our system this plan is almost identical to the control flow of the CRA itself. 
+
+As can be seen there is the need for a complaint at the start of the plan. Once this need is satisfied the state of the system will run in circles alternating between needing hypothesis, needing observables, found covering observations and observed observation until there are either no hypothesis or no observables left. At that point the plan is finished, either successful or unsuccessful.
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{communicationPlan.pdf}
@@ -176,13 +187,55 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 	\label{fig:communicationPlan}
 \end{figure}
 
-
-
 \subsection{CRA transactions}
 \input{CM-1}
 \input{CM-2}
 
 \section{Reflection}
+\subsection{The process}
+The process of creating the knowledge based system went well in general.
+
+There was a problem with, unsurprisingly, the contact with our expert. Although the expert, a student car technician, was chosen because he was more easily accessible then the average car mechanic it was still difficult to get an appointment. Because of this the initial domain schema was eventually created without the help of the expert. Also, since we initially waited for an appointment there was a great delayed in our project. The information that was eventually obtained through our expert could be added rather nicely to our domain knowledge, but this ordering undoubtedly influenced the final model.
+
+We used most of the models and methods of CommonKADS during the project. The organization and agent
+model is useful to define the boundary and context of the system. As the environment
+of the system is very small, it only works together with the car hobbyist, we
+quickly finished those. With the task model we could better define and narrow
+down the task of the system. The knowledge model and the communication model
+are very useful. They form the foundation of our implementation.
+
+The knowledge
+model makes clear what rules and inferences should be used by the system. It
+also created problems which have disappeared when we implemented it. We struggled
+with the
+difference between inferences and rules types, designing a rule type for the
+cover inference separately from a rule type for the verify and specify step. This
+proved unnecessary when we implemented the rules.
+
+The CRA needs to work together with the car hobbyist. Communication is essential
+for the system. The communication model is great to model this. Creating this
+model was time-consuming, but proved worthwhile.
+
+We did try to make a design model based on the model view controller paradigm.
+It was very unclear how this should be done. With little time left and good
+preceding models we decided to just start the implementation based on the
+knowledge and communication model. We implemented the causal rules and component
+knowledge from the knowledge model in Jess. These rules were used in the
+inferences that we also implemented in Jess. The control of the program is based
+on the communication plan and dialog diagram of the communication model and
+implemented in Java.
+
+\subsection{The final result}
+The Car Repair Assistant performs its tasks reasonably well. It gives all possible causes and it will slowly reduce the number of possible causes by querying the user about various observables. The user can also steers this process by giving suggestion about which causes should be examined next. The system is also very flexible and using it with an other car, or even an other electrical system is very simple. Nevertheless, there are a lot of possible improvements.
+
+First, the Car Repair Assistant does not reason well over so called merges. These merges are places where two wires power a single component. When reasoning, if there exists an observation of a working component, and this component is powered only by a merge then there is the conclusion that the merge can not be unpowered. However, the system can not assign truth values for the connections powering the merge because either one might still be unpowered. As a result these hypothesis remain in the list of possible hypothesis. This makes the reasoning process much less powerful.
+
+An other important point that could be improved upon is the method that the CRA uses to suggest hypothesis and observables. Right now it just choses one without any preferences. It would be a lot better if these would be selected based upon the ease of obtaining the observations or based upon the information gain.
+
+A last obvious point of improvement would be in the interface. This system would be much more practical if it worked with a transparent picture of a car that depicted all the components and there locations. This would make the tool a lot easier to use for the users.
+
+Unfortunately there was little time to create the implementation of the final Car Repair Assistant. This is part due to the delay at the start of our project and part due to the fact that two months is not very long to create a fully functional knowledge system.
 
 
 \end{document}
+

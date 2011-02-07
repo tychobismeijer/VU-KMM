@@ -4,14 +4,10 @@
 \sc Transaction 			& \emph{Transaction 1: Report complaint}  \\ \hline
 \sc Agents involved 		& 1. {\bf Sender}(Hobbyist): Initiate repair  \newline
 					  2. {\bf Receiver}(Car repair assistant): Initiate repair \newline
-					  3. {\bf Sender}(Car repair assistant): List of components  \newline
-					  4. {\bf Receiver}(Hobbyist): List of components \newline
-					  5. {\bf Sender}(Hobbyist): Component  \newline
-					  6. {\bf Receiver}(Car repair assistant): Component \newline
-					  7. {\bf Sender}(Car repair assistant): List of malfunctions  \newline
-					  8. {\bf Receiver}(Hobbyist): List of malfunctions \newline
-					  9. {\bf Sender}(Hobbyist): Malfunction  \newline
-					  10. {\bf Receiver}(Car repair assistant): Malfunction \\ \hline
+					  3. {\bf Sender}(Car repair assistant): List of complaints  \newline
+					  4. {\bf Receiver}(Hobbyist): List of complaints  \newline
+					  5. {\bf Sender}(Hobbyist): Complaint  \newline
+					  6. {\bf Receiver}(Car repair assistant): Complaint \\ \hline
 \multicolumn{2}{|l|}{\textsc{Information items}} \\ \hline
    					%List all information items that are to be transmitted in this
    					%transaction. This includes the (`core') information object the
@@ -21,20 +17,14 @@
    
 INITIATE REPAIR			&  1. {\bf Role}: A core information object. \newline
 					% whether it is a {\em core} object, or a {\em support} item.
-					   2. {\bf Form}: A boolean indicating the start of a repair process \newline
+					   2. {\bf Form}: A signal indicating the start of a repair process \newline
 					% the syntactic form in which it transmitted to another agent , e.g., data string, canned text, a certain type of diagram, 2D or 3D plot.
 					   3. {\bf Medium}: By starting the program using an icon or command\\
 					% the medium through which it is handled in the agent-agent interaction, e.g., a pop-up window, navigation and selection within a menu, command-line interface, human intervention.
-LIST OF COMPONENTS		&  1. {\bf Role}: A support information object. \newline
+LIST OF COMPLAINTS		&  1. {\bf Role}: A support information object. \newline
 					   2. {\bf Form}: A list of strings \newline
 					   3. {\bf Medium}: As menu items\\
-COMPONENT				&  1. {\bf Role}: A core information object. \newline
-					   2. {\bf Form}: An identifier \newline
-					   3. {\bf Medium}: As a selection within a menu\\
-LIST OF MALFUNCTIONS		&  1. {\bf Role}: A support information object. \newline
-					   2. {\bf Form}: A list of strings \newline
-					   3. {\bf Medium}: As menu items\\
-MALFUCNTION				&  1. {\bf Role}: A core information object. \newline
+COMPLAINT				&  1. {\bf Role}: A core information object. \newline
 					   2. {\bf Form}: An identifier \newline
 					   3. {\bf Medium}: As a selection within a menu\\ \hline
 \multicolumn{2}{|l|}{\textsc{Message specifications}}\\ \hline
@@ -47,23 +37,13 @@ INITIATION-MESSAGE		& {\bf Communication type}: ORDER\newline
 					%in certain cases, it may be useful to add a reference to, for example, what domain knowledge model or agent capability is required to be able to send or process the message.
 					  {\bf From}: Hobbyist\newline
 					  {\bf To}: Car repair assistant\\
-COMPONENT-LIST-MESSAGE		& {\bf Communication type}: ASK\newline
-					  {\bf Content}: List of components and the request to chose one\newline
+COMPLAINTS-LIST-MESSAGE		& {\bf Communication type}: REQUIRE\newline
+					  {\bf Content}: List of complaints and the request to chose one\newline
 					%&  3. {\bf Reference}: \newline
 					  {\bf From}: Car repair assistant\newline
 					  {\bf To}: Hobbyist\\
-COMPONENT-MESSAGE			& {\bf Communication type}: REPLY\newline
-					  {\bf Content}: Component\newline
-					%&  3. {\bf Reference}: \\ \hline
-					  {\bf From}: Hobbyist\newline
-					  {\bf To}: Car repair assistant\\
-MALFUNCTION-LIST-MESSAGE	& {\bf Communication type}: ASK\newline
-					  {\bf Content}: List of malfunctions and the request to chose one\newline
-					%&  3. {\bf Reference}: \\ \hline
-					  {\bf From}: Car repair assistant\newline
-					  {\bf To}: Hobbyist\\
-MALFUNCTION-MESSAGE		& {\bf Communication type}: REPLY\newline
-					  {\bf Content}: Component\newline
+COMPLAINT-MESSAGE			& {\bf Communication type}: AGREE/REPORT\newline
+					  {\bf Content}: Complaint\newline
 					%&  3. {\bf Reference}: \\ \hline
 					  {\bf From}: Hobbyist\newline
 					  {\bf To}: Car repair assistant\\\hline
@@ -78,61 +58,41 @@ MALFUNCTION-MESSAGE		& {\bf Communication type}: REPLY\newline
 \noindent
 \begin{tabular}{|>{\colleft}p{3cm}|>{\colleft}p{8.5cm}|} \hline
 {\bf Communication model} 	& {\bf Information Exchange Specification Worksheet CM-2} \\ \hline \hline
-\sc Transaction 			& \emph{Transaction 2: Report complaint}  \\ \hline
-\sc Agents involved 		& 1. {\bf Sender}(Car repair assistant): List of components  \newline
-					  2. {\bf Receiver}(Hobbyist): List of components \newline
-					  3. {\bf Sender}(Hobbyist): Component  \newline
-					  4. {\bf Receiver}(Car repair assistant): Component \newline
-					  5. {\bf Sender}(Car repair assistant): List of malfunctions  \newline
-					  6. {\bf Receiver}(Hobbyist): List of malfunctions \newline
-					  7. {\bf Sender}(Hobbyist): Malfunction  \newline
-					  8. {\bf Receiver}(Car repair assistant): Malfunction \\ \hline
+\sc Transaction 			& \emph{Transaction 2: Propose hypothesis}  \\ \hline
+\sc Agents involved 		& 1. {\bf Sender}(Car repair assistant): List of hypothesis  \newline
+					  2. {\bf Receiver}(Hobbyist): List of hypothesis \newline
+					  3. {\bf Sender}(Hobbyist): Hypothesis  \newline
+					  4. {\bf Receiver}(Car repair assistant): Hypothesis \\ \hline
 \multicolumn{2}{|l|}{\textsc{Information items}} \\ \hline
    					%List all information items that are to be transmitted in this
    					%transaction. This includes the (`core') information object the
    					%transfer of which is the purpose of the transaction. However, it may contain
    					%other, supporting, information items, that, for example, provide help
    					%or explanation. For each information item, describe the following:
-LIST OF COMPONENTS		&  1. {\bf Role}: A support information object. \newline
+LIST OF HYPOTHESIS		&  1. {\bf Role}: A support information object. \newline
 					   2. {\bf Form}: A list of strings \newline
 					   3. {\bf Medium}: As menu items\\
-COMPONENT				&  1. {\bf Role}: A core information object. \newline
+HYPOTHESIS				&  1. {\bf Role}: A core information object. \newline
 					   2. {\bf Form}: An identifier \newline
 					   3. {\bf Medium}: As a selection within a menu\\
-LIST OF MALFUNCTIONS		&  1. {\bf Role}: A support information object. \newline
-					   2. {\bf Form}: A list of strings \newline
-					   3. {\bf Medium}: As menu items\\
-MALFUNCTION			&  1. {\bf Role}: A core information object. \newline
-					   2. {\bf Form}: An identifier \newline
-					   3. {\bf Medium}: As a selection within a menu\\ \hline
 \multicolumn{2}{|l|}{\textsc{Message specifications}}\\ \hline
 					% Describe all messages that make up the transaction. For each individual message describe:
-COMPONENT-LIST-MESSAGE		& {\bf Communication type}: REQUEST\newline
-					  {\bf Content}: List of components and the request to chose one\newline
+HYPOTHESIS-LIST-MESSAGE		& {\bf Communication type}: REQUIRE\newline
+					  {\bf Content}: List of hypothesis and the request to chose one\newline
 					%&  3. {\bf Reference}: \newline
 					  {\bf From}: Car repair assistant\newline
 					  {\bf To}: Hobbyist\\
-COMPONENT-MESSAGE			& {\bf Communication type}: PROPOSE\newline
-					  {\bf Content}: Component\newline
-					%&  3. {\bf Reference}: \\ \hline
-					  {\bf From}: Hobbyist\newline
-					  {\bf To}: Car repair assistant\\
-MALFUNCTION-LIST-MESSAGE	& {\bf Communication type}: REQUEST\newline
-					  {\bf Content}: List of malfunctions and the request to chose one\newline
-					%&  3. {\bf Reference}: \\ \hline
-					  {\bf From}: Car repair assistant\newline
-					  {\bf To}: Hobbyist\\
-MALFUNCTION-MESSAGE		& {\bf Communication type}: PROPOSE\newline
-					  {\bf Content}: Component\newline
+HYPOTHESIS-MESSAGE		& {\bf Communication type}: AGREE/REPORT\newline
+					  {\bf Content}: Hypothesis\newline
 					%&  3. {\bf Reference}: \\ \hline
 					  {\bf From}: Hobbyist\newline
 					  {\bf To}: Car repair assistant\\
 NO-HYPOTHESIS-MESSAGE		& {\bf Communication type}: REJECT-ta\newline
-					  {\bf Content}: Component\newline
+					  {\bf Content}: rejection \newline
 					%&  3. {\bf Reference}: \\ \hline
 					  {\bf From}: Hobbyist\newline
 					  {\bf To}: Car repair assistant\\\hline
-\textsc{Control over messages}& See code below. \\ \hline
+%\textsc{Control over messages}& See code below. \\ \hline
    					%Give, if necessary, a control specification over the messages
    					%within the transaction. This can be done in pseudocode format or
    					%in a state-transition diagram, similar to how the control over
@@ -140,32 +100,32 @@ NO-HYPOTHESIS-MESSAGE		& {\bf Communication type}: REJECT-ta\newline
    					%difference is just the level of detail.
 \end{tabular}
 
-\begin{verbatim}
-SEND(COMPONENT-LIST-MESSAGE)
-REPEAT WHILE <no NO-HYPOTHESIS-MESSAGE received>
-  IF <user wants to suggest a hypothesis> 
-  THEN 
-    IF <COMPONENT-LIST-MESSAGE received> 
-    THEN 
-      SEND(COMPONENT-MESSAGE)
-    END-IF
-    IF <MALFUNCTION-LIST-MESSAGE received> 
-    THEN 
-      SEND(MALFUNCTION-MESSAGE)
-    END-IF
-  ELSE 
-    SEND NO-HYPOTHESIS-MESSAGE
-  END-IF
-  IF <COMPONENT-MESSAGE received>  
-  THEN 
-    SEND(MALFUNCTION-LIST-MESSAGE)
-  END-IF
-  IF <MALFUNCTION-MESSAGE received> 
-  THEN 
-    PROCESS(store-hypothesis)
-  END-IF
-END-REPEAT
-\end{verbatim}
+%\begin{verbatim}
+%SEND(COMPONENT-LIST-MESSAGE)
+%REPEAT WHILE <no NO-HYPOTHESIS-MESSAGE received>
+%  IF <user wants to suggest a hypothesis> 
+%  THEN 
+%    IF <COMPONENT-LIST-MESSAGE received> 
+%    THEN 
+%      SEND(COMPONENT-MESSAGE)
+%    END-IF
+%    IF <MALFUNCTION-LIST-MESSAGE received> 
+%    THEN 
+%      SEND(MALFUNCTION-MESSAGE)
+%    END-IF
+%  ELSE 
+%    SEND NO-HYPOTHESIS-MESSAGE
+%  END-IF
+%  IF <COMPONENT-MESSAGE received>  
+%  THEN 
+%    SEND(MALFUNCTION-LIST-MESSAGE)
+%  END-IF
+%  IF <MALFUNCTION-MESSAGE received> 
+%  THEN 
+%    PROCESS(store-hypothesis)
+%  END-IF
+%END-REPEAT
+%\end{verbatim}
 
 
 \noindent
@@ -185,7 +145,7 @@ Transaction 3: Negotiate Observable
 {\sc Agents involved} &
 1. {\bf Sender}
 %agent sending the information item(s)
-CRA send a request for an obervation, and an explanation of that observation
+CRA send a request for an observation, and an explanation of that observation
 \newline
 2. {\bf Receiver}:
 The hobbyist receives the request for an observation, and an explanation.
@@ -193,8 +153,8 @@ The hobbyist receives the request for an observation, and an explanation.
 \\
 \hline
 \multicolumn{2}{|l|}{\textsc{Information items}} \\ \hline
-&  There is two information objects, the name of the observation to be done, and an
-explanation of that obervation. 
+&  There are two information objects, the name of the observation to be done, and an
+explanation of that observation. 
 %   List all information items that are to be transmitted in this
 %   transaction. This includes the (`core') information object the
 %   transfer of which is the purpose of the transaction. However, it may contain
