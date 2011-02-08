@@ -82,3 +82,39 @@
 	 	(could-be-observed TRUE)
 	)
 )
+
+(defrule check-direct-cause-specify
+	"If the current hypothesis leads to the complaint then the current hypothesis is a direct cause for the complaint"
+ 	(causes-feature
+	 	(component ?cid)
+		(component-state ?cstate)
+		(observable ?oid)
+	)
+	(component
+	 	{id == ?cid && state == ?cstate}
+	)
+	(observable
+		{id == ?oid}
+		(complaint TRUE)
+	)
+	=>
+	(assert (direct-cause))
+)
+
+(defrule check-contradiction-specify
+	"If the current hypothesis leads to a state that was observed to false then we have a contradiction"
+ 	(causes-feature
+	 	(component ?cid)
+		(component-state ?cstate)
+		(observable ?oid)
+	)
+	(component
+	 	{id == ?cid && state == ?cstate}
+	)
+	(observable
+		{id == ?oid}
+		(observed FALSE)
+	)
+	=>
+	(assert (contradiction))
+)

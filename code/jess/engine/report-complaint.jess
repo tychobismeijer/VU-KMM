@@ -1,12 +1,3 @@
-(defquery search-likely-complaints
-        "Find all the complaint the user likely has."
-	(observable 
-		(id ?observable)
-		(name ?name)
-		(likely-as-complaint TRUE)
-	)
-)
-
 (defrule obtained-complaint1
 	"If a positive complaint is reported, realize it."
 	(complaint ?oid TRUE)
@@ -28,6 +19,13 @@
 	=>
 	(modify ?o
 		(observed FALSE)
-		(complaint TRUE)
+	)
+)
+(defquery search-likely-complaints
+        "Find all the complaint the user likely has."
+	(observable 
+		(id ?observable)
+		(name ?name)
+		(likely-as-complaint TRUE)
 	)
 )

@@ -1,5 +1,5 @@
 (defquery search-observable
-        "Search for all the observables that can be observed"
+    "Search for all the observables that can be observed"
 	(observable 
 		(id ?observable)
 		(observed nil)
@@ -7,13 +7,14 @@
 	)
 )
 (defrule try-hypothesis
-        "If a certain hypothesis needs to be evaluated, realize it."
+    "If a certain hypothesis needs to be evaluated, realize it."
 	(hypothesis
 		?cid
 		?state
 	)
 	?c <- (component
 		(id ?cid)
+		(state nil)
 	)
 	=>
 	(modify ?c

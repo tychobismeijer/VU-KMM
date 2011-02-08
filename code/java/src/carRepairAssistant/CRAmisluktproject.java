@@ -2,22 +2,17 @@ package carRepairAssistant;
 
 import jess.Rete;
 import jess.JessException;
-import jess.WorkingMemoryMarker;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import jess.RU;
 
 public class CRAmisluktproject {
-    private final static int    COMPONENT =0,
-                                STATE =1,
-                                HAS_REST = 2,
-                                COMPLAINT = 0,
+    private final static int    COMPLAINT = 0,
                                 NAME =1;
 
     private Rete jess;
     private ConsoleCheat c;
+    private View view;
     //private List<String[]> currentHypothesis;
 
     private void askLikelyComplaint() throws JessException{
@@ -74,7 +69,7 @@ public class CRAmisluktproject {
         while(candidateHypothesis.peek() != null){
             currentHypothesis = candidateHypothesis.pop();
             for(int j=currentHypothesis.maxIndex; j<basicHypothesis.size(); j++){
-                newHypothesis = new Hypothesis((ArrayList<String[]>) currentHypothesis.toArrayList().clone());
+                newHypothesis = currentHypothesis.clone();
                 newHypothesis.add(basicHypothesis.get(j)); //create a combined hypothesis
 
                 if(!newHypothesis.contradiction(jess)){ //if this hypothesis causes a contradiction then skip it
@@ -118,6 +113,18 @@ public class CRAmisluktproject {
             }
         }
 
+        //Remove the current hypothesis
+        temp = currentHypothesis.split();
+        for(int i=0; i<temp.size();i++){
+            basicHypothesis.remove(temp.get(i));
+        }
+
+        //Add current hypothesis to all basic hypothesis
+        for(int i=0; i<basicHypothesis.size();i++){
+            basicHypothesis.get(i).add(currentHypothesis);
+        }
+        
+
         return basicHypothesis;
     }
 
@@ -136,24 +143,29 @@ public class CRAmisluktproject {
             Hypothesis suggestion = basicHypothesis.get(basicHypothesis.size()-1);
 
             //Print
-            c.printf("Available hypothesis are:\n");
-            for(int i=0; i<allHypothesis.size(); i++){
-                c.printf(i + " " + allHypothesis.get(i).getFullHypothesis(jess));
-            }
-
-            c.printf("We suggest: " + suggestion.getFullHypothesis(jess));
-            c.printf("Do you have an other suggestion (no/nr/id)?\n");
+            view.printHypothesisArray(basicHypothesis, jess);
+            view.printSuggestion(suggestion, jess);
+            
+//            c.printf("Available hypothesis are:\n");
+//            for(int i=0; i<basicHypothesis.size(); i++){
+//                c.printf(i + " " + basicHypothesis.get(i).getFullHypothesis(jess));
+//            }
+//
+//            c.printf("We suggest: " + suggestion.getFullHypothesis(jess));
+//            c.printf("Do you have an other suggestion (no/nr/id)?\n");
 
             //Receive input
             String choice = c.readLine();
             choice = choice.trim();
             if (isNumber(choice)){
                 int nrChoice = Integer.parseInt(choice);
-                hypothesis.add(basicHypothesis.get(nrChoice));
-            } else if(choice.contains(" is ")) {
-                hypothesis.add(new Hypothesis(choice.substring(0, choice.indexOf(" ")), choice.substring(choice.lastIndexOf(" ")+1, choice.length())));
-            } else {
-                hypothesis.add(suggestion);
+                hypothesis = (basicHypothesis.get(nrChoice));
+            }
+//            else if(choice.contains(" is ")) {
+//                hypothesis.add(new Hypothesis(choice.substring(0, choice.indexOf(" ")), choice.substring(choice.lastIndexOf(" ")+1, choice.length())));
+//            } 
+            else {
+                hypothesis = suggestion;
             }
 
         }while(!hypothesis.directCause(jess));
@@ -171,68 +183,15 @@ public class CRAmisluktproject {
         }
     }
 
-    private List<String[]> allMultiHypothesis() throws JessException{
-        List<String[]> result = new ArrayList<String[]>();
-        jess.QueryResult hypothesis = jess.runQueryStar("search-multi-hypothesis", new jess.ValueVector());
-
-        while (hypothesis.next()) {
-            String[] h = new String[3];
-            h[COMPONENT] = hypothesis.getString("component");
-            h[STATE] = hypothesis.getString("state");
-            if(hypothesis.get("rest").toString().equals("")){
-                h[HAS_REST] = "";
-            } else {
-                h[HAS_REST] = " and something else";
-            }
-            if(!contains(result, h)){
-                result.add(h);
-            }
-        }
-        return result;
-    }
-
-    private int nrOfStateChanges() throws JessException{
-        int result = 0;
-        jess.QueryResult components = jess.runQueryStar("components-in-state", new jess.ValueVector());
-
-        while (components.next()) {
-            result++;
-        }
-        return result;
-    }
-
-    private boolean contains(List<String[]> list, String[] test){
-        String[] temp;
-        Iterator<String[]> listI = list.listIterator();
-        while(listI.hasNext()){
-            temp = listI.next();
-            if(equals(temp, test)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean equals(String[] str1, String[] str2){
-        if(!(str1.length == str2.length)){
-            return false;
-        }
-        for(int i=0; i<str1.length; i++){
-            if(!str1[i].equals(str2[i])){
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-
     private ArrayList<Hypothesis> allHypothesis() throws JessException{
         ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
-        jess.QueryResult hypothesis = generateHypothesis();
+        jess.QueryResult hypothesis = jess.runQueryStar("search-hypothesis", new jess.ValueVector());
 
         while (hypothesis.next()) {
-            result.add(new Hypothesis(hypothesis.getString("component"), hypothesis.getString("state")));
+            result.add(new Hypothesis(hypothesis.getString("component"),
+                    hypothesis.getString("name"),
+                    hypothesis.getString("state"),
+                    hypothesis.getString("stateName")));
         }
         return result;
     }
@@ -251,135 +210,30 @@ public class CRAmisluktproject {
         return result;
     }
 
-    private void printAllComponents() throws JessException {
-        jess.QueryResult components = jess.runQueryStar("search-components", new jess.ValueVector());
+//    private jess.QueryResult generateHypothesis() throws JessException {
+//        return jess.runQueryStar("search-hypothesis", new jess.ValueVector());
+//    }
 
-        while (components.next()){
-            c.printf(components.getString("component") + "\t state: ");
-            c.printf(components.getString("state") + "\t impossible-states: ");
-            c.printf(components.get("impossible-states").toString() + "\n");
-        }
-    }
+//    private void printHypothesis(Hypothesis hypothesis) throws JessException {
+//        c.printf("The hypothesis is that ");
+//        view.printHypothesis(hypothesis, jess);
+//    }
 
-    private jess.QueryResult generateHypothesis() throws JessException {
-        return jess.runQueryStar("search-hypothesis", new jess.ValueVector());
-    }
-
-//    private boolean selectHypothesis(List<String[]> hypothesis) throws JessException {
-//        if(hypothesis.size() != 0) {
-//            currentHypothesis = hypothesis.get(0);
-//            return true;
-//        } else {
-//            return false;
+//    private void printFacts() {
+//        try {
+//            java.io.Writer co = new java.io.PrintWriter(System.out);
+//            co.write("-----------------------------------\n");
+//            jess.ppFacts(co);
+//            co.flush();
+//        } catch (java.io.IOException ex) {
+//            System.err.println(ex);
 //        }
 //    }
 
-    private void printHypothesis(Hypothesis hypothesis) throws JessException {
-        c.printf("The hypothesis is that ");
-        c.printf(hypothesis.getFullHypothesis(jess));
-        c.printf(";\n");
-    }
-
-    private void printFacts() {
-        try {
-            java.io.Writer co = new java.io.PrintWriter(System.out);
-            co.write("-----------------------------------\n");
-            jess.ppFacts(co);
-            co.flush();
-        } catch (java.io.IOException ex) {
-            System.err.println(ex);
-        }
-    }
-
-    private void reset() throws JessException{
-        jess.Value nil = new jess.Value("nil", RU.SYMBOL);
-        jess.Fact fact;
-
-        Iterator<jess.Fact> facts = jess.listFacts();
-        while(facts.hasNext()){
-            fact = facts.next();
-            //Reset all states to nill before trying a new hypothesis
-            if (fact.getDeftemplate().getSlotIndex("state")>0){
-                jess.modify(fact, "state", nil);
-            }
-            //Reset all could-be-observed to nil before trying a new hypothesis
-            if (fact.getDeftemplate().getSlotIndex("could-be-observed")>0){
-                jess.modify(fact, "could-be-observed", nil);
-            }
-            //Retract all old hypothesis
-            if (fact.getName().equals("MAIN::hypothesis")){
-                jess.retract(fact);
-            }
-            //Retract all old contradictions
-            if (fact.getName().equals("MAIN::contradiction")){
-                jess.retract(fact);
-            }
-            //Retract all old direct-causes
-            if (fact.getName().equals("MAIN::direct-cause")){
-                jess.retract(fact);
-            }
-        }
-
-    }
-
-    private boolean checkHypothesis(List<String[]> hypothesis) throws JessException {
-        //Returns true if the hypothesis alone are able to cause the complaint
-        boolean result;
-        WorkingMemoryMarker beforeHypothesis = jess.mark();
-        reset();    //Does what reset to mark was supposed to do
-        for(int i=0; i<hypothesis.size();i++){
-            jess.assertString(
-                "(hypothesis " +
-                hypothesis.get(i)[COMPONENT] + " " +
-                hypothesis.get(i)[STATE] + ")"
-            );
-        }
-        jess.run();
-        //printFacts();
-        result = !(jess.findFactByFact(new jess.Fact("direct-cause", jess)) ==null);
-        //reset();
-        jess.resetToMark(beforeHypothesis);
-        return result;
-    }
-
-    private boolean checkContradiction(List<String[]> hypothesis) throws JessException {
-        //Returns true of there is a contradiction with the current set hypothesis
-        boolean result;
-        WorkingMemoryMarker beforeHypothesis = jess.mark();
-        reset();    //Does what reset to mark was supposed to do
-        for(int i=0; i<hypothesis.size();i++){
-            jess.assertString(
-                "(hypothesis " +
-                hypothesis.get(i)[COMPONENT] + " " +
-                hypothesis.get(i)[STATE] + ")"
-            );
-        }
-        jess.run();
-        //printFacts();
-        result = !(jess.findFactByFact(new jess.Fact("contradiction", jess)) ==null);
-        //reset();
-        jess.resetToMark(beforeHypothesis);
-        return result;
-    }
-
-    private boolean negotiateObservable(List<String[]> hypothesis) throws JessException {
-	WorkingMemoryMarker beforeHypothesis = jess.mark();
-        reset();    //Does what reset to mark was supposed to do
+    private boolean negotiateObservable(Hypothesis hypothesis) throws JessException {
         c.printf("Trying hypothesis\n");
-        for(int i=0; i<hypothesis.size();i++){
-            jess.assertString(
-                "(hypothesis " +
-                hypothesis.get(i)[COMPONENT] + " " +
-                hypothesis.get(i)[STATE] + ")"
-            );
-        }
-        jess.run();
-        //printAllComponents();
-        //printFacts();
-        //c.readLine();
         c.printf("Querying Observables\n");
-	jess.QueryResult observables =
-	jess.runQueryStar("search-observable", new jess.ValueVector());
+	jess.QueryResult observables = hypothesis.observables(jess);
         String answer = "no";
         while (observables.next() && answer.equals("no")) {
             String observable = observables.getString("observable");
@@ -391,7 +245,6 @@ public class CRAmisluktproject {
             while (noAnswer) {
                 answer = c.readLine();
                 if (answer.equals("true")) {
-                    jess.resetToMark(beforeHypothesis);
                     jess.assertString(
                         "(observed " +
                         observable +
@@ -400,7 +253,6 @@ public class CRAmisluktproject {
                     jess.run();
                     return true;
                 } else if (answer.equals("false")) {
-                    jess.resetToMark(beforeHypothesis);
                     //printFacts();
                     //c.readLine();
                     jess.assertString(
@@ -425,6 +277,7 @@ public class CRAmisluktproject {
     public CRAmisluktproject() {
         jess = new Rete();
         c = new ConsoleCheat();
+        view = new View();
         Hypothesis currentHypothesis = new Hypothesis();
         try {
             jess.batch("jess/test/test-multi-cover.jess");
@@ -441,8 +294,8 @@ public class CRAmisluktproject {
                 boolean observed = false;
                 while(!observed && allHypothesis.size() > 0) {
                     currentHypothesis = askAvailableHypothesis(allHypothesis);
-                    printHypothesis(currentHypothesis);
-                    observed = negotiateObservable(currentHypothesis.toArrayList());
+                    view.printCurrentHypothesis(currentHypothesis, jess);
+                    observed = negotiateObservable(currentHypothesis);
                 }
                 if (!observed) break;
             } while (found_hypothesis);

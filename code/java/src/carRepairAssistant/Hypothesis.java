@@ -15,10 +15,7 @@ import jess.RU;
  * @author Joost
  */
 public class Hypothesis {
-    private final static int    COMPONENT =0,
-                                STATE =1;
-
-    private ArrayList<String[]> hypothesisList;
+    private ArrayList<Component> hypothesisList;
     private Boolean contradiction;
     private Boolean directCause;
     private Integer nrStateChanges;
@@ -26,35 +23,56 @@ public class Hypothesis {
     
 
     Hypothesis(){
-        hypothesisList = new ArrayList<String[]>();
+        hypothesisList = new ArrayList<Component>();
     }
 
-    Hypothesis(ArrayList<String[]> hypothesisList){
+    Hypothesis(ArrayList<Component> hypothesisList){
         this.hypothesisList = hypothesisList;
     }
 
-    Hypothesis(String component, String state){
-        String[] h = new String[2];
-        hypothesisList = new ArrayList<String[]>();
-        h[COMPONENT] = component;
-        h[STATE] = state;
-        hypothesisList.add(h);
+    Hypothesis(Hypothesis hypothesis){
+        hypothesisList = new ArrayList<Component>();
+        for(int i =0; i<hypothesis.size();i++){
+            hypothesisList.add(hypothesis.get(i));
+        }
     }
 
-    Hypothesis(String[] string){
-        this(string[0], string[1]);
-     }
-
-    public ArrayList<String[]> toArrayList(){
-        return hypothesisList;
+    Hypothesis(Component component){
+        hypothesisList = new ArrayList<Component>();
+        hypothesisList.add(component);
     }
+
+    Hypothesis(String componentId, String componentName, String stateId, String stateName){
+        hypothesisList = new ArrayList<Component>();
+        hypothesisList.add(new Component(componentId, componentName, stateId, stateName));
+    }
+
+//    Hypothesis(String[] string){
+//        this(string[0], string[1]);
+//     }
+
+    //public ArrayList<String[]> toArrayList(){
+    //    return hypothesisList;
+    //}
 
     @Override
-    public boolean equals(Object otherHypothesis){
-        if(otherHypothesis.getClass() != this.getClass())
+    public boolean equals(Object otherObject){
+        if(otherObject == null)
             return false;
+        if(otherObject.getClass() != this.getClass())
+            return false;
+
+        Hypothesis otherHypothesis = (Hypothesis) otherObject;
         
-        return this.equals((Hypothesis) otherHypothesis);
+        if(hypothesisList.size() != otherHypothesis.size())
+            return false;
+
+        for(int i=0; i<hypothesisList.size(); i++){
+            if(!hypothesisList.get(i).equals(otherHypothesis.get(i)))
+                return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -64,30 +82,17 @@ public class Hypothesis {
         return hash;
     }
 
-    public boolean equals(Hypothesis otherHypothesis){
-        if(otherHypothesis == null)
-            return false;
+    @Override
+    public Hypothesis clone(){
+        return new Hypothesis(this);
+    }
 
-        ArrayList<String[]> otherHypothesisList = otherHypothesis.toArrayList();
+    public int size(){
+        return hypothesisList.size();
+    }
 
-        if(hypothesisList == null ^ otherHypothesisList == null)
-            return false;
-        if(hypothesisList == null && otherHypothesisList == null)
-            return true;
-        
-        if(hypothesisList.size() != otherHypothesisList.size())
-            return false;
-
-        for(int i=0; i<hypothesisList.size(); i++){
-            if(hypothesisList.get(i).length != 2 || otherHypothesisList.get(i).length != 2)
-                return false;
-            if(!hypothesisList.get(i)[0].equals(otherHypothesisList.get(i)[0]))
-                return false;
-            if(!hypothesisList.get(i)[1].equals(otherHypothesisList.get(i)[1]))
-                return false;
-        }
-
-        return hypothesisList.equals(otherHypothesis.toArrayList());
+    public Component get(int i){
+        return hypothesisList.get(i);
     }
 
     public ArrayList<Hypothesis> split(){
@@ -100,35 +105,38 @@ public class Hypothesis {
         return result;
     }
 
-    public String getFirstHypothesis(Rete jess) throws JessException{
-        String result;
-        result = hypothesisList.get(0)[COMPONENT] + " is " + hypothesisList.get(0)[STATE];
+//    public String getFirstHypothesis(Rete jess) throws JessException{
+//        String result;
+//        result = hypothesisList.get(0).name() + " is " + hypothesisList.get(0).state();
+//
+//        if(!this.directCause(jess)){
+//            result = result + " and... \n";
+//        } else {
+//            result = result + "\n";
+//        }
+//
+//        return result;
+//    }
 
-        if(this.composed(jess)){
-            result = result + " and... \n";
-        } else {
-            result = result + "\n";
-        }
-
-        return result;
-    }
-
-    public String getFullHypothesis(Rete jess) throws JessException{
-        String result;
-        result = hypothesisList.get(0)[COMPONENT] + " is " + hypothesisList.get(0)[STATE];
-        for(int i=1; i<hypothesisList.size(); i++){
-            result = result + " and " + hypothesisList.get(i)[COMPONENT] + " is " + hypothesisList.get(i)[STATE];
-        }
-        result = result + "\n";
-
-        return result;
-    }
+//    public String getFullHypothesis(Rete jess) throws JessException{
+//        String result;
+//        result = hypothesisList.get(hypothesisList.size()-1).name() + " is " + hypothesisList.get(hypothesisList.size()-1).state();
+//        for(int i=hypothesisList.size()-2; i>=0; i--){
+//            result = result + " and " + hypothesisList.get(i).name() + " is " + hypothesisList.get(i).state();
+//        }
+//
+//        if(!this.directCause(jess)){
+//            result = result + " and... \n";
+//        } else {
+//            result = result + "\n";
+//        }
+//
+//        return result;
+//    }
 
     public boolean contains(Hypothesis otherHypothesis){
-        ArrayList<String[]> otherHypothesisList = otherHypothesis.toArrayList();
-
-        for(int i=0; i<otherHypothesisList.size(); i++){
-            if(!hypothesisList.contains(otherHypothesisList.get(i))){
+        for(int i=0; i<otherHypothesis.size(); i++){
+            if(!hypothesisList.contains(otherHypothesis.get(i))){
                 return false;
             }
         }
@@ -137,10 +145,8 @@ public class Hypothesis {
     }
 
     public void add(Hypothesis otherHypothesis){
-        ArrayList<String[]> otherHypothesisList = otherHypothesis.toArrayList();
-
-        for(int i=0; i<otherHypothesisList.size(); i++){
-            hypothesisList.add(otherHypothesisList.get(i));
+        for(int i=0; i<otherHypothesis.size(); i++){
+            hypothesisList.add(otherHypothesis.get(i));
         }
 
         if(maxIndex != null && otherHypothesis.maxIndex != null){
@@ -152,7 +158,7 @@ public class Hypothesis {
         nrStateChanges = null;
 
     }
-    
+
     public boolean contradiction(Rete jess) throws JessException{
         if (contradiction == null){
             test(jess);
@@ -184,6 +190,11 @@ public class Hypothesis {
         return nrStateChanges;
     }
 
+    public jess.QueryResult observables(Rete jess) throws JessException{
+        test(jess);
+        return jess.runQueryStar("search-observable", new jess.ValueVector());
+    }
+
     private void test(Rete jess) throws JessException{
         WorkingMemoryMarker beforeHypothesis = jess.mark();
         reset(jess);
@@ -191,8 +202,8 @@ public class Hypothesis {
         for(int i=0; i<hypothesisList.size();i++){
             jess.assertString(
                 "(hypothesis " +
-                hypothesisList.get(i)[COMPONENT] + " " +
-                hypothesisList.get(i)[STATE] + ")"
+                hypothesisList.get(i).id() + " " +
+                hypothesisList.get(i).stateId() + ")"
             );
         }
         jess.run();

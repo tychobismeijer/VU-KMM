@@ -1,14 +1,13 @@
-(batch "jess/car-templates.jess")
-(batch "jess/car-facts.jess")
-(batch "jess/rules-templates.jess")
-(batch "jess/rules-facts.jess")
-(batch "jess/cover-rules.jess")
-(batch "jess/specify-rules.jess")
-(batch "jess/report-complaint.jess")
-(batch "jess/select.jess")
-(batch "jess/negotiate-observable.jess");
-(batch "jess/obtain-rules.jess");
-(batch "jess/search-likely-complaints.jess");
+(batch "jess/engine/car-templates.jess")
+(batch "jess/car-knowledge/car-facts.jess")
+(batch "jess/engine/rules-templates.jess")
+(batch "jess/car-knowledge/rules-facts.jess")
+(batch "jess/engine/cover-rules.jess")
+(batch "jess/engine/specify-rules.jess")
+(batch "jess/engine/report-complaint.jess")
+(batch "jess/engine/select.jess")
+(batch "jess/engine/negotiate-observable.jess");
+(batch "jess/engine/obtain.jess");
 
 (defquery search-components
 	(component 

@@ -2,10 +2,12 @@
         "Find all possible hypothesis"
 	(component 
 		(id ?component)
+		(name ?name)
 		(possible-states $? ?state $?)
 	)
 	(state
 		(id ?state)
+		(name ?stateName)
 		(broken TRUE)
 	)
 )

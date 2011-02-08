@@ -46,102 +46,128 @@
 	(component
 		(id dynamo)
 		(type dynamo)
+		(name "dynamo")
 	)
 	(component
 		(id battery)
 		(type battery)
+		(name "battery")
 	)
 	(component
 	 	(id dynamo-fuse)
 		(type fuse)
+		(name "dynamo fuse")
 	)
 	(component
 	 	(id battery-dynamo-merge)
 		(type merge)
+		(name "battery dynamo merge")
 	)
 	(component
 	 	(id battery-fuse)
 		(type fuse)
+		(name "battery fuse")
 	)
 	(component
 	 	(id ignition)
 		(type switch)
+		(name "ignition")
 	)
 	(component
 	 	(id charge-indicator)
 		(type charge-indicator)
+		(name "charge indicator")
 	)
 	(component
 	 	(id coil)
 		(type coil)
+		(name "coil")
 	)
 	(component
 	 	(id distributor)
 		(type distributor)
+		(name "distributor")
 	)
 	(component
 	 	(id spark-plugs)
 		(type spark-plug)
+		(name "spark plugs")
 	)
 	(component
 	 	(id starter)
 		(type starter)
+		(name "starter")
 	)
 	(component
 	 	(id signal-switch)
 		(type switch)
+		(name "signal switch")
 	)
 	(component
 	 	(id beam-switch)
 		(type switch)
+		(name "beam switch")
 	)
 	(component
 	 	(id light-switch)
 		(type switch)
+		(name "light switch")
 	)
 	(component
 	 	(id merge-light-left)
 		(type merge)
+		(name "left light merge ")
 	)
 	(component
 	 	(id merge-light-right)
 		(type merge)
+		(name "right light merge")
 	)
 	(component
 	 	(id head-light-indicator)
 		(type light)
+		(name "head light indicator")
 	)
 	(component
 	 	(id fuse-head-light-left)
 		(type fuse)
+		(name "left head light fuse")
 	)
 	(component
 	 	(id fuse-head-light-right)
 		(type fuse)
+		(name "right head light fuse")
 	)
 	(component
 	 	(id fuse-beam-light-left)
 		(type fuse)
+		(name "left beam light fuse")
 	)
 	(component
 	 	(id fuse-beam-light-right)
 		(type fuse)
+		(name "right beam light fuse")
 	)
 	(component
 	 	(id head-light-left)
 		(type light)
+		(name "left head light")
 	)
 	(component
 	 	(id beam-light-left)
 		(type light)
+		(name "left beam light")
 	)
 	(component
 	 	(id head-light-right)
 		(type light)
+		(name "right head light")
+		
 	)
 	(component
 	 	(id beam-light-right)
 		(type light)
+		(name "right beam light")
 	)
 
 
@@ -149,141 +175,169 @@
 	 	(id wire01)
 		(in dynamo)
 		(out charge-indicator)
+		(name "wire 1")
 	)
 	(connection
 	 	(id wire02)
 		(in dynamo)
 		(out dynamo-fuse)
+		(name "wire 2")
 	)
 	(connection
 	 	(id wire03)
 		(in dynamo-fuse)
 		(out battery)
+		(name "wire 3")
 	)
 	(connection
 	 	(id wire04)
 		(in dynamo-fuse)
 		(out battery-dynamo-merge)
+		(name "wire 4")
 	)
 	(connection
 	 	(id wire05)
 		(in battery)
 		(out battery-dynamo-merge)
+		(name "wire 5")
 	)
 	(connection
 	 	(id wire06)
 		(in battery-dynamo-merge)
 		(out battery-fuse)
+		(name "wire 6")
 	)
 	(connection
 	 	(id wire07)
 		(in battery-fuse)
 		(out ignition)
+		(name "wire 7")
 	)
 	(connection
 	 	(id wire08)
 		(in ignition)
 		(out charge-indicator)
+		(name "wire 8")
 	)
 	(connection
 	 	(id wire09)
 		(in ignition)
 		(out starter)
+		(name "wire 9")
 	)
 	(connection
 	 	(id wire10)
 		(in ignition)
 		(out coil)
+		(name "wire 10")
 	)
 	(connection
 	 	(id wire11)
 		(in coil)
 		(out distributor)
+		(name "wire 11")
 	)
 	(connection
 	 	(id wire12)
 		(in distributor)
 		(out spark-plugs)
+		(name "wire 12")
 	)
 	(connection
 	 	(id wire13)
 		(in ignition)
 		(out signal-switch)
+		(name "wire 13")
 	)
 	(connection
 	 	(id wire14)
 		(in signal-switch)
 		(out merge-light-left)
+		(name "wire 14")
 	)
 	(connection
 	 	(id wire15)
 		(in signal-switch)
 		(out merge-light-right)
+		(name "wire 15")
 	)
 	(connection
 	 	(id wire16)
 		(in fuse-head-light-left)
 		(out head-light-indicator)
+		(name "wire 16")
 	)
 	(connection
 	 	(id wire17)
 		(in fuse-head-light-left)
 		(out head-light-left)
+		(name "wire 17")
 	)
 	(connection
 	 	(id wire18)
 		(in fuse-head-light-right)
 		(out head-light-right)
+		(name "wire 18")
 	)
 	(connection
 	 	(id wire19)
 		(in battery-fuse)
 		(out light-switch)
+		(name "wire 19")
 	)
 	(connection
 	 	(id wire20)
 		(in light-switch)
 		(out beam-switch)
+		(name "wire 20")
 	)
 	(connection
 	 	(id wire21)
 		(in light-switch)
 		(out fuse-beam-light-left)
+		(name "wire 21")
 	)
 	(connection
 	 	(id wire22)
 		(in light-switch)
 		(out fuse-beam-light-right)
+		(name "wire 22")
 	)
 	(connection
 	 	(id wire23)
 		(in beam-switch)
 		(out merge-light-left)
+		(name "wire 23")
 	)
 	(connection
 	 	(id wire24)
 		(in beam-switch)
 		(out merge-light-right)
+		(name "wire 24")
 	)
 	(connection
 	 	(id wire25)
 		(in fuse-beam-light-left)
 		(out beam-light-left)
+		(name "wire 25")
 	)
 	(connection
 	 	(id wire26)
 		(in fuse-beam-light-right)
 		(out beam-light-right)
+		(name "wire 26")
 	)
 	(connection
 	 	(id wire27)
 		(in merge-light-left)
 		(out fuse-head-light-left)
+		(name "wire 27")
 	)
 	(connection
 	 	(id wire28)
 		(in merge-light-right)
 		(out fuse-head-light-right)
+		(name "wire 28")
 	)
 
 ;lights
