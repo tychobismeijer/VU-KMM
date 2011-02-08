@@ -1,6 +1,6 @@
-(batch "jess/engine/car-templates.jess")
+(batch "jess/engine/domain-part-templates.jess")
 (batch "jess/car-knowledge/car-facts.jess")
-(batch "jess/engine/rules-templates.jess")
+(batch "jess/engine/domain-rules-templates.jess")
 (batch "jess/car-knowledge/rules-facts.jess")
 (batch "jess/engine/cover-rules.jess")
 (batch "jess/engine/specify-rules.jess")
