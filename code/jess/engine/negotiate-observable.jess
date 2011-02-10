@@ -2,6 +2,7 @@
     "Search for all the observables that can be observed"
 	(observable 
 		(id ?observable)
+		(name ?name)
 		(observed nil)
 		(could-be-observed TRUE)
 	)
