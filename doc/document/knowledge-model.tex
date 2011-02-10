@@ -22,7 +22,7 @@ The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' el
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{rule-types.pdf}
+	\includegraphics[width=7cm]{rule-types.pdf}
 	\caption{Rule types}
 	\label{fig:IS}
 \end{figure}
@@ -98,7 +98,14 @@ Note that the car is incomplete. It lacks, for example rear lights. The represen
 
 
 \subsection{Inference knowledge}
-The inference model is shown in figure~\ref{fig:InferenceModel}. This inference model is almost exactly the same as the template shown in the common cads book. The only difference is an additional interaction with the user `obtain possible selection'. This interaction was added because our user would greatly like to influence the reasoning process by proposing his own hypothesis. The model is annotated with a simple example of how the system could work.
+The inference model is shown in figure~\ref{fig:InferenceModel}. This inference
+model is almost the same as the template shown in the CommonKADS book.
+The first difference is an additional interaction with the user `obtain possible
+selection'. This interaction was added because our user would greatly like to
+influence the reasoning process by proposing his own hypothesis. The second
+difference is the added transfer function `try to repair'. This is added because
+the user has to try to repair his car to finally confirm an hypothesis. The model is
+annotated with a simple example of how the system could work.
 
 \begin{figure}[htbp]
 	\centering
@@ -112,12 +119,58 @@ The inference model is shown in figure~\ref{fig:InferenceModel}. This inference 
 In our context analysis we identified to major task shown in the TM-1 tables.
 For this project we decided to focus only on the diagnoses task. The task model
 of the diagnoses task is shown in figure~\ref{fig:taskDecomposition}. The task
-model shows that the diagnoses task simply consists of the inference and
+model shows that the diagnoses task consists of the inference and
 interactions of the template diagnoses task plus the `obtain possible selection'
-interaction that we added to the template.
+and `try to repair' transfer functions. `Obtain possible selection' is used for 
+improved user interaction about hypothesis.
+`Try to repair' is used to to ask the user to repair the car and confirm or
+reject an hypothesis.
 
 The task method we use to solve this task is in figure~\ref{fig:taskMethod}.
+\begin{verbatim}
+TASK diagnosis
+  ROLES:
+    INPUT:
+      complaint: "Finding that initiates the diagnostic process";
+    OUTPUT:
+      faults: "The faults that could have caused the complaint";
+      evidence: "The evidence gathered during diagnosis";
+END TASK diagnosis;
 
+TASK-METHOD augmented-causal-covering
+  REALIZES: diagnosis
+  DECOMPOSITION:
+    INFERENCES: cover, select, specify, verify;
+    TRANSFER-FUNCTIONS: obtain-possible-selection, obtain-finding,
+        try-to-repair;
+  ROLES:
+    INTERMEDIATE:
+      differential: "candidate solutions";
+      hypothesis: "candidate solution";
+      observable: "something that can be observed";
+      finding: "the resulting information of an observation";
+      repair-succesfull: "boolean indication result of the repair";
+  CONTROL-STRUCTURE:
+    cover(complaint -> differential);
+    REPEAT WHILE differential.size == 0
+      select(differential -> hypothesis);
+      obtain-possible-selection(differential + hypothesis -> hypothesis);
+      specify(hypothesis -> observable);
+      IF "observables left" THEN
+        obtain(observable -> finding);
+        evidence := finding ADD evidence;
+        verify(evidence + differential -> differential);
+      ELSE
+        try-to-repair(hypothesis -> repair-succesfull);
+        IF NOT repair-succesfull THEN
+          differential SUBSTRACT hypothesis;
+        END IF
+      END IF
+    UNTIL repair-succesfull
+    faults := differential;
+END TASK-METHOD
+
+\end{verbatim}
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.00\textwidth]{taskDecomposition.pdf}
