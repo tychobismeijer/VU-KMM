@@ -1,8 +1,0 @@
-(batch "jess/car-templates.jess")
-(batch "jess/car-facts.jess")
-(batch "jess/rules-templates.jess")
-(batch "jess/rules-facts.jess")
-(batch "jess/cover-rules.jess")
-(batch "jess/verify-rules.jess")
-(batch "jess/report-complaint.jess")
-(batch "jess/select.jess")

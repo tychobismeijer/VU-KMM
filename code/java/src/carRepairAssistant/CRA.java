@@ -292,7 +292,7 @@ public class CRA {
         jess = new Rete();
         c = new Console();
         try {
-            jess.batch("engine/run-from-java.jess");
+            jess.batch("jess/engine/run-from-java.jess");
             jess.reset();
             askLikelyComplaint();
             jess.run();

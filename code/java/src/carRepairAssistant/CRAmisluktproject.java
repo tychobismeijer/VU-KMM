@@ -11,7 +11,7 @@ public class CRAmisluktproject {
                                 NAME =1;
 
     private Rete jess;
-    private ConsoleCheat c;
+    private Console c;
     private View view;
     //private List<String[]> currentHypothesis;
 
@@ -276,7 +276,7 @@ public class CRAmisluktproject {
 
     public CRAmisluktproject() {
         jess = new Rete();
-        c = new ConsoleCheat();
+        c = new Console();
         view = new View();
         Hypothesis currentHypothesis = new Hypothesis();
         try {

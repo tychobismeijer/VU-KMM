@@ -1,5 +1,0 @@
-(batch "car-templates.jess")
-(batch "car-facts.jess")
-(batch "rules-templates.jess")
-(batch "rules-facts.jess")
-(batch "cover-rules.jess")

@@ -1,2 +1,2 @@
 #!/bin/sh
-CLASSPATH=build:lib/jess.jar java carRepairAssistant.CRA
+CLASSPATH=build:lib/jess.jar java carRepairAssistant.CRAmisluktproject

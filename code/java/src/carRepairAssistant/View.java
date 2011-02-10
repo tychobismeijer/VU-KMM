@@ -12,10 +12,10 @@ import jess.Rete;
  * @author Joost
  */
 public class View {
-    private ConsoleCheat c;
+    private Console c;
 
     View(){
-        c = new ConsoleCheat();
+        c = new Console();
     }
 
     private void printSpace(int number){
