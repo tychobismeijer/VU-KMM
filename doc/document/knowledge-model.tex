@@ -126,7 +126,31 @@ improved user interaction about hypothesis.
 `Try to repair' is used to to ask the user to repair the car and confirm or
 reject an hypothesis.
 
-The task method we use to solve this task is in figure~\ref{fig:taskMethod}.
+The task method we use to solve this task is in figure~\ref{fig:taskMethod} and
+~\ref{txt:taskMethod}. Our method is inspired by the causal-covering method of
+CommonKADS. A major improvement is that we ask the user to repair his car directly if
+we cannot find any observables for an hypothesis. If we waited until it made all
+possible observations for all hypothesis we would focus to much on unlikely
+hypothesis. It's much better to ask the user to repair a likely fault.
+
+Now wefurther specify the inferences and transfer functions.
+\begin{description}
+\item[Cover] finds all components and combination of components that could
+possibly cause the problem. This list of hypothesis is called the differential.
+\item[Select] selects a good hypothesis to test from a list of hypothesis.
+\item[Specify] finds a good observable to be observed for an hypothesis.
+\item[Verify] updates the differential by removing hypothesis that are not
+anymore possbible.
+\item[Obtain Possible Selection] asks the user to select a hypothesis from the
+differential. The user can also keep de hypothesis found by the select
+inference.
+\item[Obtain Finding] works with the user to do an observation of an observable
+and report the resulting finding.
+\item[Try to Repair] asks the user to verify an hypothesis by trying to repair
+the car. 
+\end{description}
+
+\begin{figure}[htbp]
 \begin{verbatim}
 TASK diagnosis
   ROLES:
@@ -170,8 +194,11 @@ TASK-METHOD augmented-causal-covering
     END WHILE
     faults := differential;
 END TASK-METHOD
-
 \end{verbatim}
+\caption{The task method for our diagnosis task.}
+\label{txt:taskMethod}
+\end{figure}
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.00\textwidth]{taskDecomposition.pdf}
