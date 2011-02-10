@@ -152,7 +152,8 @@ TASK-METHOD augmented-causal-covering
       repair-succesfull: "boolean indication result of the repair";
   CONTROL-STRUCTURE:
     cover(complaint -> differential);
-    REPEAT WHILE differential.size == 0
+    repair-succesfull := false;
+    REPEAT WHILE NOT differential.size == 0 AND NOT repair-succesfull
       select(differential -> hypothesis);
       obtain-possible-selection(differential + hypothesis -> hypothesis);
       specify(hypothesis -> observable);
@@ -166,7 +167,7 @@ TASK-METHOD augmented-causal-covering
           differential SUBSTRACT hypothesis;
         END IF
       END IF
-    UNTIL repair-succesfull
+    END WHILE
     faults := differential;
 END TASK-METHOD
 
