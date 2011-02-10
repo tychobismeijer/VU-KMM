@@ -1,0 +1,26 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Communication model}
+Since our system is highly interactive the communication model is very important. Figure~\ref{fig:dialogueDiagram} shows all the transaction that exist between the system and the user. Most transaction are pretty straight forward consisting of just some data being send from one to the other. The negotiate observable transaction is more complex and it therefore has its own flow control shown in figure~\ref{fig:trans3-control}. More details about these transactions are shown in tables TM-1 and TM-2.
+
+\subsection{CRA communication plan}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{dialogueDiagram.pdf}
+	\caption{Dialogue diagram of the diagnoses task}
+	\label{fig:dialogueDiagram}
+\end{figure}
+
+The control flow of the communication is shown in the communication plan (figure~\ref{fig:communicationPlan}). Because communication is so important in our system this plan is almost identical to the control flow of the CRA itself. 
+
+As can be seen there is the need for a complaint at the start of the plan. Once this need is satisfied the state of the system will run in circles alternating between needing hypothesis, needing observables, found covering observations and observed observation until there are either no hypothesis or no observables left. At that point the plan is finished, either successful or unsuccessful.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{communicationPlan.pdf}
+	\caption{The communication plan of the diagnoses task.}
+	\label{fig:communicationPlan}
+\end{figure}
+
+\subsection{CRA transactions}
+\input{CM-1}
+\input{CM-2}

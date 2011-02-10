@@ -1,0 +1,50 @@
+% Knowledge Management and Modelling Final
+% Tycho Bismeijer
+% Joost Huizinga
+% 10 feb 2011
+
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{array}
+\usepackage{lmodern}
+\usepackage{graphicx}
+
+\graphicspath{{../diagrams/}{}}
+
+% Voor de CommonKADS worksheets
+\def\pbs#1{\let\temp=\\#1\let\\=\temp}
+\def\colleft{\pbs\raggedright\hspace{0pt}}
+
+\title{The Car Repair Assistant}
+\author{
+Joost Huizinga (1557017)\\
+Tycho Bismeier (1615440)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{context-model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{knowledge-model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{communication-model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{design-model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{conclusion}
+
+
+\end{document}
+

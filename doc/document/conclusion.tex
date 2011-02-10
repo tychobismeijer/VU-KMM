@@ -1,0 +1,44 @@
+\section{Conclusion}
+\subsection{The process}
+The process of creating the knowledge based system went well in general.
+
+There was a problem with, unsurprisingly, the contact with our expert. Although the expert, a student car technician, was chosen because he was more easily accessible then the average car mechanic it was still difficult to get an appointment. Because of this the initial domain schema was eventually created without the help of the expert. Also, since we initially waited for an appointment there was a great delayed in our project. The information that was eventually obtained through our expert could be added rather nicely to our domain knowledge, but this ordering undoubtedly influenced the final model.
+
+We used most of the models and methods of CommonKADS during the project. The organization and agent
+model is useful to define the boundary and context of the system. As the environment
+of the system is very small, it only works together with the car hobbyist, we
+quickly finished those. With the task model we could better define and narrow
+down the task of the system. The knowledge model and the communication model
+are very useful. They form the foundation of our implementation.
+
+The knowledge
+model makes clear what rules and inferences should be used by the system. It
+also created problems which have disappeared when we implemented it. We struggled
+with the
+difference between inferences and rules types, designing a rule type for the
+cover inference separately from a rule type for the verify and specify step. This
+proved unnecessary when we implemented the rules.
+
+The CRA needs to work together with the car hobbyist. Communication is essential
+for the system. The communication model is great to model this. Creating this
+model was time-consuming, but proved worthwhile.
+
+We did try to make a design model based on the model view controller paradigm.
+It was very unclear how this should be done. With little time left and good
+preceding models we decided to just start the implementation based on the
+knowledge and communication model. We implemented the causal rules and component
+knowledge from the knowledge model in Jess. These rules were used in the
+inferences that we also implemented in Jess. The control of the program is based
+on the communication plan and dialog diagram of the communication model and
+implemented in Java.
+
+\subsection{The final result}
+The Car Repair Assistant performs its tasks reasonably well. It gives all possible causes and it will slowly reduce the number of possible causes by querying the user about various observables. The user can also steers this process by giving suggestion about which causes should be examined next. The system is also very flexible and using it with an other car, or even an other electrical system is very simple. Nevertheless, there are a lot of possible improvements.
+
+First, the Car Repair Assistant does not reason well over so called merges. These merges are places where two wires power a single component. When reasoning, if there exists an observation of a working component, and this component is powered only by a merge then there is the conclusion that the merge can not be unpowered. However, the system can not assign truth values for the connections powering the merge because either one might still be unpowered. As a result these hypothesis remain in the list of possible hypothesis. This makes the reasoning process much less powerful.
+
+An other important point that could be improved upon is the method that the CRA uses to suggest hypothesis and observables. Right now it just choses one without any preferences. It would be a lot better if these would be selected based upon the ease of obtaining the observations or based upon the information gain.
+
+A last obvious point of improvement would be in the interface. This system would be much more practical if it worked with a transparent picture of a car that depicted all the components and there locations. This would make the tool a lot easier to use for the users.
+
+Unfortunately there was little time to create the implementation of the final Car Repair Assistant. This is part due to the delay at the start of our project and part due to the fact that two months is not very long to create a fully functional knowledge system.
