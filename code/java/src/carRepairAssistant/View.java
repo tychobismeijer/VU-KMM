@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package carRepairAssistant;
 import java.util.ArrayList;
 import jess.JessException;
@@ -31,11 +26,6 @@ public class View {
         c.printf(number);
     }
 
-    private void printString(String string, int tab){
-         c.printf(string);
-         printSpace(tab - string.length());
-    }
-
     public void printCurrentHypothesis(Hypothesis hypothesis, Rete jess)throws JessException{
         c.printf("The hypothesis is that ");
         printHypothesis(hypothesis, jess);
@@ -49,7 +39,7 @@ public class View {
     private void printHypothesis(Hypothesis hypothesis, int[] tabArray, Rete jess) throws JessException{
         String name, state;
 
-        for(int j=0; j<hypothesis.size(); j++){
+        for(int j=hypothesis.size()-1; j>=0; j--){
             name = hypothesis.get(j).name();
             state = hypothesis.get(j).stateName();
             c.printf(" " + name);
@@ -57,7 +47,7 @@ public class View {
             c.printf(" is " + state);
             printSpace(tabArray[j*2+1] - state.length());
 
-            if(j+1<hypothesis.size()){
+            if(j>0){
                 c.printf(" and");
             }
         }
@@ -89,21 +79,41 @@ public class View {
         return result;
     }
 
+    public void suggestObservable(Observable observable){
+        c.printf("Do you want to observe if " + observable.name() + "? true/false/no\n");
+    }
+
+    public void printTryAgain(){
+        c.printf("try again: true/false/no\n");
+    }
+
+    public void printNoObservablesLeft(){
+        c.printf("No observables for this hypothesis \n");
+    }
+
     public void printSelectHypothesis(){
         c.printf("\n");
-        c.printf("---------SELECT HYPOTHESIS---------\n");
+        c.printf("-----------SELECT HYPOTHESIS----------\n");
     }
 
     public void printReportComplaint(){
         c.printf("\n");
-        c.printf("---------REPORT COMPLAINT---------\n");
+        c.printf("-----------REPORT COMPLAINT-----------\n");
+    }
+
+    public void printNegotiateObservable(){
+        c.printf("\n");
+        c.printf("---------NEGOTIATE OBSERVABLE---------\n");
+    }
+
+    public void printReportResult(){
+        c.printf("\n");
+        c.printf("------------REPORT RESULT-------------\n");
     }
 
     public void printHypothesisArray(ArrayList<Hypothesis> hypothesisArray, Rete jess) throws JessException{
         Hypothesis hypothesis;
         int[] tabArray = getTabArray(hypothesisArray);
-
-        c.printf("Available hypothesis are:\n");
 
         for(int i=0; i<hypothesisArray.size(); i++){
             hypothesis = hypothesisArray.get(i);
@@ -112,9 +122,33 @@ public class View {
         }
     }
 
+    public void printObservableArray(ArrayList<Observable> observableArray){
+        c.printf("Likely complaints are:\n");
+        for(int i=0; i<observableArray.size(); i++){
+            c.printf(i + ": " + observableArray.get(i).name() + " (id: " + observableArray.get(i).id() + ")\n");
+        }
+        c.printf("Your complaint is?\n");
+    }
+
     public void printSuggestion(Hypothesis suggestion, Rete jess) throws JessException{
         c.printf("We suggest: ");
         printHypothesis(suggestion, jess);
         c.printf("Do you have an other suggestion (no/nr/id)?\n");
+    }
+
+
+    public void printResult(ArrayList<Hypothesis> hypothesis, Rete jess) throws JessException{
+        printReportResult();
+        if(hypothesis.size()==0){
+            c.printf("There are no possible hypothesis left.\n");
+        } else if(hypothesis.size()==1){
+            c.printf("The cause is probably that: ");
+            printHypothesis(hypothesis.get(0), jess);
+            c.printf("Try to fix this and, if the problem remains, run the program again.\n");
+        } else {
+            c.printf("The cause is probably one of the following: \n");
+            printHypothesisArray(hypothesis, jess);
+            c.printf("Try to fix these and, if the problem remains, run the program again.\n");
+        }
     }
 }

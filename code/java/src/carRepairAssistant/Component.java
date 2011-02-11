@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package carRepairAssistant;
 
 /**
@@ -20,18 +15,34 @@ public class Component {
         this.state = new State(stateId, stateName);
     }
 
+    /**
+     * Returns a nicely printable name of this component
+     * @return The name of this component
+     */
     String name(){
         return name;
     }
 
+    /**
+     * Returns the id of this component as used in the jess enginge
+     * @return The id of this component
+     */
     String id(){
         return id;
     }
 
+    /**
+     * Returns a nicely printable name of the state of this component
+     * @return The name of this state
+     */
     String stateId(){
         return state.id();
     }
 
+    /**
+     * Returns the id of the state of this component as used in the jess enginge
+     * @return The id of the state of this component
+     */
     String stateName(){
         return state.name();
     }
