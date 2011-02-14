@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CRAmisluktproject {
+public class CRA {
     private Model m;
     private Console c;
     private View view;
 
 //Constructors
-    public CRAmisluktproject() {
+    public CRA() {
         //Define local objects
         List<Hypothesis> allHypothesis;
         Hypothesis currentHypothesis = new Hypothesis(m);
@@ -326,6 +326,6 @@ public class CRAmisluktproject {
 
 //Main
     public static void main(String[] arg) {
-        new CRAmisluktproject();
+        new CRA();
     }
 }
