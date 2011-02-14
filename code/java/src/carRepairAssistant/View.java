@@ -14,6 +14,64 @@ class View {
         c = new Console();
     }
 
+    public Observable askComplaint(List<Observable> allComplaints) {
+        Observable result;
+        String choice;
+
+        //Print complaints
+        printObservableArray(allComplaints);
+
+        //Receive input
+        choice = c.readLine();
+        choice = choice.trim();
+        if (isNumber(choice)){
+            int nrChoice = Integer.parseInt(choice);
+            result = allComplaints.get(nrChoice);
+        } else {
+            result = new Observable(choice, choice);
+        }
+
+        return result;
+    }
+
+    public Hypothesis askHypothesis(List<Hypothesis> allHypothesis) throws JessException {
+        List<Hypothesis> basicHypothesis;
+        Hypothesis hypothesis = new Hypothesis(allHypothesis.get(0).m);
+
+        //Print the start of the Select hypothesis fase
+        printSelectHypothesis();
+
+        do {
+            //Creates the list of basic hypothesis 
+            basicHypothesis = hypothesis.filterSingleExtensions(allHypothesis);
+
+            //Sets our suggestion
+            Hypothesis suggestion = basicHypothesis.get(basicHypothesis.size()-1);
+
+            //Print the available hypothesis and our suggestion
+            printHypothesisArray(basicHypothesis);
+            printSuggestion(suggestion);
+
+            //Receive user input
+            String choice = c.readLine();
+            choice = choice.trim();
+
+            if (isNumber(choice)){
+                //If the user made a choice from the list then that choice becomes the selected hypothesis
+                int nrChoice = Integer.parseInt(choice);
+                hypothesis = (basicHypothesis.get(nrChoice));
+            }
+            else {
+                //If the user did not make a choice then our suggestion becomes the selected hypothesis
+                hypothesis = suggestion;
+            }
+
+            //Repeat until the hypothesis is a direct cause for the complaint
+        } while(!hypothesis.directCause());
+
+        return hypothesis;
+    }
+
     private void printSpace(int number){
         for(int i=0; i<number; i++){
             c.printf(" ");
@@ -150,6 +208,21 @@ class View {
             c.printf("The cause is probably one of the following: \n");
             printHypothesisArray(hypothesis);
             c.printf("Try to fix these and, if the problem remains, run the program again.\n");
+        }
+    }
+
+    /**
+     * Returns whether the input string is parseble as an integer
+     * @param string The string to be tested
+     * @return True if the string can be parsed as an integer; False otherwise
+     */
+    private boolean isNumber(String string){
+        try{
+            Integer.parseInt(string);
+            return true;
+        }
+        catch(NumberFormatException nfe){
+            return false;
         }
     }
 }

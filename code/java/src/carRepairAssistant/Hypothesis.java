@@ -11,7 +11,7 @@ public class Hypothesis {
     Boolean directCause;
     Integer nrStateChanges;
     List<Component> hypothesisList;
-    private Model m;
+    Model m;
     Integer maxIndex;
     boolean tested;
     
@@ -51,6 +51,93 @@ public class Hypothesis {
         hypothesisList.add(new Component(componentId, componentName, stateId, stateName));
         tested = false;
         this.m = m;
+    }
+
+    /**
+     * Takes a list of composed and basic hypothesis and returns a list of all
+     * different basic hypothesis that are contained in these hypothesis.
+     * @param hypothesisList The list of hypothesis to be simplified
+     * @return A list of basic hypothesis
+     */
+    private static List<Hypothesis> simplifyHypothesis(List<Hypothesis> hypothesis){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
+        List<Hypothesis> temp;
+
+        //create an array of all basic hypothesis that are in the filtered hypothesis and that does not contain duplicates
+        for(int i=0; i<hypothesis.size(); i++){
+            //Split the hypothesis into its basic hypothesis
+            temp = hypothesis.get(i).split();
+            for(int j=0; j<temp.size(); j++){
+                if(!result.contains(temp.get(j))){
+                    //If the basic hypothesis is not yet contained in the result
+                    //Add it to the result
+                    result.add(temp.get(j));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds extensions of this hypothesis.
+     * It returns a list of hypothesis that contains this hypothesis
+     * and that extends it with at most one basic hypothesis.
+     *
+     * If this hypothesis is an empty hypothesis then the result will be
+     * a list of basic hypothesis.
+     *
+     * This function is used to generate the list of hypothesis that is shown to
+     * the user.
+     *
+     * @param hypothesis The list being filtered and simplified
+     * @return
+     */
+     public List<Hypothesis> filterSingleExtensions(List<Hypothesis> hypothesis){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
+        List<Hypothesis> temp;
+
+        result = filterExtensions(hypothesis);
+        result = simplifyHypothesis(result);
+
+        //Remove the current hypothesis
+        temp = this.split();
+        for(int i=0; i<temp.size();i++){
+            result.remove(temp.get(i));
+        }
+
+        //Add current hypothesis to all basic hypothesis
+        for(int i=0; i<result.size();i++){
+            result.get(i).add(this);
+        }
+
+        return result;
+    }
+
+    /**
+     * Takes a filter hypothesis and a list of hypothesis. It then returns a list
+     * of hypothesis that all contain the filter hypothesis and that does not
+     * contain any hypothesis that was already tested.
+     *
+     * Note, the filter hypothesis might be an empty hypothesis in which case
+     * this function only removes those hypothesis that are tested
+     * @param filterHypothesis The hypothesis used to filter the hypothesis list
+     * @param hypothesisList The hypothesis list that is being filtered
+     * @return A filtered hypothesis list
+     */
+    private List<Hypothesis> filterExtensions(List<Hypothesis> hypothesis){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
+
+        //find all hypothesis that contain the current hypothesis and are not yet tested
+        for(int i=0; i<hypothesis.size(); i++){
+            if(hypothesis.get(i).contains(this) && !hypothesis.get(i).tested){
+                //If this hypothesis contains the filter hypothesis and is not yet tested
+                //Add it to the result
+                result.add(hypothesis.get(i));
+            }
+        }
+
+        return result;
     }
 
     @Override
