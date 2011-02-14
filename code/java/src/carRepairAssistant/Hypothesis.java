@@ -4,16 +4,17 @@ import java.util.List;
 import jess.JessException;
 /**
  *
- * @author Joost
+ * @author Joost and Tycho
  */
 public class Hypothesis {
     Boolean contradiction;
     Boolean directCause;
     Integer nrStateChanges;
     List<Component> hypothesisList;
-    Model m;
     Integer maxIndex;
     boolean tested;
+
+    private Model m;
     
     /**
      * Construct an empty hypothesis

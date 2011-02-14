@@ -9,9 +9,14 @@ import jess.JessException;
  */
 class View {
     private Console c;
+    private Control control;
 
     View(){
         c = new Console();
+    }
+
+    void setControl(Control control) {
+        this.control = control;
     }
 
     public Observable askComplaint(List<Observable> allComplaints) {
@@ -36,7 +41,7 @@ class View {
 
     public Hypothesis askHypothesis(List<Hypothesis> allHypothesis) throws JessException {
         List<Hypothesis> basicHypothesis;
-        Hypothesis hypothesis = new Hypothesis(allHypothesis.get(0).m);
+        Hypothesis hypothesis = control.newEmptyHypothesis();
 
         //Print the start of the Select hypothesis fase
         printSelectHypothesis();

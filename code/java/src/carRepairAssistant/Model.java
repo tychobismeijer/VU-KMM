@@ -12,14 +12,20 @@ import java.util.Iterator;
 
 /**
  * The model of the car repair assistent. 
+ *
  * @author Tycho and Joost
  */
 class Model {
     private Rete jess;
+    private Control control;
 
     Model() {
         //Initialize jess
         jess = new Rete();
+    }
+
+    void setControl(Control control) {
+        this.control = control;
     }
 
     void setup() throws JessException {
