@@ -3,10 +3,24 @@
 (batch "jess/engine/domain-rules-templates.jess")
 (batch "jess/car-knowledge/car-rules.jess")
 (batch "jess/engine/cover-rules.jess")
-(batch "jess/engine/verify-rules.jess")
 (batch "jess/engine/specify-rules.jess")
 (batch "jess/engine/report-complaint.jess")
 (batch "jess/engine/select.jess")
 (batch "jess/engine/negotiate-observable.jess");
 (batch "jess/engine/obtain.jess");
-(batch "jess/engine/report-complaint.jess");
+
+(defquery search-components
+	(component 
+		(id ?component)
+		(state ?state)
+		(possible-states $?possible-states)
+		(impossible-states $?impossible-states)
+	)
+)
+
+(defquery components-in-state
+	(component 
+		(id ?component)
+		{state <> nill}
+	)
+)
