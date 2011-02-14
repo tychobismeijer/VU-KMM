@@ -1,12 +1,13 @@
 package carRepairAssistant;
 import java.util.ArrayList;
+import java.util.List;
 import jess.JessException;
-import jess.Rete;
+
 /**
  *
- * @author Joost
+ * @author Joost and Tycho
  */
-public class View {
+class View {
     private Console c;
 
     View(){
@@ -26,17 +27,17 @@ public class View {
         c.printf(number);
     }
 
-    public void printCurrentHypothesis(Hypothesis hypothesis, Rete jess)throws JessException{
+    public void printCurrentHypothesis(Hypothesis hypothesis) throws JessException{
         c.printf("The hypothesis is that ");
-        printHypothesis(hypothesis, jess);
+        printHypothesis(hypothesis);
     }
 
-    private void printHypothesis(Hypothesis hypothesis, Rete jess)throws JessException{
+    private void printHypothesis(Hypothesis hypothesis) throws JessException{
         int[] tabArray = new int[hypothesis.size()*2];
-        printHypothesis(hypothesis, tabArray, jess);
+        printHypothesis(hypothesis, tabArray);
     }
 
-    private void printHypothesis(Hypothesis hypothesis, int[] tabArray, Rete jess) throws JessException{
+    private void printHypothesis(Hypothesis hypothesis, int[] tabArray) throws JessException{
         String name, state;
 
         for(int j=hypothesis.size()-1; j>=0; j--){
@@ -52,13 +53,13 @@ public class View {
             }
         }
 
-        if(!hypothesis.directCause(jess)){
+        if(!hypothesis.directCause()){
             c.printf(" and...");
         }
         c.printf("\n");
     }
 
-    private int maxHypothesisSize(ArrayList<Hypothesis> hypothesisArray){
+    private int maxHypothesisSize(List<Hypothesis> hypothesisArray){
         int result = 0;
         for(int i=0; i<hypothesisArray.size(); i++){
             result = Math.max(result, hypothesisArray.get(i).size());
@@ -66,7 +67,7 @@ public class View {
         return result;
     }
 
-    private int[] getTabArray(ArrayList<Hypothesis> hypothesisArray){
+    private int[] getTabArray(List<Hypothesis> hypothesisArray){
         int[] result = new int[maxHypothesisSize(hypothesisArray)*2];
 
         for(int i=0; i<hypothesisArray.size(); i++){
@@ -111,18 +112,18 @@ public class View {
         c.printf("------------REPORT RESULT-------------\n");
     }
 
-    public void printHypothesisArray(ArrayList<Hypothesis> hypothesisArray, Rete jess) throws JessException{
+    public void printHypothesisArray(List<Hypothesis> hypothesisArray) throws JessException{
         Hypothesis hypothesis;
         int[] tabArray = getTabArray(hypothesisArray);
 
         for(int i=0; i<hypothesisArray.size(); i++){
             hypothesis = hypothesisArray.get(i);
             printInt(i, hypothesisArray.size());
-            printHypothesis(hypothesis, tabArray, jess);
+            printHypothesis(hypothesis, tabArray);
         }
     }
 
-    public void printObservableArray(ArrayList<Observable> observableArray){
+    public void printObservableArray(List<Observable> observableArray){
         c.printf("Likely complaints are:\n");
         for(int i=0; i<observableArray.size(); i++){
             c.printf(i + ": " + observableArray.get(i).name() + " (id: " + observableArray.get(i).id() + ")\n");
@@ -130,24 +131,24 @@ public class View {
         c.printf("Your complaint is?\n");
     }
 
-    public void printSuggestion(Hypothesis suggestion, Rete jess) throws JessException{
+    public void printSuggestion(Hypothesis suggestion) throws JessException{
         c.printf("We suggest: ");
-        printHypothesis(suggestion, jess);
+        printHypothesis(suggestion);
         c.printf("Do you have an other suggestion (no/nr/id)?\n");
     }
 
 
-    public void printResult(ArrayList<Hypothesis> hypothesis, Rete jess) throws JessException{
+    public void printResult(List<Hypothesis> hypothesis) throws JessException{
         printReportResult();
         if(hypothesis.size()==0){
             c.printf("There are no possible hypothesis left.\n");
         } else if(hypothesis.size()==1){
             c.printf("The cause is probably that: ");
-            printHypothesis(hypothesis.get(0), jess);
+            printHypothesis(hypothesis.get(0));
             c.printf("Try to fix this and, if the problem remains, run the program again.\n");
         } else {
             c.printf("The cause is probably one of the following: \n");
-            printHypothesisArray(hypothesis, jess);
+            printHypothesisArray(hypothesis);
             c.printf("Try to fix these and, if the problem remains, run the program again.\n");
         }
     }

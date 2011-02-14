@@ -1,36 +1,34 @@
 package carRepairAssistant;
 
-import jess.Rete;
 import jess.JessException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class CRAmisluktproject {
-    private Rete jess;
+    private Model m;
     private Console c;
     private View view;
 
 //Constructors
     public CRAmisluktproject() {
         //Define local objects
-        ArrayList<Hypothesis> allHypothesis;
-        Hypothesis currentHypothesis = new Hypothesis();
+        List<Hypothesis> allHypothesis;
+        Hypothesis currentHypothesis = new Hypothesis(m);
 
         //Construct global objects
-        jess = new Rete();
         c = new Console();
+        m = new Model();
         view = new View();
         
         try {
-            //Initialize jess
-            jess.batch("jess/test/test-multi-cover.jess");
-            jess.reset();
+            m.setup();
 
             //Receive the complaint
             reportComplaint();
 
             //Generate all hypothesis
-            allHypothesis = coverComplaints();
+            allHypothesis = m.allHypothesis();
 
             while (hypothesisLeft(allHypothesis)) {
                 //While there are still viable hypothesis left
@@ -55,18 +53,19 @@ public class CRAmisluktproject {
 
 //Main methods
     /**
-     * Gets the complaint from the user and asserts it to the jess rules engine
+     * Gets the complaint from the user and asserts it to the model.
+     *
      * @throws jess.JessException
      */
     private void reportComplaint() throws JessException{
         String choice;
-        Observable observable;
+        Observable complaint;
 
         //Print the start of the report complaint fase
         view.printReportComplaint();
         
-        //Get possible complaints
-        ArrayList<Observable> allComplaints = allComplaints();
+        //Get likely complaints
+        List<Observable> allComplaints = m.likelyComplaints();
 
         //Print complaints
         view.printObservableArray(allComplaints);
@@ -76,39 +75,13 @@ public class CRAmisluktproject {
         choice = choice.trim();
         if (isNumber(choice)){
             int nrChoice = Integer.parseInt(choice);
-            observable = allComplaints.get(nrChoice);
+            complaint = allComplaints.get(nrChoice);
         } else {
-            observable = new Observable(choice, choice);
+            complaint = new Observable(choice, choice);
         }
 
         //Assert complaint
-        observable.assertAsComplaint(jess);
-    }
-
-    /**
-     * Generates all possible hypothesis that could cause the reported complaint
-     * @return All possible hypothesis
-     * @throws jess.JessException
-     */
-    private ArrayList<Hypothesis> coverComplaints() throws JessException{
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
-
-        //Runs the jess engine and queries for all basic hypothesis
-        jess.run();
-        jess.QueryResult hypothesis = jess.runQueryStar("search-hypothesis", new jess.ValueVector());
-
-        //Adds the basic hypothesis to the result array
-        while (hypothesis.next()) {
-            result.add(new Hypothesis(hypothesis.getString("component"),
-                    hypothesis.getString("name"),
-                    hypothesis.getString("state"),
-                    hypothesis.getString("stateName")));
-        }
-        
-        //Expands the basic hypothesis to composed hypothesis where necessary
-        result = expandHypothesis(result);
-
-        return result;
+        m.assertComplaint(complaint);
     }
 
     /**
@@ -117,9 +90,9 @@ public class CRAmisluktproject {
      * @return The selected hypothesis.
      * @throws jess.JessException
      */
-    private Hypothesis selectHypothesis(ArrayList<Hypothesis> allHypothesis) throws JessException{
-        ArrayList<Hypothesis> basicHypothesis;
-        Hypothesis hypothesis = new Hypothesis();
+    private Hypothesis selectHypothesis(List<Hypothesis> allHypothesis) throws JessException{
+        List<Hypothesis> basicHypothesis;
+        Hypothesis hypothesis = new Hypothesis(m);
 
         //Print the start of the Select hypothesis fase
         view.printSelectHypothesis();
@@ -132,8 +105,8 @@ public class CRAmisluktproject {
             Hypothesis suggestion = basicHypothesis.get(basicHypothesis.size()-1);
 
             //Print the available hypothesis and our suggestion
-            view.printHypothesisArray(basicHypothesis, jess);
-            view.printSuggestion(suggestion, jess);
+            view.printHypothesisArray(basicHypothesis);
+            view.printSuggestion(suggestion);
 
             //Receive user input
             String choice = c.readLine();
@@ -150,7 +123,7 @@ public class CRAmisluktproject {
             }
 
             //Repeat until the hypothesis is a direct cause for the complaint
-        }while(!hypothesis.directCause(jess));
+        } while(!hypothesis.directCause());
 
         return hypothesis;
     }
@@ -162,14 +135,14 @@ public class CRAmisluktproject {
      * @throws jess.JessException
      */
     private boolean specifyObservable(Hypothesis hypothesis) throws JessException {
-        ArrayList<Observable> observables;
+        List<Observable> observables;
         String answer;
 
         //Print the start of the specify observable fase
         view.printNegotiateObservable();
 
         //Generate all possible observables that could falsify the hypothesis
-        observables = hypothesis.observables(jess);
+        observables = m.observables(hypothesis);
 
         //Ask until there are no observables left or the answer is not 'no'
         answer = "no";
@@ -181,10 +154,10 @@ public class CRAmisluktproject {
             while (true) {
                 answer = c.readLine();
                 if (answer.equals("true")) {
-                    observable.assertAsObservation(true, jess);
+                    m.assertFinding(observable, true);
                     return true;
                 } else if (answer.equals("false")) {
-                    observable.assertAsObservation(false, jess);
+                    m.assertFinding(observable, false);
                     return true;
                 } else if (answer.equals("no")) {
                     break;
@@ -204,14 +177,14 @@ public class CRAmisluktproject {
      * @return A list of hypothesis that does not contain any contradictions
      * @throws jess.JessException
      */
-    private ArrayList<Hypothesis> verifyHypothesis(ArrayList<Hypothesis> allHypothesis) throws JessException{
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
+    private List<Hypothesis> verifyHypothesis(List<Hypothesis> allHypothesis) throws JessException{
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
 
         for(int i=0; i<allHypothesis.size(); i++){
             //For each hypothesis do:
             //Rerun the reasoning process using the new data
-            allHypothesis.get(i).test(jess);
-            if(!allHypothesis.get(i).contradiction(jess)){
+            m.test(allHypothesis.get(i));
+            if(!allHypothesis.get(i).contradiction()){
                 //If the hypothesis does NOT contain a contradiction
                 //Add it to the result
                 result.add(allHypothesis.get(i));
@@ -226,85 +199,11 @@ public class CRAmisluktproject {
      * @param allHypothesis The hypothesis on which the results will be based.
      * @throws jess.JessException
      */
-    private void reportResult(ArrayList<Hypothesis> allHypothesis) throws JessException{
-        view.printResult(allHypothesis, jess);
+    private void reportResult(List<Hypothesis> allHypothesis) throws JessException{
+        view.printResult(allHypothesis);
     }
 
 //Secondary methods
-    /**
-     * Expands a list of basic hypothesis into composed hypothesis where necessary.
-     * A basic hypothesis is an hypothesis which consists of only one component and its state.
-     * A composed hypothesis is an hypothesis consisting of multiple components and their states.
-     * It is necessary to expand a basic hypothesis when the hypothesis is not a direct cause.
-     * 
-     * E.G. 'Wire 16 is broken' is a basic hypothesis for 'left head light gives no light',
-     * but assuming that ONLY 'wire 16 is broken' does not lead to 'left head light gives no light'
-     * (it is not a direct cause).
-     * Therefore 'wire 16 is broken' has to be expanded to, for example
-     * 'wire 16 is broken and light switch is broken'.
-     *
-     * Note that most basic hypothesis are expanded into multiple composed hypothesis,
-     * thus the returned list is often bigger then the inital list.
-     * @param allHypothesis A list of basic hypothesis which should be expanded.
-     * @return A list of expanded hypothesis.
-     * @throws jess.JessException
-     */
-    private ArrayList<Hypothesis> expandHypothesis(ArrayList<Hypothesis> allHypothesis) throws JessException{
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
-        ArrayList<Hypothesis> basicHypothesis = new ArrayList<Hypothesis>();
-        LinkedList<Hypothesis> candidateHypothesis = new LinkedList<Hypothesis>();
-        Hypothesis currentHypothesis;
-        Hypothesis newHypothesis;
-
-        //Check each hypothesis and create a list of hypothesis should be expanded
-        for(int i=0; i<allHypothesis.size(); i++){
-            currentHypothesis = allHypothesis.get(i);
-
-            if(currentHypothesis.directCause(jess)){
-                //If the current hypothesis is a direct cause it does not need expanding
-                //add it to result
-                result.add(allHypothesis.get(i));
-            } else {
-                //If this hypothesis is not a direct cause then it needs expanding
-                //Store the index of this hypothesis for optimalization purpose
-                currentHypothesis.maxIndex = basicHypothesis.size();
-                //Add the hypothesis to the list of basic hypothesis that will be used for expanding
-                basicHypothesis.add(currentHypothesis);
-                //Add the hypothesis to the queue of candidates for expanding
-                candidateHypothesis.add(currentHypothesis); 
-            }
-        }
-
-        //Expand the candidate hypothesis
-        while(candidateHypothesis.peek() != null){
-            //Get the first hypothesis
-            currentHypothesis = candidateHypothesis.pop();
-            for(int j=currentHypothesis.maxIndex; j<basicHypothesis.size(); j++){
-                //For each basic hypothesis that we have not tried with this combination
-                //Create a new composed hypothesis by expanding the candidate with the basic hypothesis
-                newHypothesis = currentHypothesis.clone();
-                newHypothesis.add(basicHypothesis.get(j));
-
-                if(newHypothesis.directCause(jess)){
-                    //If the new hypothesis is a direct cause then a new composed hypothesis has been found
-                    //Add it to the result
-                    result.add(newHypothesis);
-                } else {
-                    //If the new hypothesis is not a direct cause then it might need further expanding.
-                    //Check whether new information was gained with the composed hypothesis by
-                    //checking whether the new hypothesis causes more state changes then
-                    //the two previous hypothesis combined
-                    if((currentHypothesis.nrStateChanges(jess) + basicHypothesis.get(j).nrStateChanges(jess) < newHypothesis.nrStateChanges(jess))){
-                        //If new information was gained then the new hypothesis
-                        //should get further expanded
-                        candidateHypothesis.add(newHypothesis);
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
 
     /**
      * Takes a filter hypothesis and a list of hypothesis. It then returns a list
@@ -317,8 +216,8 @@ public class CRAmisluktproject {
      * @param hypothesisList The hypothesis list that is being filtered
      * @return A filtered hypothesis list
      */
-    private ArrayList<Hypothesis> filterHypothesis(Hypothesis filterHypothesis, ArrayList<Hypothesis> hypothesisList){
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
+    private List<Hypothesis> filterHypothesis(Hypothesis filterHypothesis, List<Hypothesis> hypothesisList){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
 
         //find all hypothesis that contain the current hypothesis and are not yet tested
         for(int i=0; i<hypothesisList.size(); i++){
@@ -338,9 +237,9 @@ public class CRAmisluktproject {
      * @param hypothesisList The list of hypothesis to be simplified
      * @return A list of basic hypothesis
      */
-    private ArrayList<Hypothesis> simplifyHypothesis(ArrayList<Hypothesis> hypothesisList){
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
-        ArrayList<Hypothesis> temp;
+    private List<Hypothesis> simplifyHypothesis(List<Hypothesis> hypothesisList){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
+        List<Hypothesis> temp;
 
         //create an array of all basic hypothesis that are in the filtered hypothesis and that does not contain duplicates
         for(int i=0; i<hypothesisList.size(); i++){
@@ -372,9 +271,9 @@ public class CRAmisluktproject {
      * @param hypothesisList The list being filtered and simplified
      * @return
      */
-    private ArrayList<Hypothesis> filterAndSimplifyHypothesis(Hypothesis filterHypothesis, ArrayList<Hypothesis> hypothesisList){
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
-        ArrayList<Hypothesis> temp;
+    private List<Hypothesis> filterAndSimplifyHypothesis(Hypothesis filterHypothesis, List<Hypothesis> hypothesisList){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
+        List<Hypothesis> temp;
 
         result = filterHypothesis(filterHypothesis, hypothesisList);
         result = simplifyHypothesis(result);
@@ -409,32 +308,13 @@ public class CRAmisluktproject {
     }
 
     /**
-     * Returns all observables that are likely as a complaint
-     * @return Observables that are likely as complaints
-     * @throws jess.JessException
-     */
-    private ArrayList<Observable> allComplaints() throws JessException {
-        ArrayList<Observable> result = new ArrayList<Observable>();
-
-        //Run the query
-        jess.QueryResult likely_complaints = jess.runQueryStar("search-likely-complaints", new jess.ValueVector());
-
-        //Put the results in an array list
-        while (likely_complaints.next()){
-            result.add(new Observable(likely_complaints.getString("observable"), likely_complaints.getString("name")));
-        }
-
-        return result;
-    }
-
-    /**
      * Indicates wheter there are any viable hypothesis left.
      * Counts only hypothesis that are not yet tested.
      * @param hypothesis The hypothesis to be evaluated
      * @return True if there is at least one viable hypothesis in the array;
      * False otherwise
      */
-    private boolean hypothesisLeft(ArrayList<Hypothesis> hypothesis){
+    private boolean hypothesisLeft(List<Hypothesis> hypothesis){
         for(int i=0; i<hypothesis.size(); i++){
             if(!hypothesis.get(i).tested){
                 return true;

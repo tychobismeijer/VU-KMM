@@ -1,51 +1,56 @@
 package carRepairAssistant;
 import java.util.ArrayList;
-import java.util.Iterator;
-import jess.Rete;
+import java.util.List;
 import jess.JessException;
-import jess.WorkingMemoryMarker;
-import jess.RU;
 /**
  *
  * @author Joost
  */
 public class Hypothesis {
-    private ArrayList<Component> hypothesisList;
-    private Boolean contradiction;
-    private Boolean directCause;
-    private Integer nrStateChanges;
-    public Integer maxIndex;
-    public boolean tested;
+    Boolean contradiction;
+    Boolean directCause;
+    Integer nrStateChanges;
+    List<Component> hypothesisList;
+    private Model m;
+    Integer maxIndex;
+    boolean tested;
     
-
-    Hypothesis(){
+    /**
+     * Construct an empty hypothesis
+     */
+    Hypothesis(Model m){
         hypothesisList = new ArrayList<Component>();
         tested = false;
+        this.m = m;
     }
 
-    Hypothesis(ArrayList<Component> hypothesisList){
+    Hypothesis(List<Component> hypothesisList, Model m){
         this.hypothesisList = hypothesisList;
         tested = false;
+        this.m = m;
     }
 
-    Hypothesis(Hypothesis hypothesis){
+    Hypothesis(Hypothesis hypothesis, Model m){
         hypothesisList = new ArrayList<Component>();
         for(int i =0; i<hypothesis.size();i++){
             hypothesisList.add(hypothesis.get(i));
         }
         tested = false;
+        this.m = hypothesis.m;
     }
 
-    Hypothesis(Component component){
+    Hypothesis(Component component, Model m){
         hypothesisList = new ArrayList<Component>();
         hypothesisList.add(component);
         tested = false;
+        this.m = m;
     }
 
-    Hypothesis(String componentId, String componentName, String stateId, String stateName){
+    Hypothesis(String componentId, String componentName, String stateId, String stateName, Model m){
         hypothesisList = new ArrayList<Component>();
         hypothesisList.add(new Component(componentId, componentName, stateId, stateName));
         tested = false;
+        this.m = m;
     }
 
     @Override
@@ -84,11 +89,6 @@ public class Hypothesis {
         return hash;
     }
     
-    @Override
-    public Hypothesis clone(){
-        return new Hypothesis(this);
-    }
-
     /**
     * Returns the number of components in this hypothesis
     * @return the number of components
@@ -111,11 +111,11 @@ public class Hypothesis {
      * When the current hypothesis is already a basic hypothesis it just returns the current hypothesis
      * @return
      */
-    public ArrayList<Hypothesis> split(){
-        ArrayList<Hypothesis> result = new ArrayList<Hypothesis>();
+    public List<Hypothesis> split(){
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
 
          for(int i=0; i<hypothesisList.size(); i++){
-             result.add(new Hypothesis(hypothesisList.get(i)));
+             result.add(new Hypothesis(hypothesisList.get(i), m));
          }
 
         return result;
@@ -162,9 +162,9 @@ public class Hypothesis {
      * @return Returns true if this hypothesis causes a contradiction
      * @throws jess.JessException
      */
-    public boolean contradiction(Rete jess) throws JessException{
+    public boolean contradiction() throws JessException{
         if (contradiction == null){
-            test(jess);
+            m.test(this);
         }
         return contradiction;
     }
@@ -176,110 +176,27 @@ public class Hypothesis {
      * @return Returns true if this hypothesis is a direct cause
      * @throws jess.JessException
      */
-    public boolean directCause(Rete jess) throws JessException{
+    public boolean directCause() throws JessException{
         if (directCause == null){
-            test(jess);
+            m.test(this);
         }
         return directCause;
     }
 
     /**
-     * Returns the number of state changes whithin the supplied jess engine that is caused by assuming this hypothesis
-     * @param jess The supplied jess engine
+     * Returns the number of state changes whithin the supplied model that is caused by assuming this hypothesis.
+     *
      * @return Returns the number of state changes
      * @throws jess.JessException
      */
-    public int nrStateChanges(Rete jess) throws JessException{
+    public int nrStateChanges() throws JessException {
         if (nrStateChanges == null){
-            test(jess);
+            m.test(this);
         }
         return nrStateChanges;
     }
 
-    /**
-     * Returns all observables with which this hypothesis could be falsified whithin the supplied jess engine
-     * @param jess The supplied jess engine
-     * @return Returns an array list of observables that could falsify this hypothesis
-     * @throws jess.JessException
-     */
-    public ArrayList<Observable> observables(Rete jess) throws JessException{
-        ArrayList<Observable> result = new ArrayList<Observable>();
-
-        test(jess);
-
-        jess.QueryResult observables = jess.runQueryStar("search-observable", new jess.ValueVector());
-
-        while (observables.next()){
-            result.add(new Observable(observables.getString("observable"), observables.getString("name")));
-        }
-        
-        return result;
-    }
-
-    /**
-     * Asserts this hypothesis in the supplied jess engine and internally stores the results
-     * @param jess The supplied jess engine
-     * @throws jess.JessException
-     */
-    public void test(Rete jess) throws JessException{
-        WorkingMemoryMarker beforeHypothesis = jess.mark();
-        reset(jess);
-
-        for(int i=0; i<hypothesisList.size();i++){
-            jess.assertString(
-                "(hypothesis " +
-                hypothesisList.get(i).id() + " " +
-                hypothesisList.get(i).stateId() + ")"
-            );
-        }
-        jess.run();
-
-        contradiction = !(jess.findFactByFact(new jess.Fact("contradiction", jess)) ==null);
-        directCause = !(jess.findFactByFact(new jess.Fact("direct-cause", jess)) ==null);
-        nrStateChanges = 0;
-        jess.QueryResult components = jess.runQueryStar("components-in-state", new jess.ValueVector());
-
-        while (components.next()) {
-            nrStateChanges++;
-        }
-        
-        jess.resetToMark(beforeHypothesis);
-    }
-
-    /**
-     * Retracts all hypothesis and all conclusions that relate to these hypothesis from the supplied jess enginge.
-     * Facts related to hypothesis are contradictions and direct causes.
-     * Also reverts all state changes.
-     * @param jess The supplied jess engine.
-     * @throws jess.JessException
-     */
-    private void reset(Rete jess) throws JessException{
-        jess.Value nil = new jess.Value("nil", RU.SYMBOL);
-        jess.Fact fact;
-
-        Iterator<jess.Fact> facts = jess.listFacts();
-        while(facts.hasNext()){
-            fact = facts.next();
-            //Reset all states to nill before trying a new hypothesis
-            if (fact.getDeftemplate().getSlotIndex("state")>0){
-                jess.modify(fact, "state", nil);
-            }
-            //Reset all could-be-observed to nil before trying a new hypothesis
-            if (fact.getDeftemplate().getSlotIndex("could-be-observed")>0){
-                jess.modify(fact, "could-be-observed", nil);
-            }
-            //Retract all old hypothesis
-            if (fact.getName().equals("MAIN::hypothesis")){
-                jess.retract(fact);
-            }
-            //Retract all old contradictions
-            if (fact.getName().equals("MAIN::contradiction")){
-                jess.retract(fact);
-            }
-            //Retract all old direct-causes
-            if (fact.getName().equals("MAIN::direct-cause")){
-                jess.retract(fact);
-            }
-        }
+    public Hypothesis clone() {
+        return new Hypothesis(this, m);
     }
 }
