@@ -1,18 +1,28 @@
 package carRepairAssistant;
-import jess.JessException;
-import jess.Rete;
 /**
  * An observable that can be observed and/or is a complaint.
+ * An empty observable means that there was or is nothing to observe.
  *
  * @author Joost and Tycho
  */
-public class Observable {
+class Observable {
     private String name;
     private String id;
 
-    Observable (String id, String name){
+    /**
+     * Construct an Observable with id and name
+     */
+    Observable(String id, String name){
         this.id = id;
         this.name = name;
+    }
+
+    /**
+     * Construct an empty Observable
+     */
+    Observable() {
+        this.id = "";
+        this.name = "";
     }
 
     /**
@@ -31,5 +41,12 @@ public class Observable {
      */
     public String id(){
         return id;
+    }
+    
+    /**
+     * Predicate about wether this Observable is empty or not
+     */
+    public boolean empty() {
+        return id.equals("");
     }
 }

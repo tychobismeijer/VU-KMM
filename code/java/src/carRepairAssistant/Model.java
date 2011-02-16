@@ -24,11 +24,11 @@ class Model {
         jess = new Rete();
     }
 
-    void setControl(Control control) {
+    public void setControl(Control control) {
         this.control = control;
     }
 
-    void setup() throws JessException {
+    public void setup() throws JessException {
         jess.batch("jess/engine/run-from-java.jess");
         jess.reset();
     }
@@ -39,7 +39,7 @@ class Model {
      *
      * @param c The observable that was observed a a complaint.
      */
-    void assertComplaint(Observable c) throws JessException {
+    public void assertComplaint(Observable c) throws JessException {
         String fact = "(complaint " + c.id() + " TRUE)";
         jess.assertString(fact);
     }
@@ -52,9 +52,9 @@ class Model {
      *      <code>true</code> if the observation was positive,
      *      <code>false</code> if the observation was negative.
      */
-    void assertFinding(Observable f, boolean result) throws JessException {
-        String fact = "(observed " + f.id();
-        if (result) {
+    public void assertFinding(Finding f) throws JessException {
+        String fact = "(observed " + f.observation().id();
+        if (f.result()) {
             fact = fact + " TRUE)";
         } else {
             fact = fact + " FALSE)";
@@ -70,15 +70,16 @@ class Model {
      *
      * @param h The hypothesis that is impossible
      */
-    void assertImpossible(Hypothesis h) throws JessException {
-        for (int i=0; i<h.hypothesisList.size(); i++) {
-            jess.assertString(
-                "(impossible " +
-                    h.hypothesisList.get(i).id() + " " +
-                    h.hypothesisList.get(i).stateId() +
-                ")"
-            );
-        }
+    public void assertImpossible(Hypothesis h) throws JessException {
+        h.assertImpossible();
+    }
+
+    public void assertImpossible(Component c) throws JessException {
+        jess.assertString(
+            "(impossible " +
+                c.id() + " " +
+                c.stateId() +
+            ")");
         jess.run();
     }
 
@@ -88,7 +89,7 @@ class Model {
      * @return A list of the observables. An empty list if there are no
      *      observables for the hypothesis.
      */
-    List<Observable> observables(Hypothesis h) throws JessException {
+    public List<Observable> observables(Hypothesis h) throws JessException {
         List<Observable> result = new ArrayList<Observable>();
 
         test(h);
@@ -105,7 +106,7 @@ class Model {
      *
      * @return A list with all the possible hypothesis.
      */
-    List<Hypothesis> allHypothesis() throws JessException {
+    public List<Hypothesis> allHypothesis() throws JessException {
         List<Hypothesis> result = new ArrayList<Hypothesis>();
 
         //Runs the jess engine and queries for all basic hypothesis
@@ -132,7 +133,7 @@ class Model {
      *
      * @return A list of the likely complaints.
      */
-    List<Observable> likelyComplaints() throws JessException {
+    public List<Observable> likelyComplaints() throws JessException {
         List<Observable> result = new ArrayList<Observable>();
 
         //Run the query
@@ -155,14 +156,8 @@ class Model {
         WorkingMemoryMarker beforeHypothesis = jess.mark();
         resetHypothesis();
 
-        for (int i=0; i<h.hypothesisList.size(); i++) {
-            jess.assertString(
-                "(hypothesis " +
-                    h.hypothesisList.get(i).id() + " " +
-                    h.hypothesisList.get(i).stateId() +
-                ")"
-            );
-        }
+        h.assertH();
+
         jess.run();
 
         h.contradiction = !(jess.findFactByFact(new jess.Fact("contradiction", jess)) == null);
@@ -176,6 +171,16 @@ class Model {
         
         jess.resetToMark(beforeHypothesis);
     }
+
+    void assertComponentState(Component c) throws JessException {
+        jess.assertString(
+            "(hypothesis " +
+                c.id() + " " +
+                c.stateId() +
+            ")"
+        );
+    }
+
 
     /**
      * Expands a list of basic hypothesis into composed hypothesis where necessary.

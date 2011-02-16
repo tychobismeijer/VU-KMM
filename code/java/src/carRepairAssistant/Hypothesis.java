@@ -10,7 +10,7 @@ public class Hypothesis {
     Boolean contradiction;
     Boolean directCause;
     Integer nrStateChanges;
-    List<Component> hypothesisList;
+    private List<Component> componentList;
     Integer maxIndex;
     boolean tested;
 
@@ -20,36 +20,36 @@ public class Hypothesis {
      * Construct an empty hypothesis
      */
     Hypothesis(Model m){
-        hypothesisList = new ArrayList<Component>();
+        componentList = new ArrayList<Component>();
         tested = false;
         this.m = m;
     }
 
-    Hypothesis(List<Component> hypothesisList, Model m){
-        this.hypothesisList = hypothesisList;
+    Hypothesis(List<Component> componentList, Model m){
+        this.componentList = componentList;
         tested = false;
         this.m = m;
     }
 
     Hypothesis(Hypothesis hypothesis, Model m){
-        hypothesisList = new ArrayList<Component>();
+        componentList = new ArrayList<Component>();
         for(int i =0; i<hypothesis.size();i++){
-            hypothesisList.add(hypothesis.get(i));
+            componentList.add(hypothesis.get(i));
         }
         tested = false;
         this.m = hypothesis.m;
     }
 
     Hypothesis(Component component, Model m){
-        hypothesisList = new ArrayList<Component>();
-        hypothesisList.add(component);
+        componentList = new ArrayList<Component>();
+        componentList.add(component);
         tested = false;
         this.m = m;
     }
 
     Hypothesis(String componentId, String componentName, String stateId, String stateName, Model m){
-        hypothesisList = new ArrayList<Component>();
-        hypothesisList.add(new Component(componentId, componentName, stateId, stateName));
+        componentList = new ArrayList<Component>();
+        componentList.add(new Component(componentId, componentName, stateId, stateName));
         tested = false;
         this.m = m;
     }
@@ -57,7 +57,7 @@ public class Hypothesis {
     /**
      * Takes a list of composed and basic hypothesis and returns a list of all
      * different basic hypothesis that are contained in these hypothesis.
-     * @param hypothesisList The list of hypothesis to be simplified
+     * @param componentList The list of hypothesis to be simplified
      * @return A list of basic hypothesis
      */
     private static List<Hypothesis> simplifyHypothesis(List<Hypothesis> hypothesis){
@@ -123,7 +123,7 @@ public class Hypothesis {
      * Note, the filter hypothesis might be an empty hypothesis in which case
      * this function only removes those hypothesis that are tested
      * @param filterHypothesis The hypothesis used to filter the hypothesis list
-     * @param hypothesisList The hypothesis list that is being filtered
+     * @param componentList The hypothesis list that is being filtered
      * @return A filtered hypothesis list
      */
     private List<Hypothesis> filterExtensions(List<Hypothesis> hypothesis){
@@ -152,13 +152,13 @@ public class Hypothesis {
 
         Hypothesis otherHypothesis = (Hypothesis) otherObject;
         
-        if(hypothesisList.size() != otherHypothesis.size())
+        if(componentList.size() != otherHypothesis.size())
             return false;
 
-        for(int i=0; i<hypothesisList.size(); i++){
+        for(int i=0; i<componentList.size(); i++){
             temp = false;
             for(int j=0; j<otherHypothesis.size(); j++){
-                if(hypothesisList.get(i).equals(otherHypothesis.get(j)))
+                if(componentList.get(i).equals(otherHypothesis.get(j)))
                     temp = true;
             }
 
@@ -173,7 +173,7 @@ public class Hypothesis {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + (this.hypothesisList != null ? this.hypothesisList.hashCode() : 0);
+        hash = 67 * hash + (this.componentList != null ? this.componentList.hashCode() : 0);
         return hash;
     }
     
@@ -182,7 +182,7 @@ public class Hypothesis {
     * @return the number of components
     */
     public int size(){
-        return hypothesisList.size();
+        return componentList.size();
     }
 
     /**
@@ -191,9 +191,28 @@ public class Hypothesis {
      * @return The component at index i
      */
     public Component get(int i){
-        return hypothesisList.get(i);
+        return componentList.get(i);
     }
 
+    public boolean containsWire() {
+        for (Component c : componentList) {
+            if (Pattern.matches("*wire*", c.id())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void assertImpossible() throws JessException {
+        for (Component c : componentList) {
+            m.assertImpossible(c);
+        }
+    }
+    public void assertH() throws JessException {
+        for (Component c : componentList) {
+            m.assertComponent(c);
+        }
+
+    }
     /**
      * Splits a composed hypothesis into basic hypothesis
      * When the current hypothesis is already a basic hypothesis it just returns the current hypothesis
@@ -202,8 +221,8 @@ public class Hypothesis {
     public List<Hypothesis> split(){
         List<Hypothesis> result = new ArrayList<Hypothesis>();
 
-         for(int i=0; i<hypothesisList.size(); i++){
-             result.add(new Hypothesis(hypothesisList.get(i), m));
+         for(int i=0; i<componentList.size(); i++){
+             result.add(new Hypothesis(componentList.get(i), m));
          }
 
         return result;
@@ -217,7 +236,7 @@ public class Hypothesis {
      */
     public boolean contains(Hypothesis otherHypothesis){
         for(int i=0; i<otherHypothesis.size(); i++){
-            if(!hypothesisList.contains(otherHypothesis.get(i))){
+            if(!componentList.contains(otherHypothesis.get(i))){
                 return false;
             }
         }
@@ -231,7 +250,7 @@ public class Hypothesis {
      */
     public void add(Hypothesis otherHypothesis){
         for(int i=0; i<otherHypothesis.size(); i++){
-            hypothesisList.add(otherHypothesis.get(i));
+            componentList.add(otherHypothesis.get(i));
         }
 
         if(maxIndex != null && otherHypothesis.maxIndex != null){

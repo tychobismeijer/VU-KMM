@@ -15,9 +15,6 @@ class View {
         c = new Console();
     }
 
-    void setControl(Control control) {
-        this.control = control;
-    }
 
     public Observable askComplaint(List<Observable> allComplaints) {
         Observable result;
@@ -43,15 +40,12 @@ class View {
         List<Hypothesis> basicHypothesis;
         Hypothesis hypothesis = control.newEmptyHypothesis();
 
-        //Print the start of the Select hypothesis fase
-        printSelectHypothesis();
-
         do {
             //Creates the list of basic hypothesis 
             basicHypothesis = hypothesis.filterSingleExtensions(allHypothesis);
 
             //Sets our suggestion
-            Hypothesis suggestion = basicHypothesis.get(basicHypothesis.size()-1);
+            Hypothesis suggestion = control.suggest(basicHypothesis);
 
             //Print the available hypothesis and our suggestion
             printHypothesisArray(basicHypothesis);
@@ -77,6 +71,73 @@ class View {
         return hypothesis;
     }
 
+    public Finding askObservables(List<Observable> observables) {
+        String answer;
+        
+        //Ask until there are no observables left or the answer is not 'no'
+        answer = "no";
+        while (observables.size() != 0 && answer.equals("no")) {
+            //Suggest the first observable
+            Observable observable = observables.remove(0);
+            suggestObservable(observable);
+
+            while (true) {
+                answer = c.readLine();
+                if (answer.equals("true")) {
+                    return new Finding(observable, false);
+                } else if (answer.equals("false")) {
+                    return new Finding(observable, false);
+                } else if (answer.equals("no")) {
+                    break;
+                } else {
+                    printTryAgain();
+                    continue;
+                }
+            }
+        }
+        printNoObservablesLeft();
+        return null;
+    }
+
+    public void reportResult(List<Hypothesis> hypothesis) throws JessException{
+        if(hypothesis.size()==0){
+            c.printf("There are no possible hypothesis left.\n");
+        } else if(hypothesis.size()==1){
+            c.printf("The cause is probably that: ");
+            printHypothesis(hypothesis.get(0));
+            c.printf("Try to fix this and, if the problem remains, run the program again.\n");
+        } else {
+            c.printf("The cause is probably one of the following: \n");
+            printHypothesisArray(hypothesis);
+            c.printf("Try to fix these and, if the problem remains, run the program again.\n");
+        }
+    }
+
+    public void printSelectHypothesis(){
+        c.printf("\n");
+        c.printf("-----------SELECT HYPOTHESIS----------\n");
+    }
+
+    public void printReportComplaint(){
+        c.printf("\n");
+        c.printf("-----------REPORT COMPLAINT-----------\n");
+    }
+
+    public void printNegotiateObservable(){
+        c.printf("\n");
+        c.printf("---------NEGOTIATE OBSERVABLE---------\n");
+    }
+
+    public void printReportResult(){
+        c.printf("\n");
+        c.printf("------------REPORT RESULT-------------\n");
+    }
+
+
+    void setControl(Control control) {
+        this.control = control;
+    }
+
     private void printSpace(int number){
         for(int i=0; i<number; i++){
             c.printf(" ");
@@ -90,7 +151,7 @@ class View {
         c.printf(number);
     }
 
-    public void printCurrentHypothesis(Hypothesis hypothesis) throws JessException{
+    private void printCurrentHypothesis(Hypothesis hypothesis) throws JessException{
         c.printf("The hypothesis is that ");
         printHypothesis(hypothesis);
     }
@@ -143,39 +204,19 @@ class View {
         return result;
     }
 
-    public void suggestObservable(Observable observable){
+    private void suggestObservable(Observable observable){
         c.printf("Do you want to observe if " + observable.name() + "? true/false/no\n");
     }
 
-    public void printTryAgain(){
+    private void printTryAgain(){
         c.printf("try again: true/false/no\n");
     }
 
-    public void printNoObservablesLeft(){
+    private void printNoObservablesLeft(){
         c.printf("No observables for this hypothesis \n");
     }
 
-    public void printSelectHypothesis(){
-        c.printf("\n");
-        c.printf("-----------SELECT HYPOTHESIS----------\n");
-    }
-
-    public void printReportComplaint(){
-        c.printf("\n");
-        c.printf("-----------REPORT COMPLAINT-----------\n");
-    }
-
-    public void printNegotiateObservable(){
-        c.printf("\n");
-        c.printf("---------NEGOTIATE OBSERVABLE---------\n");
-    }
-
-    public void printReportResult(){
-        c.printf("\n");
-        c.printf("------------REPORT RESULT-------------\n");
-    }
-
-    public void printHypothesisArray(List<Hypothesis> hypothesisArray) throws JessException{
+    private void printHypothesisArray(List<Hypothesis> hypothesisArray) throws JessException{
         Hypothesis hypothesis;
         int[] tabArray = getTabArray(hypothesisArray);
 
@@ -186,7 +227,7 @@ class View {
         }
     }
 
-    public void printObservableArray(List<Observable> observableArray){
+    private void printObservableArray(List<Observable> observableArray){
         c.printf("Likely complaints are:\n");
         for(int i=0; i<observableArray.size(); i++){
             c.printf(i + ": " + observableArray.get(i).name() + " (id: " + observableArray.get(i).id() + ")\n");
@@ -194,27 +235,13 @@ class View {
         c.printf("Your complaint is?\n");
     }
 
-    public void printSuggestion(Hypothesis suggestion) throws JessException{
+    private void printSuggestion(Hypothesis suggestion) throws JessException{
         c.printf("We suggest: ");
         printHypothesis(suggestion);
         c.printf("Do you have an other suggestion (no/nr/id)?\n");
     }
 
 
-    public void printResult(List<Hypothesis> hypothesis) throws JessException{
-        printReportResult();
-        if(hypothesis.size()==0){
-            c.printf("There are no possible hypothesis left.\n");
-        } else if(hypothesis.size()==1){
-            c.printf("The cause is probably that: ");
-            printHypothesis(hypothesis.get(0));
-            c.printf("Try to fix this and, if the problem remains, run the program again.\n");
-        } else {
-            c.printf("The cause is probably one of the following: \n");
-            printHypothesisArray(hypothesis);
-            c.printf("Try to fix these and, if the problem remains, run the program again.\n");
-        }
-    }
 
     /**
      * Returns whether the input string is parseble as an integer

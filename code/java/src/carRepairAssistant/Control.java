@@ -11,7 +11,6 @@ import java.util.List;
  */
 class Control {
     private Model m;
-    private Console c;
     private View view;
 
     Control(Model m, View view) {
@@ -19,7 +18,6 @@ class Control {
         this.view = view;
         m.setControl(this);
         view.setControl(this);
-        c = new Console();
     }
 
 //Main methods
@@ -36,17 +34,13 @@ class Control {
         try {
             m.setup();
 
-            //Receive the complaint
             reportComplaint();
-
-            //Generate all hypothesis
             allHypothesis = m.allHypothesis();
-
             while (hypothesisLeft(allHypothesis)) {
-
+                //Print the start of the Select hypothesis fase
+                view.printSelectHypothesis();
                 //Select an hypothesis
                 currentHypothesis = view.askHypothesis(allHypothesis);
-
                 //Specify and obtain an observable for this hypothesis
                 if(!specifyObservable(currentHypothesis)){
                     //If no observation was obtained, mark this hypothesis as tested
@@ -56,12 +50,25 @@ class Control {
                     allHypothesis = verifyHypothesis(allHypothesis);
                 }
             }
-
             reportResult(allHypothesis);
         } catch (JessException ex) {
             System.err.println(ex);
         }
-    }        
+    }
+
+    public Hypothesis suggest(List<Hypothesis> hypothesis) {
+        if (hypothesis
+        Hypothesis result = hypothesis.get(0);
+        for (Hypothesis h : hypothesis) {
+            if (!result.containsWire()) {
+                break;
+            } else {
+                resu
+        }
+        return result;
+    }
+
+
     private void reportComplaint() throws JessException{
         Observable complaint;
 
@@ -85,39 +92,22 @@ class Control {
      */
     private boolean specifyObservable(Hypothesis hypothesis) throws JessException {
         List<Observable> observables;
-        String answer;
+        Finding finding;
 
         //Print the start of the specify observable fase
         view.printNegotiateObservable();
 
         //Generate all possible observables that could falsify the hypothesis
         observables = m.observables(hypothesis);
-
-        //Ask until there are no observables left or the answer is not 'no'
-        answer = "no";
-        while (observables.size() != 0 && answer.equals("no")) {
-            //Suggest the first observable
-            Observable observable = observables.remove(0);
-            view.suggestObservable(observable);
-
-            while (true) {
-                answer = c.readLine();
-                if (answer.equals("true")) {
-                    m.assertFinding(observable, true);
-                    return true;
-                } else if (answer.equals("false")) {
-                    m.assertFinding(observable, false);
-                    return true;
-                } else if (answer.equals("no")) {
-                    break;
-                } else {
-                    view.printTryAgain();
-                    continue;
-                }
-            }
+        
+        // Negotiate an observation
+        finding = view.askObservables(observables);
+        if (finding != null) {
+            m.assertFinding(finding);
+            return true;
+        } else {
+            return false;
         }
-        view.printNoObservablesLeft();
-        return false;
     }
 
     /**
@@ -149,7 +139,8 @@ class Control {
      * @throws jess.JessException
      */
     private void reportResult(List<Hypothesis> allHypothesis) throws JessException{
-        view.printResult(allHypothesis);
+        view.printReportResult();        
+        view.reportResult(allHypothesis);
     }
 
 //Secondary methods
