@@ -78,10 +78,62 @@ While this seems to be a perfectly reasonable way to find hypothesis there is on
 
 
 
-The second part of cover expands the basic hypothesis when the hypothesis alone is not enough to explain the complaint. 
+The second part of cover expands the basic hypothesis when the hypothesis alone is not enough to explain the complaint. This part has been coded in java and is shown below.
 
+\begin{verbatim}
+private List<Hypothesis> expandHypothesis(List<Hypothesis> allHypothesis) {
+    ...
 
+    for(int i=0; i<allHypothesis.size(); i++){
+        currentHypothesis = allHypothesis.get(i);
 
+        if(currentHypothesis.directCause()){
+            result.add(allHypothesis.get(i));
+        } else {
+            currentHypothesis.maxIndex = basicHypothesis.size();
+            basicHypothesis.add(currentHypothesis);
+            candidateHypothesis.add(currentHypothesis); 
+        }
+    }
+\end{verbatim}
+
+The first part creates a list of which hypothesis should be expanded, namely those that would not by themselves cause the complaint. Those that do cause the complaint by themselves are fine hypothesis and are immediatly added to the result. Note that, in order to find out if an hypothesis would cause the complaint, the causal model is used again, only 
+
+The hypothesis that are selected for expansion are added to two different lists: the basic hypothesis list and the candidate hypothesis list. The basic hypothesis list will be used to expand other hypothesis. The candidate hypothesis list is the list of hypothesis to be expanded and it will grow when  hypothesis need to be expanded more then once.
+
+\begin{verbatim}
+        //Expand the candidate hypothesis
+        while(candidateHypothesis.peek() != null){
+            //Get the first hypothesis
+            currentHypothesis = candidateHypothesis.pop();
+            for(int j=currentHypothesis.maxIndex; j<basicHypothesis.size(); j++){
+                //For each basic hypothesis that we have not tried with this combination
+                //Create a new composed hypothesis by expanding the candidate with the basic hypothesis
+                newHypothesis = currentHypothesis.clone();
+                newHypothesis.add(basicHypothesis.get(j));
+
+                if(newHypothesis.directCause()){
+                    //If the new hypothesis is a direct cause then a new composed hypothesis has been found
+                    //Add it to the result
+                    result.add(newHypothesis);
+                } else {
+                    //If the new hypothesis is not a direct cause then it might need further expanding.
+                    //Check whether new information was gained with the composed hypothesis by
+                    //checking whether the new hypothesis causes more state changes then
+                    //the two previous hypothesis combined
+                    if((currentHypothesis.nrStateChanges() + basicHypothesis.get(j).nrStateChanges() < newHypothesis.nrStateChanges())){
+                        //If new information was gained then the new hypothesis
+                        //should get further expanded
+                        candidateHypothesis.add(newHypothesis);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+\end{verbatim}
 
 \end{document}
 

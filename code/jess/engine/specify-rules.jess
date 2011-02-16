@@ -102,7 +102,7 @@
 )
 
 (defrule check-contradiction-specify
-	"If the current hypothesis leads to a state that was observed to false then we have a contradiction"
+	"If the current hypothesis leads to a state that was observed to be false then we have a contradiction"
  	(causes-feature
 	 	(component ?cid)
 		(component-state ?cstate)
