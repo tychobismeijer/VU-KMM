@@ -1,0 +1,87 @@
+% Knowledge Management and Modelling Final
+% Tycho Bismeijer
+% Joost Huizinga
+% 10 feb 2011
+
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{array}
+\usepackage{lmodern}
+\usepackage{graphicx}
+
+\graphicspath{{../diagrams/}{}}
+
+% Voor de CommonKADS worksheets
+\def\pbs#1{\let\temp=\\#1\let\\=\temp}
+\def\colleft{\pbs\raggedright\hspace{0pt}}
+
+\title{The Car Repair Assistant}
+\author{
+Joost Huizinga (1557017)\\
+Tycho Bismeier (1615440)}
+\date{\today}
+
+\begin{document}
+
+\section{Design}
+\subsection{Inferences}
+\subsubsection{Knowledge base}
+Most inferences use the causal-model knowledge base. This knowledge base is mainly implemented in the file \textbf{car-rules.jess}. In this file there is a list of facts. Every facts implements a rule from the causal-model knowledge base. There are four types of facts: causes-to-wire, causes-from-wire, causes-from-2wires and causes-feature. These types correspond to the rule type found in the causal model knowledge base with the exception of causes-from-2wires which is a special case of the causes-from-wire rule type. Below is an example of a causes-to-wire fact.
+
+\begin{verbatim}
+(causes-to-wire
+   (faulty-comp-type battery)
+   (faulty-comp-state empty)
+   (wire-state no-power)
+)
+\end{verbatim}
+
+This fact should be interpreted as the rule: if a component is a battery and this battery is empty then any wire connected to it will have no power. For actual reasoning these facts are used by jess rules defined in other files. This approach was chosen because it grants flexibility. For example, the addition of one rule will enable all forward reasoning for causes-to-wire. The addition one additional rule will then enable all backward reasoning for causes-to-wire. If we implemented these rules directly as jess rules then we had to create two rules for every fact in this file.
+
+
+\subsubsection{Cover}
+The cover step has been divided into two parts. The first part creates a list of single component hypothesis, which we will call \emph{basic hypothesis}. The second part expands some of these basic hypothesis into multi component hypothesis, which we will call \emph{composed hypothesis}.
+
+The first part is implemented in jess, in the file \textbf{cover-rules.jess}, and uses the causal-model knowledge base. The reasoning process will start at a complaint and it will then reason backwards through the components listing all possible causes for the complaint. One of the rules used in this process is shown below.
+
+\begin{verbatim}
+(defrule causes-feature-cover
+"If a faulty state of a component causes an observed complaint, 
+that component might be in that state"
+   (observable
+      {observed == TRUE}
+      {complaint == TRUE}
+      (id ?oid)
+   )
+   (causes-feature
+      {observable == ?oid}
+      (component ?cid)
+      (component-state ?cstate)
+   )
+   ?c <- (component
+      {id == ?cid}
+      (possible-states $?ps&~:(member$ ?cstate ?ps))
+      (impossible-states $?ips&~:(member$ ?cstate ?ips))
+   )
+   =>
+   (modify ?c
+      (possible-states (create$ ?ps ?cstate))
+   )
+)
+\end{verbatim}
+
+The rule above has four parts. The first part triggers when there is an observable that was marked as a complaint. The second part triggers when there exists a `rule' (remember that these rules are implemented as jess facts) that links this observable with a component and a state. The third part checks whether this component already has this state as a possible or impossible state. The fourth part is the consequent and adds the state to the possible-states of the component.
+
+The other rules will propagate possible states in a similar manner such that, at the end of the reasoning process, every component that could potentially be the cause of the complaint has a possible state that would cause this component to malfunction. Then a query will collect all component-state combinations and each of these combinations becomes a hypothesis.
+
+While this seems to be a perfectly reasonable way to find hypothesis there is one problem: there might be a merge in the reasoning trace. A merge is a component that has two inputs and that gives power when one of its inputs provides power, functioning as a logical OR. If such a component has no power then this is because there are two components that do not provide power two the merge. As such, the hypothesis now involves two components. Because of implementation problems this issue has not been addressed in jess. Instead it has been solved in the java code and it comprises the second part of cover.
+
+
+
+The second part of cover expands the basic hypothesis when the hypothesis alone is not enough to explain the complaint. 
+
+
+
+
+\end{document}
+
