@@ -15,7 +15,10 @@ class View {
         c = new Console();
     }
 
-
+    
+    /*
+     * Public methods as documented in the report.
+     */
     public Observable askComplaint(List<Observable> allComplaints) {
         Observable result;
         String choice;
@@ -112,31 +115,61 @@ class View {
             c.printf("Try to fix these and, if the problem remains, run the program again.\n");
         }
     }
+    
+    /*
+     * Public Methods for letting the user know how far we are in the reasoning
+     * process.
+     */
 
+    /**
+     * Let the user know we are beginning the select hypothesis phase.
+     */
     public void printSelectHypothesis(){
         c.printf("\n");
         c.printf("-----------SELECT HYPOTHESIS----------\n");
     }
 
+    /**
+     * Let the user know we are beginning the report complaint phase.
+     */
     public void printReportComplaint(){
         c.printf("\n");
         c.printf("-----------REPORT COMPLAINT-----------\n");
     }
 
+    /**
+     * Let the user know we are beginning the negotiate observable phase.
+     */
     public void printNegotiateObservable(){
         c.printf("\n");
         c.printf("---------NEGOTIATE OBSERVABLE---------\n");
     }
 
+    /**
+     * Let the user know we are beginning the report result phase.
+     */
     public void printReportResult(){
         c.printf("\n");
         c.printf("------------REPORT RESULT-------------\n");
     }
 
+    /*
+     * Methods for setting up the realtions for interaction between objects.
+     */
 
+    /**
+     * Set ups a Control for this View. Expected to be called by Control to
+     * associate this View with it.
+     *
+     * @param control The Control to assiociate with.
+     */
     void setControl(Control control) {
         this.control = control;
     }
+
+    /*
+     *Private methods use to implement the above public methods.
+     */
 
     private void printSpace(int number){
         for(int i=0; i<number; i++){

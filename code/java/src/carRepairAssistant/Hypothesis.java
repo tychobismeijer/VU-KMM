@@ -1,7 +1,10 @@
 package carRepairAssistant;
+
 import java.util.ArrayList;
 import java.util.List;
 import jess.JessException;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Joost and Tycho
@@ -54,6 +57,7 @@ public class Hypothesis {
         this.m = m;
     }
 
+
     /**
      * Takes a list of composed and basic hypothesis and returns a list of all
      * different basic hypothesis that are contained in these hypothesis.
@@ -94,7 +98,7 @@ public class Hypothesis {
      * @param hypothesis The list being filtered and simplified
      * @return
      */
-     public List<Hypothesis> filterSingleExtensions(List<Hypothesis> hypothesis){
+    public List<Hypothesis> filterSingleExtensions(List<Hypothesis> hypothesis){
         List<Hypothesis> result = new ArrayList<Hypothesis>();
         List<Hypothesis> temp;
 
@@ -196,7 +200,7 @@ public class Hypothesis {
 
     public boolean containsWire() {
         for (Component c : componentList) {
-            if (Pattern.matches("*wire*", c.id())) {
+            if (Pattern.matches(".*wire.*", c.id())) {
                 return true;
             }
         }
@@ -209,7 +213,7 @@ public class Hypothesis {
     }
     public void assertH() throws JessException {
         for (Component c : componentList) {
-            m.assertComponent(c);
+            m.assertComponentState(c);
         }
 
     }

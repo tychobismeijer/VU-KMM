@@ -20,18 +20,11 @@ class Model {
     private Control control;
 
     Model() {
-        //Initialize jess
-        jess = new Rete();
     }
 
-    public void setControl(Control control) {
-        this.control = control;
-    }
-
-    public void setup() throws JessException {
-        jess.batch("jess/engine/run-from-java.jess");
-        jess.reset();
-    }
+    /*
+     * Public methods as documented in the report.
+     */
 
     /**
      * Asserts a complaint. A complaint is always a positive observation,
@@ -71,17 +64,10 @@ class Model {
      * @param h The hypothesis that is impossible
      */
     public void assertImpossible(Hypothesis h) throws JessException {
+        // Callback: assertImpossible(Component c);
         h.assertImpossible();
     }
 
-    public void assertImpossible(Component c) throws JessException {
-        jess.assertString(
-            "(impossible " +
-                c.id() + " " +
-                c.stateId() +
-            ")");
-        jess.run();
-    }
 
     /**
      * Gets the observables for a hypothesis that could falsify it.
@@ -148,7 +134,67 @@ class Model {
     }
 
     /**
+     * Removes all hypothesis that cause a contradiction according to the
+     * current knowledge from a list of hypothesis.
+     *
+     * @param allHypothesis The hypothesis out of which the contradicting
+     *      hypothesis should be removed.
+     * @return A list of hypothesis that does not contain any contradictions
+     * @throws jess.JessException
+     */
+    public List<Hypothesis> verify(List<Hypothesis> hypothesis)
+            throws JessException {
+        List<Hypothesis> result = new ArrayList<Hypothesis>();
+        
+        /* Test every hypothesis and add it to the result if it doesn't cause a
+         * contradiction */
+        for(Hypothesis h : hypothesis) {
+            test(h);
+            if (!h.contradiction()) {
+                result.add(h);
+            }
+        }
+
+        return result;
+    }
+
+
+    
+    /*
+     **************************************************************************
+     * Methods for setting up the realtions for interaction between objects.
+     */
+
+    /**
+     * Set ups a Control for this Model. Expected to be called by Control to
+     * associate this View with it.
+     *
+     * @param control The Control to assiociate with.
+     */
+    void setControl(Control control) {
+        this.control = control;
+    }
+
+    /**
+     * Set ups a Jess for this Model. Loads Jess, loads the Jess files and
+     * resets the Jess engine.
+     *
+     * @param control The Control to assiociate with.
+     */
+    void setup() throws JessException {
+        jess = new Rete();
+        jess.batch("jess/engine/run-from-java.jess");
+        jess.reset();
+    }
+
+    /*
+     **************************************************************************
+     * Methods for interaction with Hypothesis
+     */
+
+    /**
      * Asserts a hypothesis and stores the results of that in Jess.
+     *
      * @param jess The supplied jess engine
      * @throws jess.JessException
      */
@@ -157,6 +203,7 @@ class Model {
         resetHypothesis();
 
         h.assertH();
+        // Callback: assertComponentState(Component c);
 
         jess.run();
 
@@ -181,6 +228,19 @@ class Model {
         );
     }
 
+    void assertImpossible(Component c) throws JessException {
+        jess.assertString(
+            "(impossible " +
+                c.id() + " " +
+                c.stateId() +
+            ")");
+        jess.run();
+    }
+
+    /*
+     **************************************************************************
+     * Private methods to implement above public methods.
+     */
 
     /**
      * Expands a list of basic hypothesis into composed hypothesis where necessary.
@@ -257,6 +317,7 @@ class Model {
 
         return result;
     }
+
 
     /**
      * Retracts all hypothesis and all conclusions that relate to these hypothesis from the supplied jess enginge.

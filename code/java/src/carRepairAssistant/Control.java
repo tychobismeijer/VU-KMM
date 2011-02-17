@@ -47,7 +47,7 @@ class Control {
                     allHypothesis.get(allHypothesis.indexOf(currentHypothesis)).tested = true;
                 } else {
                     //If an observation was obtained, check all hypothesis against this new observation
-                    allHypothesis = verifyHypothesis(allHypothesis);
+                    allHypothesis = m.verify(allHypothesis);
                 }
             }
             reportResult(allHypothesis);
@@ -57,16 +57,19 @@ class Control {
     }
 
     public Hypothesis suggest(List<Hypothesis> hypothesis) {
-        if (hypothesis
+        if (hypothesis.size() <= 0) {
+            return newEmptyHypothesis();
+        }
         Hypothesis result = hypothesis.get(0);
         for (Hypothesis h : hypothesis) {
             if (!result.containsWire()) {
                 break;
             } else {
-                resu
+                result = h;
+            }
         }
         return result;
-    }
+}
 
 
     private void reportComplaint() throws JessException{
@@ -108,29 +111,6 @@ class Control {
         } else {
             return false;
         }
-    }
-
-    /**
-     * Removes all hypothesis that cause a contradiction according to the current knowledge.
-     * @param allHypothesis The hypothesis out of which the contradicting hypothesis should be removed.
-     * @return A list of hypothesis that does not contain any contradictions
-     * @throws jess.JessException
-     */
-    private List<Hypothesis> verifyHypothesis(List<Hypothesis> allHypothesis) throws JessException{
-        List<Hypothesis> result = new ArrayList<Hypothesis>();
-
-        for(int i=0; i<allHypothesis.size(); i++){
-            //For each hypothesis do:
-            //Rerun the reasoning process using the new data
-            m.test(allHypothesis.get(i));
-            if(!allHypothesis.get(i).contradiction()){
-                //If the hypothesis does NOT contain a contradiction
-                //Add it to the result
-                result.add(allHypothesis.get(i));
-            }
-        }
-
-        return result;
     }
 
     /**
