@@ -25,6 +25,7 @@ class Model {
     }
 
     /*
+     **************************************************************************
      * Public methods as documented in the report.
      */
 

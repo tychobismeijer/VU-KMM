@@ -38,10 +38,13 @@ class Control {
                 currentHypothesis = view.askHypothesis(allHypothesis);
                 // Specify and obtain an observable for this hypothesis
                 if (!specifyObservable(currentHypothesis)) {
-                    //If no observation was obtained, mark this having no observations
-                    allHypothesis.get(allHypothesis.indexOf(currentHypothesis)).setNoObservationsLeft();
+                    // If no observation was obtained, mark this having no
+                    // observations
+                    allHypothesis.get(allHypothesis.indexOf(currentHypothesis)
+                        ).setNoObservationsLeft();
                 } else {
-                    //If an observation was obtained, check all hypothesis against this new observation
+                    // If an observation was obtained, check all hypothesis
+                    // against this new observation
                     allHypothesis = m.verify(allHypothesis);
                 }
             }
@@ -51,6 +54,11 @@ class Control {
         }
     }
     
+    /*
+     **************************************************************************
+     * Public methods as documented in the report.
+     */
+
     /**
      * Suggest an hypothesis. This could call the Model for help, but doesn't.
      * We only filter on the ComponentStates in the hypothesis.
@@ -132,7 +140,7 @@ class Control {
      * @throws jess.JessException
      */
     private void reportResult(List<Hypothesis> allHypothesis) throws JessException{
-        view.printReportResult();        
+        view.startReportResult();        
         view.reportResult(allHypothesis);
     }
 
@@ -141,7 +149,8 @@ class Control {
      * Counts only hypothesis that possibly have observations left.
      *
      * @param hypothesis The hypothesis to be evaluated
-     * @return <code>true</code> if there is at least one viable hypothesis in the list
+     * @return <code>true</code> if there is at least one viable hypothesis in
+     *      the list
      *      <code>false</code> otherwise
      */
     private boolean hypothesisLeft(List<Hypothesis> hypothesis){

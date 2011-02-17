@@ -1,10 +1,13 @@
 package carRepairAssistant;
+
 import java.util.ArrayList;
 import java.util.List;
 import jess.JessException;
+import static java.lang.Math.max;
 
 /**
- *
+ * View deals with the communication with the user and the user interface. This
+ * View is a text interface.
  * @author Joost and Tycho
  */
 class View {
@@ -15,10 +18,11 @@ class View {
         c = new Console();
     }
 
-    
     /*
+     **************************************************************************
      * Public methods as documented in the report.
      */
+
     public Observable askComplaint(List<Observable> allComplaints) {
         Observable result;
         String choice;
@@ -39,7 +43,8 @@ class View {
         return result;
     }
 
-    public Hypothesis askHypothesis(List<Hypothesis> allHypothesis) throws JessException {
+    public Hypothesis askHypothesis(List<Hypothesis> allHypothesis)
+            throws JessException {
         List<Hypothesis> basicHypothesis;
         Hypothesis hypothesis = control.newEmptyHypothesis();
 
@@ -59,12 +64,14 @@ class View {
             choice = choice.trim();
 
             if (isNumber(choice)){
-                //If the user made a choice from the list then that choice becomes the selected hypothesis
+                // If the user made a choice from the list then that choice
+                // becomes the selected hypothesis.
                 int nrChoice = Integer.parseInt(choice);
                 hypothesis = (basicHypothesis.get(nrChoice));
             }
             else {
-                //If the user did not make a choice then our suggestion becomes the selected hypothesis
+                // If the user did not make a choice then our suggestion
+                // becomes the selected hypothesis.
                 hypothesis = suggestion;
             }
 
@@ -102,8 +109,9 @@ class View {
         return null;
     }
 
-    public void reportResult(List<Hypothesis> hypothesis) throws JessException{
-        if(hypothesis.size()==0){
+    public void reportResult(List<Hypothesis> hypothesis)
+            throws JessException {
+        if (hypothesis.size()==0){
             c.printf("There are no possible hypothesis left.\n");
         } else if(hypothesis.size()==1){
             c.printf("The cause is probably that: ");
@@ -117,6 +125,7 @@ class View {
     }
     
     /*
+     **************************************************************************
      * Public Methods for letting the user know how far we are in the reasoning
      * process.
      */
@@ -140,7 +149,7 @@ class View {
     /**
      * Let the user know we are beginning the negotiate observable phase.
      */
-    public void printNegotiateObservable(){
+    public void startNegotiateObservable(){
         c.printf("\n");
         c.printf("---------NEGOTIATE OBSERVABLE---------\n");
     }
@@ -154,6 +163,7 @@ class View {
     }
 
     /*
+     **************************************************************************
      * Methods for setting up the realtions for interaction between objects.
      */
 
@@ -168,7 +178,8 @@ class View {
     }
 
     /*
-     *Private methods use to implement the above public methods.
+     **************************************************************************
+     * Private methods use to implement the above public methods.
      */
 
     private void printSpace(int number){
@@ -184,26 +195,43 @@ class View {
         c.printf(number);
     }
 
-    private void printCurrentHypothesis(Hypothesis hypothesis) throws JessException{
+    private void printCurrentHypothesis(Hypothesis hypothesis)
+            throws JessException {
         c.printf("The hypothesis is that ");
         printHypothesis(hypothesis);
     }
 
-    private void printHypothesis(Hypothesis hypothesis) throws JessException{
+    private void printHypothesis(Hypothesis hypothesis) throws JessException {
         int[] tabArray = new int[hypothesis.size()*2];
         printHypothesis(hypothesis, tabArray);
     }
 
-    private void printHypothesis(Hypothesis hypothesis, int[] tabArray) throws JessException{
+    private void printHypothesis(Hypothesis hypothesis, int[] tabArray)
+            throws JessException{
         String name, state;
+        for(int j=hypothesis.size()-1; j>=0; j--){
+            name = hypothesis.get(j).name();
+            state = hypothesis.get(j).stateName();
+            c.printf(" " + name);
+            printSpace(tabArray[j*2] - name.length());
+            c.printf(" is " + state);
+            printSpace(tabArray[j*2+1] - state.length());
 
+            if(j>0){
+                c.printf(" and");
+            }
+        }
+
+        if(!hypothesis.directCause()){
+            c.printf(" and...");
+        }
         c.printf("\n");
     }
 
     private int maxHypothesisSize(List<Hypothesis> hypothesisArray){
         int result = 0;
         for(int i=0; i<hypothesisArray.size(); i++){
-            result = Math.max(result, hypothesisArray.get(i).size());
+            result = max(result, hypothesisArray.get(i).size());
         }
         return result;
     }
@@ -213,8 +241,14 @@ class View {
 
         for(int i=0; i<hypothesisArray.size(); i++){
             for(int j=0; j<hypothesisArray.get(i).size(); j++){
-                result[j*2] = Math.max(result[j*2], hypothesisArray.get(i).get(j).name().length());
-                result[j*2+1] = Math.max(result[j*2+1], hypothesisArray.get(i).get(j).stateName().length());
+                result[j*2] = max(
+                    result[j*2],
+                    hypothesisArray.get(i).get(j).name().length()
+                );
+                result[j*2+1] = max(
+                    result[j*2+1],
+                    hypothesisArray.get(i).get(j).stateName().length()
+                );
             }
         }
 
@@ -222,7 +256,10 @@ class View {
     }
 
     private void suggestObservable(Observable observable){
-        c.printf("Do you want to observe if " + observable.name() + "? true/false/no\n");
+        c.printf("Do you want to observe if " +
+            observable.name() +
+            "? true/false/no\n"
+        );
     }
 
     private void printTryAgain(){
@@ -233,7 +270,8 @@ class View {
         c.printf("No observables for this hypothesis \n");
     }
 
-    private void printHypothesisArray(List<Hypothesis> hypothesisArray) throws JessException{
+    private void printHypothesisArray(List<Hypothesis> hypothesisArray)
+            throws JessException {
         Hypothesis hypothesis;
         int[] tabArray = getTabArray(hypothesisArray);
 
@@ -244,15 +282,19 @@ class View {
         }
     }
 
-    private void printObservableArray(List<Observable> observableArray){
+    private void printObservableArray(List<Observable> observableArray) {
         c.printf("Likely complaints are:\n");
         for(int i=0; i<observableArray.size(); i++){
-            c.printf(i + ": " + observableArray.get(i).name() + " (id: " + observableArray.get(i).id() + ")\n");
+            c.printf(i +
+                ": " + observableArray.get(i).name() +
+                " (id: " + observableArray.get(i).id() + ")\n"
+            );
         }
         c.printf("Your complaint is?\n");
     }
 
-    private void printSuggestion(Hypothesis suggestion) throws JessException{
+    private void printSuggestion(Hypothesis suggestion)
+            throws JessException{
         c.printf("We suggest: ");
         printHypothesis(suggestion);
         c.printf("Do you have an other suggestion (no/nr/id)?\n");
