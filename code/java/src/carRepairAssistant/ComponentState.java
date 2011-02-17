@@ -1,15 +1,16 @@
 package carRepairAssistant;
 
 /**
+ * A component in a state.
  *
  * @author Joost
  */
-public class Component {
+public class ComponentState {
     private String name;
     private String id;
     private State state;
 
-    Component(String id, String name, String stateId, String stateName){
+    ComponentState(String id, String name, String stateId, String stateName){
         this.id = id;
         this.name = name;
         this.state = new State(stateId, stateName);
@@ -53,11 +54,11 @@ public class Component {
             return false;
          if(otherObject.getClass() != this.getClass())
             return false;
-         Component otherComponent = (Component) otherObject;
+         ComponentState other = (ComponentState) otherObject;
 
-         if(!id.equals(otherComponent.id()))
+         if(!id.equals(other.id()))
             return false;
-         if(!state.id().equals(otherComponent.stateId()))
+         if(!state.id().equals(other.stateId()))
             return false;
          return true;
     }

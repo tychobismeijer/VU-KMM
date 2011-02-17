@@ -6,10 +6,10 @@ import jess.JessException;
 import java.util.regex.Pattern;
 
 /**
- * TODO
+ * A hypothesis that consists of one or more components and their states.
  *
- * A basic hypothesis consists of one Component. An composed hypothesis consists
- * of one or more Components.
+ * A basic hypothesis consists of one ComponentState. An composed hypothesis consists
+ * of one or more ComponentsStates.
  *
  * @author Joost and Tycho
  */
@@ -17,7 +17,7 @@ public class Hypothesis {
     Boolean contradiction;
     Boolean directCause;
     Integer nrStateChanges;
-    private List<Component> componentList;
+    private List<ComponentState> componentList;
     Integer maxIndex;
     boolean tested;
 
@@ -27,19 +27,19 @@ public class Hypothesis {
      * Construct an empty hypothesis
      */
     Hypothesis(Model m){
-        componentList = new ArrayList<Component>();
+        componentList = new ArrayList<ComponentState>();
         tested = false;
         this.m = m;
     }
 
-    Hypothesis(List<Component> componentList, Model m){
+    Hypothesis(List<ComponentState> componentList, Model m){
         this.componentList = componentList;
         tested = false;
         this.m = m;
     }
 
     Hypothesis(Hypothesis hypothesis, Model m){
-        componentList = new ArrayList<Component>();
+        componentList = new ArrayList<ComponentState>();
         for(int i =0; i<hypothesis.size();i++){
             componentList.add(hypothesis.get(i));
         }
@@ -47,16 +47,16 @@ public class Hypothesis {
         this.m = hypothesis.m;
     }
 
-    Hypothesis(Component component, Model m){
-        componentList = new ArrayList<Component>();
+    Hypothesis(ComponentState component, Model m){
+        componentList = new ArrayList<ComponentState>();
         componentList.add(component);
         tested = false;
         this.m = m;
     }
 
     Hypothesis(String componentId, String componentName, String stateId, String stateName, Model m){
-        componentList = new ArrayList<Component>();
-        componentList.add(new Component(componentId, componentName, stateId, stateName));
+        componentList = new ArrayList<ComponentState>();
+        componentList.add(new ComponentState(componentId, componentName, stateId, stateName));
         tested = false;
         this.m = m;
     }
@@ -198,12 +198,12 @@ public class Hypothesis {
      * @param i The index of the component
      * @return The component at index i
      */
-    public Component get(int i){
+    public ComponentState get(int i){
         return componentList.get(i);
     }
 
     public boolean containsWire() {
-        for (Component c : componentList) {
+        for (ComponentState c : componentList) {
             if (Pattern.matches(".*wire.*", c.id())) {
                 return true;
             }
@@ -211,12 +211,12 @@ public class Hypothesis {
         return false;
     }
     public void assertImpossible() throws JessException {
-        for (Component c : componentList) {
+        for (ComponentState c : componentList) {
             m.assertImpossible(c);
         }
     }
     public void assertH() throws JessException {
-        for (Component c : componentList) {
+        for (ComponentState c : componentList) {
             m.assertComponentState(c);
         }
 
