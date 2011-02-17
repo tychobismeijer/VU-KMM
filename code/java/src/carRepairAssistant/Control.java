@@ -44,7 +44,7 @@ class Control {
                 //Specify and obtain an observable for this hypothesis
                 if(!specifyObservable(currentHypothesis)){
                     //If no observation was obtained, mark this hypothesis as tested
-                    allHypothesis.get(allHypothesis.indexOf(currentHypothesis)).tested = true;
+                    allHypothesis.get(allHypothesis.indexOf(currentHypothesis)).setNoObservationsLeft();
                 } else {
                     //If an observation was obtained, check all hypothesis against this new observation
                     allHypothesis = m.verify(allHypothesis);
@@ -135,7 +135,7 @@ class Control {
      */
     private boolean hypothesisLeft(List<Hypothesis> hypothesis){
         for(int i=0; i<hypothesis.size(); i++){
-            if(!hypothesis.get(i).tested){
+            if(hypothesis.get(i).observationsLeft()){
                 return true;
             }
         }

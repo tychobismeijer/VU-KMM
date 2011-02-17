@@ -218,23 +218,26 @@ class Model {
      */
     void test(Hypothesis h) throws JessException {
         WorkingMemoryMarker beforeHypothesis;
+        boolean contradiction;
+        boolean directCause;
+        int nrStateChanges;
         
         beforeHypothesis = jess.mark();
         resetHypothesis();
         // Calls back from Hypothesis to assertComponentState(ComponentState c);
         h.assertH();
         jess.run();
-        h.contradiction =
+        contradiction =
             (jess.findFactByFact(new jess.Fact("contradiction", jess))
              != null);
-        h.directCause = 
+        directCause = 
             (jess.findFactByFact(new jess.Fact("direct-cause", jess))
              != null);
-
-        h.nrStateChanges = jess.countQueryResults(
+        nrStateChanges = jess.countQueryResults(
             "components-in-state",
             EMPTY_PARAMS
         );
+        h.setTestResult(contradiction, directCause, nrStateChanges);
         jess.resetToMark(beforeHypothesis);
     }
     
@@ -293,12 +296,9 @@ class Model {
 
             if(currentHypothesis.directCause()){
                 //If the current hypothesis is a direct cause it does not need expanding
-                //add it to result
                 result.add(allHypothesis.get(i));
             } else {
                 //If this hypothesis is not a direct cause then it needs expanding
-                //Store the index of this hypothesis for optimalization purpose
-                currentHypothesis.maxIndex = basicHypothesis.size();
                 //Add the hypothesis to the list of basic hypothesis that will be used for expanding
                 basicHypothesis.add(currentHypothesis);
                 //Add the hypothesis to the queue of candidates for expanding
@@ -310,7 +310,7 @@ class Model {
         while(candidateHypothesis.peek() != null){
             //Get the first hypothesis
             currentHypothesis = candidateHypothesis.pop();
-            for(int j=currentHypothesis.maxIndex; j<basicHypothesis.size(); j++){
+            for(int j=basicHypothesis.indexOf(currentHypothesis); j<basicHypothesis.size(); j++){
                 //For each basic hypothesis that we have not tried with this combination
                 //Create a new composed hypothesis by expanding the candidate with the basic hypothesis
                 newHypothesis = currentHypothesis.clone();

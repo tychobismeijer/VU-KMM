@@ -197,22 +197,6 @@ class View {
     private void printHypothesis(Hypothesis hypothesis, int[] tabArray) throws JessException{
         String name, state;
 
-        for(int j=hypothesis.size()-1; j>=0; j--){
-            name = hypothesis.get(j).name();
-            state = hypothesis.get(j).stateName();
-            c.printf(" " + name);
-            printSpace(tabArray[j*2] - name.length());
-            c.printf(" is " + state);
-            printSpace(tabArray[j*2+1] - state.length());
-
-            if(j>0){
-                c.printf(" and");
-            }
-        }
-
-        if(!hypothesis.directCause()){
-            c.printf(" and...");
-        }
         c.printf("\n");
     }
 
