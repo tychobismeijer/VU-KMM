@@ -11,16 +11,19 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * The model of the car repair assistent. 
+ * The model of the car repair assistent.
  *
  * @author Tycho and Joost
  */
 class Model {
     private Rete jess;
     private Control control;
+    // Empty Parameters for a Jess query.
+    private static final jess.ValueVector EMPTY_PARAMS = new jess.ValueVector();
 
     Model() {
     }
+
 
     /*
      * Public methods as documented in the report.
@@ -33,7 +36,9 @@ class Model {
      * @param c The observable that was observed a a complaint.
      */
     public void assertComplaint(Observable c) throws JessException {
-        String fact = "(complaint " + c.id() + " TRUE)";
+        String fact;
+
+        fact = "(complaint " + c.id() + " TRUE)";
         jess.assertString(fact);
     }
 
@@ -46,10 +51,12 @@ class Model {
      *      <code>false</code> if the observation was negative.
      */
     public void assertFinding(Finding f) throws JessException {
-        String fact = "(observed " + f.observation().id();
-        if (f.result()) {
+        String fact;
+        
+        fact = "(observed " + f.observation().id();
+        if (f.result() == true) {
             fact = fact + " TRUE)";
-        } else {
+        } else { // f.result == false
             fact = fact + " FALSE)";
         }
         jess.assertString(fact);
@@ -61,10 +68,10 @@ class Model {
      * This can happen if the hypothesis was tested, for example a car repair
      * was made.
      *
-     * @param h The hypothesis that is impossible
+     * @param h The hypothesis that is impossible.
      */
     public void assertImpossible(Hypothesis h) throws JessException {
-        // Callback: assertImpossible(Component c);
+        // Calls back from Hypothesis to assertImpossible(Component c);
         h.assertImpossible();
     }
 
@@ -75,15 +82,22 @@ class Model {
      * @return A list of the observables. An empty list if there are no
      *      observables for the hypothesis.
      */
-    public List<Observable> observables(Hypothesis h) throws JessException {
+    public List<Observable> observables(Hypothesis h) 
+            throws JessException {
         List<Observable> result = new ArrayList<Observable>();
+        QueryResult observables;
 
+        // Test the hypothesis in Jess and obtain the observables.
         test(h);
-        jess.QueryResult observables = jess.runQueryStar("search-observable", new jess.ValueVector());
-        while (observables.next()){
-            result.add(new Observable(observables.getString("observable"), observables.getString("name")));
+        observables = jess.runQueryStar("search-observable", EMPTY_PARAMS);
+        // Convert the QueryList of observables to a List<Observable>.
+        while (observables.next()) {
+            result.add(new Observable(
+                observables.getString("observable"),
+                observables.getString("name")
+            ));
         }
-        
+
         return result;
     }
 
@@ -94,23 +108,24 @@ class Model {
      */
     public List<Hypothesis> allHypothesis() throws JessException {
         List<Hypothesis> result = new ArrayList<Hypothesis>();
+        QueryResult hypothesis;
 
-        //Runs the jess engine and queries for all basic hypothesis
+        // Query for all basic hypothesis after making sure Jess is up-to-date.
         jess.run();
-        jess.QueryResult hypothesis = jess.runQueryStar("search-hypothesis", new jess.ValueVector());
+        hypothesis = jess.runQueryStar("search-hypothesis", EMPTY_PARAMS);
 
-        //Adds the basic hypothesis to the result array
+        // Convert the QueryResult to a List<Hypothesis> of basic hypothesis.
         while (hypothesis.next()) {
-            result.add(new Hypothesis(hypothesis.getString("component"),
-                    hypothesis.getString("name"),
-                    hypothesis.getString("state"),
-                    hypothesis.getString("stateName"),
-                    this));
+            result.add(new Hypothesis(
+                hypothesis.getString("component"),
+                hypothesis.getString("name"),
+                hypothesis.getString("state"),
+                hypothesis.getString("stateName"),
+                this
+            ));
         }
         
-        //Expands the basic hypothesis to composed hypothesis where necessary
         result = expandHypothesis(result);
-
         return result;
     }
 
@@ -121,13 +136,16 @@ class Model {
      */
     public List<Observable> likelyComplaints() throws JessException {
         List<Observable> result = new ArrayList<Observable>();
+        QueryResult complaints;
 
-        //Run the query
-        QueryResult likely_complaints = jess.runQueryStar("search-likely-complaints", new jess.ValueVector());
-
-        //Put the results in an array list
-        while (likely_complaints.next()){
-            result.add(new Observable(likely_complaints.getString("observable"), likely_complaints.getString("name")));
+        // Run a Jess query to find all the likely complaints.
+        complaints = jess.runQueryStar("search-likely-complaints", EMPTY_PARAMS);
+        // Convert the QueryResult to an List
+        while (complaints.next()){
+            result.add(new Observable(
+                complaints.getString("observable"),
+                complaints.getString("name"))
+            );
         }
 
         return result;
@@ -162,7 +180,7 @@ class Model {
     
     /*
      **************************************************************************
-     * Methods for setting up the realtions for interaction between objects.
+     * Methods for setting up the relations for interaction between objects.
      */
 
     /**
@@ -193,32 +211,33 @@ class Model {
      */
 
     /**
-     * Asserts a hypothesis and stores the results of that in Jess.
+     * Asserts a hypothesis and get the results of that from jess.
      *
-     * @param jess The supplied jess engine
+     * @param h The hypothesis that is tested.
      * @throws jess.JessException
      */
     void test(Hypothesis h) throws JessException {
-        WorkingMemoryMarker beforeHypothesis = jess.mark();
-        resetHypothesis();
-
-        h.assertH();
-        // Callback: assertComponentState(Component c);
-
-        jess.run();
-
-        h.contradiction = !(jess.findFactByFact(new jess.Fact("contradiction", jess)) == null);
-        h.directCause = !(jess.findFactByFact(new jess.Fact("direct-cause", jess)) == null);
-        h.nrStateChanges = 0;
-        jess.QueryResult components = jess.runQueryStar("components-in-state", new jess.ValueVector());
-
-        while (components.next()) {
-            h.nrStateChanges++;
-        }
+        WorkingMemoryMarker beforeHypothesis;
         
+        beforeHypothesis = jess.mark();
+        resetHypothesis();
+        // Calls back from Hypothesis to assertComponentState(Component c);
+        h.assertH();
+        jess.run();
+        h.contradiction =
+            (jess.findFactByFact(new jess.Fact("contradiction", jess))
+             != null);
+        h.directCause = 
+            (jess.findFactByFact(new jess.Fact("direct-cause", jess))
+             != null);
+
+        h.nrStateChanges = jess.countQueryResults(
+            "components-in-state",
+            EMPTY_PARAMS
+        );
         jess.resetToMark(beforeHypothesis);
     }
-
+    
     void assertComponentState(Component c) throws JessException {
         jess.assertString(
             "(hypothesis " +
@@ -320,7 +339,7 @@ class Model {
 
 
     /**
-     * Retracts all hypothesis and all conclusions that relate to these hypothesis from the supplied jess enginge.
+     * Retracts all hypothesis and all conclusions that relate to these hypothesis from the jess enginge.
      * Facts related to hypothesis are contradictions and direct causes.
      * Also reverts all state changes.
      *

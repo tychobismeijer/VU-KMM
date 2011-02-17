@@ -6,6 +6,10 @@ import jess.JessException;
 import java.util.regex.Pattern;
 
 /**
+ * TODO
+ *
+ * A basic hypothesis consists of one Component. An composed hypothesis consists
+ * of one or more Components.
  *
  * @author Joost and Tycho
  */
