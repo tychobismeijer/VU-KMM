@@ -2,13 +2,13 @@ package carRepairAssistant;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Iterator;
 import jess.Rete;
 import jess.JessException;
 import jess.QueryResult;
 import jess.WorkingMemoryMarker;
 import jess.RU;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * The model of the car repair assistent.
@@ -18,12 +18,11 @@ import java.util.Iterator;
 class Model {
     private Rete jess;
     private Control control;
-    // Empty Parameters for a Jess query.
+    // Empty parameters for a Jess query.
     private static final jess.ValueVector EMPTY_PARAMS = new jess.ValueVector();
 
     Model() {
     }
-
 
     /*
      * Public methods as documented in the report.

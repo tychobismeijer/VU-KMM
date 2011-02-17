@@ -20,13 +20,9 @@ class Control {
         view.setControl(this);
     }
 
-//Main methods
     /**
-     * Gets the complaint from the user and asserts it to the model.
-     *
-     * @throws jess.JessException
+     * Start the diagnosis process.
      */
-
     public void start() {
         List<Hypothesis> allHypothesis;
         Hypothesis currentHypothesis = new Hypothesis(m);
@@ -37,13 +33,12 @@ class Control {
             reportComplaint();
             allHypothesis = m.allHypothesis();
             while (hypothesisLeft(allHypothesis)) {
-                //Print the start of the Select hypothesis fase
-                view.printSelectHypothesis();
-                //Select an hypothesis
+                view.startSelectHypothesis();
+                // Select an hypothesis
                 currentHypothesis = view.askHypothesis(allHypothesis);
-                //Specify and obtain an observable for this hypothesis
-                if(!specifyObservable(currentHypothesis)){
-                    //If no observation was obtained, mark this hypothesis as tested
+                // Specify and obtain an observable for this hypothesis
+                if (!specifyObservable(currentHypothesis)) {
+                    //If no observation was obtained, mark this having no observations
                     allHypothesis.get(allHypothesis.indexOf(currentHypothesis)).setNoObservationsLeft();
                 } else {
                     //If an observation was obtained, check all hypothesis against this new observation
@@ -55,8 +50,14 @@ class Control {
             System.err.println(ex);
         }
     }
-
-    public Hypothesis suggest(List<Hypothesis> hypothesis) {
+    
+    /**
+     * Suggest an hypothesis. This could call the Model for help, but doesn't.
+     * We only filter on the ComponentStates in the hypothesis.
+     *
+     * @param hypothesis The list of hypothesis to pick the suggestion from.
+     */
+    Hypothesis suggest(List<Hypothesis> hypothesis) {
         if (hypothesis.size() <= 0) {
             return newEmptyHypothesis();
         }
@@ -69,41 +70,52 @@ class Control {
             }
         }
         return result;
-}
+    }
 
+    /*
+     **************************************************************************
+     * Factory methods
+     */
 
+    Hypothesis newEmptyHypothesis() {
+        return new Hypothesis(m);
+    }
+
+    /*
+     **************************************************************************
+     * Private
+     */
+
+    /**
+     * Ask for a complaint and assert it to the model.
+     */
     private void reportComplaint() throws JessException{
         Observable complaint;
 
-        //Print the start of the report complaint fase
-        view.printReportComplaint();
-        
-        //Get likely complaints
+        view.startReportComplaint();
         List<Observable> allComplaints = m.likelyComplaints();
-        
         complaint = view.askComplaint(allComplaints);
-
-        //Assert complaint
         m.assertComplaint(complaint);
     }
 
     /**
-     * Specifies an observable for the supplied hypothesis, based on user input, and obtains the observation result.
-     * @param hypothesis The hypothesis for which the observable should be specified.
-     * @return Returns true if an observation was made; returns false otherwise.
-     * @throws jess.JessException
+     * Specifies an observable for the supplied hypothesis, based on user
+     * input, and obtains the observation result.
+     *
+     * @param hypothesis The hypothesis for which the observable should be
+     *      specified.
+     * @return Returns true if an observation was made; returns false
+     *      otherwise.
      */
-    private boolean specifyObservable(Hypothesis hypothesis) throws JessException {
+    private boolean specifyObservable(Hypothesis hypothesis)
+            throws JessException {
         List<Observable> observables;
         Finding finding;
 
-        //Print the start of the specify observable fase
-        view.printNegotiateObservable();
-
-        //Generate all possible observables that could falsify the hypothesis
+        view.startNegotiateObservable();
+        // Generate all possible observables that could falsify the hypothesis.
         observables = m.observables(hypothesis);
-        
-        // Negotiate an observation
+        // Try to make an observation.
         finding = view.askObservables(observables);
         if (finding != null) {
             m.assertFinding(finding);
@@ -114,7 +126,8 @@ class Control {
     }
 
     /**
-     * Prints the results.
+     * Report the results of the process.
+     *
      * @param allHypothesis The hypothesis on which the results will be based.
      * @throws jess.JessException
      */
@@ -123,32 +136,21 @@ class Control {
         view.reportResult(allHypothesis);
     }
 
-//Secondary methods
-
-
     /**
      * Indicates wheter there are any viable hypothesis left.
-     * Counts only hypothesis that are not yet tested.
+     * Counts only hypothesis that possibly have observations left.
+     *
      * @param hypothesis The hypothesis to be evaluated
-     * @return True if there is at least one viable hypothesis in the array;
-     * False otherwise
+     * @return <code>true</code> if there is at least one viable hypothesis in the list
+     *      <code>false</code> otherwise
      */
     private boolean hypothesisLeft(List<Hypothesis> hypothesis){
-        for(int i=0; i<hypothesis.size(); i++){
-            if(hypothesis.get(i).observationsLeft()){
+        for (Hypothesis h : hypothesis) {
+            if (h.observationsLeft()) {
                 return true;
             }
         }
-
         return false;
     }
-
-// Factory methods
-
-    Hypothesis newEmptyHypothesis() {
-        return new Hypothesis(m);
-    }
-
-    
 }
 

@@ -124,7 +124,7 @@ class View {
     /**
      * Let the user know we are beginning the select hypothesis phase.
      */
-    public void printSelectHypothesis(){
+    public void startSelectHypothesis(){
         c.printf("\n");
         c.printf("-----------SELECT HYPOTHESIS----------\n");
     }
@@ -132,7 +132,7 @@ class View {
     /**
      * Let the user know we are beginning the report complaint phase.
      */
-    public void printReportComplaint(){
+    public void startReportComplaint(){
         c.printf("\n");
         c.printf("-----------REPORT COMPLAINT-----------\n");
     }
@@ -148,7 +148,7 @@ class View {
     /**
      * Let the user know we are beginning the report result phase.
      */
-    public void printReportResult(){
+    public void startReportResult(){
         c.printf("\n");
         c.printf("------------REPORT RESULT-------------\n");
     }
