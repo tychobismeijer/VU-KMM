@@ -1,29 +1,3 @@
-% Knowledge Management and Modelling Final
-% Tycho Bismeijer
-% Joost Huizinga
-% 10 feb 2011
-
-\documentclass[a4paper,10pt]{article}
-
-\usepackage{array}
-\usepackage{lmodern}
-\usepackage{graphicx}
-
-\graphicspath{{../diagrams/}{}}
-
-% Voor de CommonKADS worksheets
-\def\pbs#1{\let\temp=\\#1\let\\=\temp}
-\def\colleft{\pbs\raggedright\hspace{0pt}}
-
-\title{The Car Repair Assistant}
-\author{
-Joost Huizinga (1557017)\\
-Tycho Bismeier (1615440)}
-\date{\today}
-
-\begin{document}
-
-\section{Design}
 \subsection{Inferences}
 \subsubsection{Knowledge base}
 Most inferences use the causal-model knowledge base. This knowledge base is mainly implemented in the file \textbf{car-rules.jess}. In this file there is a list of facts. Every facts implements a rule from the causal-model knowledge base. There are four types of facts: causes-to-wire, causes-from-wire, causes-from-2wires and causes-feature. These types correspond to the rule type found in the causal model knowledge base with the exception of causes-from-2wires which is a special case of the causes-from-wire rule type. Below is an example of a causes-to-wire fact.
@@ -76,12 +50,11 @@ The other rules will propagate possible states in a similar manner such that, at
 
 While this seems to be a perfectly reasonable way to find hypothesis there is one problem: there might be a merge in the reasoning trace. A merge is a component that has two inputs and that gives power when one of its inputs provides power, functioning as a logical OR. If such a component has no power then this is because there are two components that do not provide power two the merge. As such, the hypothesis now involves two components. Because of implementation problems this issue has not been addressed in jess. Instead it has been solved in the java code and it comprises the second part of cover.
 
-
-
 The second part of cover expands the basic hypothesis when the hypothesis alone is not enough to explain the complaint. This part has been coded in java and is shown below.
 
-\begin{verbatim}
-private List<Hypothesis> expandHypothesis(List<Hypothesis> allHypothesis) {
+\begin{lstlisting}[language=Java]
+private List<Hypothesis>
+        expandHypothesis(List<Hypothesis> allHypothesis) {
     ...
 
     for(int i=0; i<allHypothesis.size(); i++){
@@ -95,45 +68,42 @@ private List<Hypothesis> expandHypothesis(List<Hypothesis> allHypothesis) {
             candidateHypothesis.add(currentHypothesis); 
         }
     }
-\end{verbatim}
+\end{lstlisting}
 
 The first part creates a list of which hypothesis should be expanded, namely those that would not by themselves cause the complaint. Those that do cause the complaint by themselves are fine hypothesis and are immediatly added to the result. Note that, in order to find out if an hypothesis would cause the complaint, the causal model is used again, only 
 
 The hypothesis that are selected for expansion are added to two different lists: the basic hypothesis list and the candidate hypothesis list. The basic hypothesis list will be used to expand other hypothesis. The candidate hypothesis list is the list of hypothesis to be expanded and it will grow when  hypothesis need to be expanded more then once.
 
-\begin{verbatim}
-        //Expand the candidate hypothesis
-        while(candidateHypothesis.peek() != null){
-            //Get the first hypothesis
-            currentHypothesis = candidateHypothesis.pop();
-            for(int j=currentHypothesis.maxIndex; j<basicHypothesis.size(); j++){
-                //For each basic hypothesis that we have not tried with this combination
-                //Create a new composed hypothesis by expanding the candidate with the basic hypothesis
-                newHypothesis = currentHypothesis.clone();
-                newHypothesis.add(basicHypothesis.get(j));
+%TODO lange regels opbreken
+\begin{lstlisting}[language=Java]
+    //Expand the candidate hypothesis
+    while(candidateHypothesis.peek() != null){
+        //Get the first hypothesis
+        currentHypothesis = candidateHypothesis.pop();
+        for(int j=currentHypothesis.maxIndex; j<basicHypothesis.size(); j++){
+            //For each basic hypothesis that we have not tried with this combination
+            //Create a new composed hypothesis by expanding the candidate with the basic hypothesis
+            newHypothesis = currentHypothesis.clone();
+            newHypothesis.add(basicHypothesis.get(j));
 
-                if(newHypothesis.directCause()){
-                    //If the new hypothesis is a direct cause then a new composed hypothesis has been found
-                    //Add it to the result
-                    result.add(newHypothesis);
-                } else {
-                    //If the new hypothesis is not a direct cause then it might need further expanding.
-                    //Check whether new information was gained with the composed hypothesis by
-                    //checking whether the new hypothesis causes more state changes then
-                    //the two previous hypothesis combined
-                    if((currentHypothesis.nrStateChanges() + basicHypothesis.get(j).nrStateChanges() < newHypothesis.nrStateChanges())){
-                        //If new information was gained then the new hypothesis
-                        //should get further expanded
-                        candidateHypothesis.add(newHypothesis);
-                    }
+            if(newHypothesis.directCause()){
+                //If the new hypothesis is a direct cause then a new composed hypothesis has been found
+                //Add it to the result
+                result.add(newHypothesis);
+            } else {
+                //If the new hypothesis is not a direct cause then it might need further expanding.
+                //Check whether new information was gained with the composed hypothesis by
+                //checking whether the new hypothesis causes more state changes then
+                //the two previous hypothesis combined
+                if((currentHypothesis.nrStateChanges() + basicHypothesis.get(j).nrStateChanges() < newHypothesis.nrStateChanges())){
+                    //If new information was gained then the new hypothesis
+                    //should get further expanded
+                    candidateHypothesis.add(newHypothesis);
                 }
             }
         }
-
-        return result;
     }
 
-\end{verbatim}
-
-\end{document}
-
+    return result;
+}
+\end{lstlisting}

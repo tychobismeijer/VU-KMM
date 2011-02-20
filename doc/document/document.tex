@@ -1,15 +1,25 @@
 % Knowledge Management and Modelling Final
 % Tycho Bismeijer
 % Joost Huizinga
-% 10 feb 2011
+% 20 feb 2011
 
 \documentclass[a4paper,10pt]{article}
 
 \usepackage{array}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{listings}
 
 \graphicspath{{../diagrams/}{}}
+
+\lstset{%
+    basicstyle=\small,
+    captionpos=t,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    breakindent=0pt,
+    linewidth={1.2\textwidth},
+    breakautoindent=true,
+    breaklines=true}
 
 % Voor de CommonKADS worksheets
 \def\pbs#1{\let\temp=\\#1\let\\=\temp}
@@ -41,6 +51,7 @@ Tycho Bismeier (1615440)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \include{design-model}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \include{conclusion}

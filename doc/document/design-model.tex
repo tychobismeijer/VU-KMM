@@ -1,7 +1,40 @@
 \section{Design Model}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Components and Overall Structure}
+Structural design model.
+see \ref{fig:designmodel1}. Application is in Java. Knowledge mostly in Jess and
+for a part in Java (see section on inferences). Java application starts jess
+engine with working memory.
+
+In the working memory are the domain rules, facts
+that represent inferential knowledge of car, and the domain parts, knowledge
+about the current status of parts of the car. Domain rules are not modified over
+a run of the program, domain parts are modified.
+
+Information from the app goes to jess by asserting
+support facts, these are then interpeted as modifications of domain parts.
+Inferences made by Jess go to the app by queries made by the app.
+
+The Jess parts is divided in a engine and a domain part. The domain rules and
+domain parts are implementations of templates supplied by the engine. The
+engines inferences makes forward and backward reasonings from these rules and
+parts. The domain rules and parts can be substituted by rules and parts from a
+different domain while keeping the engine. The rules might be understandable by an
+expert or user, our car repair hobbyist does. The complexity of the inferences
+made by the engine are not visible in the domain part.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{designmodel-packages.pdf}
     \caption{The designmodel of our system}
     \label{fig:designmodel1}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Components and Overall Structure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{inference-implementation}
+
