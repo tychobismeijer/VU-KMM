@@ -1,0 +1,191 @@
+% Knowledge Management and Modelling exercise 3
+% Tycho Bismeijer
+% 21 September 2010
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{array}
+\usepackage{lmodern}
+\usepackage{graphicx}
+
+% Voor de CommonKADS worksheets
+\def\pbs#1{\let\temp=\\#1\let\\=\temp}
+\def\colleft{\pbs\raggedright\hspace{0pt}}
+
+\title{The Car Repair Assistant}
+\author{
+Joost Huizinga (1557017)\\
+Tycho Bismeier (1615440)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+Cars are probably the most important vehicle of our century. Where most people would use cars only for transport some have turned their car in a hobby. For these hobbyist performing minor upgrades and repairs on there cars is about as important as driving the car.
+
+Unfortunately its is sometimes difficult to find the right information to perform these repairs and upgrades. For this problem we developed the car repair assistant. The car repair assistant is a knowledge system that helps with the identification and repair of various problems a car might have.
+
+Because car repair is a very wide problem area we have narrowed it down to only the electrical system. Most of our models nevertheless assume the complete car repair assistant. It are the domain specific models that only consider the electrical system of the car. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Context model}
+This section contains the tables OM-1, OM-2, OM-5, TM-1, TM-2, AM-1. Since our problem is based on a single person that repairs his car in its own time there is no organization. This makes organizational structures or flows quite impossible to create. Nevertheless, most parts of the forms that concern the organizational model are still relevant.
+
+\subsection{Organizational model}
+\input{OM-1}
+\input{OM-2}
+\input{OM-5}
+
+\subsection{Task and agent models}
+\input{TM-1}
+\input{TM-2}
+\input{AM-1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Knowledge model}
+
+
+\subsection{Domain knowledge}
+In our context analysis we identified four different kinds of knowledge shown in tables TM-2. This knowledge is all domain knowledge but they are represented in different ways in out model. The general car knowledge would be a car template, a concept that is part of our domain schema. Because we did not implement the ability for our system to reason with car templates we do not have an instantion of such a template.
+
+A simplefied instantiation of specific car knowledge is shown in figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem}. These figures show exactly which components exist and how they are connected in our example car. A part of this knowledge is also present in our knowledge base since the components since the mappings between component states and observables can be different for every car. There exist many different cars and every car would have its own scheme. Modeling them is beyond the scope of this project.
+
+Component knowledge is contained in our knowledge base. These are the rules that state exactly what happens when two components are connected. Note that these rules do not specify specific components and they are thus independent of the actual car.
+
+Car repair knowledge is not present in our model. This is because our system does not use car repair knowledge for reasoning. Adding car repair knowledge could enhance the system by enabeling it to propose observables that are easy to observe first.
+
+\subsubsection{Domain schema}
+The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' electrical parts and that these parts can be of several types. Connections are special because they are electrical components that connect other components. The rule types shown in figure~\ref{fig:IS} define the rules that exist between these concepts. 
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{domainSchema.pdf}
+	\caption{Domain schema for the car diagnoses task}
+	\label{fig:DS}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{ruleTypes.jpg}
+	\caption{Rule types}
+	\label{fig:IS}
+\end{figure}
+
+\subsubsection{Knowledge base}
+Below is a general overview of our knowledge base. Because all rules together create a single causal model all rules are contained in a single knowledge base. Not all rules are shown. Instead we show one instance of every kind of rule and explain how the other rules look. This is done because the complete knowledge base is very large.
+
+The CAUSES-TO-WIRE rules state that if a device is generating or passing through power and this device is in a state that makes it unable to perform this function then all wires leading from it will be unpowered. A seperate rule exists for the combinations of each device type with every possible state that would make it unable to power the wire.
+
+\begin{verbatim}
+KNOWLEDGE-BASE causal-model;
+   USES:
+      Component-knowledge
+      Car-specific-knowledge
+   EXPRESSIONS:
+      A.state = empty
+      A.type = battery
+      B.type = connection
+      B.comp1 = A
+      CAUSES-TO-WIRE
+      B.state = no-power
+\end{verbatim}
+
+The CAUSES-FROM-WIRE rules state that if all wires connected to a device are in a state that makes them unable to pass on power then this device will be unpowered. A seperate rule exists for the combination of every wire state that makes the wire unable to pass on power and every device type.
+
+\begin{verbatim}
+      A.state = empty
+      A.type = battery
+      B.type = connection
+      B.comp1 = A
+      CAUSES-FEATURE
+      B.state = no-power
+\end{verbatim}
+
+The 
+
+\begin{verbatim}
+      A.name = head-light-left
+      A.state = no-power
+      CAUSES-FEATURE
+      observable = head-light-left-no-light
+END KNOWLEDGE-BASE causal-model;
+\end{verbatim}
+
+
+\subsubsection{Example of a car}
+Figures~\ref{fig:ChargeSystem},~\ref{fig:LightSystem} and~\ref{fig:StartAndIgnitionSystem} show a graphical representation of an example car according to our model. This car consists of several electrical components. Normal electrical components are shown as objects in boxes with underlined text. Connections are, altough they are objects as well, represented by arrows that show which components they connect. High level electrical components are shown as large boxes that contain other electrical components. Altough the are represented in these diagrams they are not used in the reasoning process.
+
+Note that the car is incomplete. It lacks, for example rear lights. The representation is based on a general notion of how cars work but it is not a (partial) representation of an existing car.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{ChargeSystem.pdf}
+	\caption{Rule types}
+	\label{fig:ChargeSystem}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{LightSystem.pdf}
+	\caption{Rule types}
+	\label{fig:LightSystem}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{StartAndIgnitionSystem.pdf}
+	\caption{Rule types}
+	\label{fig:StartAndIgnitionSystem}
+\end{figure}
+
+
+\subsection{Inference knowledge}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{InferenceModel.pdf}
+	\caption{Annotated inference model}
+	\label{fig:InferenceModel}
+\end{figure}
+
+
+\subsection{Task knowledge}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth, trim = 0 130 0 0, clip = true]{taskDecomposition.pdf}
+	\caption{Task-decomposistion diagram for the diagnoses task}
+	\label{fig:taskDecomposition}
+\end{figure}
+
+
+
+\section{Communication model}
+\subsection{CRA communication plan}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{dialogueDiagram.pdf}
+	\caption{Dialogue diagram of the diagnoses task}
+	\label{fig:dialogueDiagram}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{communicationPlan.pdf}
+	\caption{The communication plan of the diagnoses task.}
+	\label{fig:communicationPlan}
+\end{figure}
+
+
+
+\subsection{CRA transactions}
+\input{CM-1}
+\input{CM-2}
+
+\section{Design model}
+
+
+\section{Reflection}
+
+
+\end{document}
