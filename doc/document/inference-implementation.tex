@@ -10,8 +10,15 @@ Most inferences use the causal-model knowledge base. This knowledge base is main
 )
 \end{verbatim}
 
-This fact should be interpreted as the rule: if a component is a battery and this battery is empty then any wire connected to it will have no power. For actual reasoning these facts are used by jess rules defined in other files. This approach was chosen because it grants flexibility. For example, the addition of one rule will enable all forward reasoning for causes-to-wire. The addition one additional rule will then enable all backward reasoning for causes-to-wire. If we implemented these rules directly as jess rules then we had to create two rules for every fact in this file.
+This fact should be interpreted as the rule: if a component is a battery and this battery is empty then any wire connected to it will have no power. For actual reasoning these facts are used by jess rules defined in other files. This approach was chosen because it grants flexibility. For example, the addition of one rule will enable all forward reasoning for causes-to-wire. The addition of one extra rule will then enable all backward reasoning for causes-to-wire. If we implemented these rules directly as jess rules then we had to create two rules for every fact in this file.
 
+\subsubsection{Forward reasoning}
+The forward reasoning rules are specified in \textbf{forward-reasoning-rules.jess} and work as follows. For every fact type in \textbf{car-rules.jess} there is one rule that specifies how forward reasoning is implemented. Reasoning starts with one or more components being in a certain state. These starting states are usually a hypothesis that is being tested. Next, the direct effects of these states are derived and connected components are set to the derived state. This process then propagates until the are no more new state that can be derived.	Forward reasoning is a deterministic process. Every state, or combination of states, causes only a single next state. 
+
+\subsubsection{Backward reasoning}
+The backward reasoning rules are specified in \textbf{backward-reasoning-rules.jess}. As with the forward rules, there is a backward reasoning rule for every fact type in \textbf{car-rules.jess}, with the exception of causes-from-2wires. This fact type has two rules associated with it, one for each wire. Since the wires can be handled independently, these rules are simpler then trying to create one large rule to govern them both at the same time.
+
+Backwards reasoning starts from an observable and propagates backward until there are no more inferences to be made. It reasons with possibilities, meaning that the observable \emph{left head light does not work} will result in the inferences that \emph{wire 17 might be broken} AND \emph{wire 17 might have no power}. For both these inferences it is then examined whether they could have been caused by one or more other malfunctions. 
 
 \subsubsection{Cover}
 The cover step has been divided into two parts. The first part creates a list of single component hypothesis, which we will call \emph{basic hypothesis}. The second part expands some of these basic hypothesis into multi component hypothesis, which we will call \emph{composed hypothesis}.
@@ -70,7 +77,7 @@ private List<Hypothesis>
     }
 \end{lstlisting}
 
-The first part creates a list of which hypothesis should be expanded, namely those that would not by themselves cause the complaint. Those that do cause the complaint by themselves are fine hypothesis and are immediatly added to the result. Note that, in order to find out if an hypothesis would cause the complaint, the causal model is used again, only 
+The first part creates a list of which hypothesis should be expanded, namely those that would not by themselves cause the complaint. Those that do cause the complaint by themselves are fine hypothesis and are immediately added to the result. Note that, in order to find out if an hypothesis would cause the complaint, the causal model is used again, only 
 
 The hypothesis that are selected for expansion are added to two different lists: the basic hypothesis list and the candidate hypothesis list. The basic hypothesis list will be used to expand other hypothesis. The candidate hypothesis list is the list of hypothesis to be expanded and it will grow when  hypothesis need to be expanded more then once.
 
