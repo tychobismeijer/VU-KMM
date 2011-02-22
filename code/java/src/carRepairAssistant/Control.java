@@ -13,6 +13,8 @@ class Control {
     private Model m;
     private View view;
 
+    private Hypothesis currentHypothesis;
+
     Control(Model m, View view) {
         this.m = m;
         this.view = view;
@@ -25,7 +27,7 @@ class Control {
      */
     public void start() {
         List<Hypothesis> allHypothesis;
-        Hypothesis currentHypothesis = new Hypothesis(m);
+        currentHypothesis = new Hypothesis(m);
 
         try {
             m.setup();
@@ -60,15 +62,18 @@ class Control {
 
     /**
      * Suggest an hypothesis. This could call the Model for help, but doesn't.
-     * We only filter on the ComponentStates in the hypothesis.
+     * We only filter on the ComponentStates in the hypothesis. We are
+     * suggesting hypothesis without wires, as these are difficult to repair.
      *
      * @param hypothesis The list of hypothesis to pick the suggestion from.
      */
     Hypothesis suggest(List<Hypothesis> hypothesis) {
+        Hypothesis result;
+
         if (hypothesis.size() <= 0) {
             return newEmptyHypothesis();
         }
-        Hypothesis result = hypothesis.get(0);
+        result = hypothesis.get(0);
         for (Hypothesis h : hypothesis) {
             if (!result.containsWire()) {
                 break;
@@ -76,6 +81,24 @@ class Control {
                 result = h;
             }
         }
+        return result;
+    }
+
+    /**
+     * Suggest an observable for observation. This could call the Model for help, but doesn't.
+     *
+     * @param observables The list of observables to pick the suggestion from.
+     */
+    Observable suggest(List<Observable> observables) {
+        Observable result;
+        
+        result = observables.get(0);
+        for (Observable o : observables) {
+            if (!currentHypothesis.isAlso(o)) {
+                return o;
+            }
+        }
+
         return result;
     }
 

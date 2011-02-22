@@ -102,20 +102,21 @@ class View {
 
     public Finding askObservables(List<Observable> observables) {
         String answer;
+        Observable suggestion;
         
         //Ask until there are no observables left or the answer is not 'no'
         answer = "no";
         while (observables.size() != 0 && answer.equals("no")) {
             //Suggest the first observable
-            Observable observable = observables.remove(0);
-            suggestObservable(observable);
-
+            suggestion = control.suggest(observables);
+            observables.remove(suggestion);
+            printSuggestObservable(suggestion);
             while (true) {
                 answer = c.readLine();
                 if (answer.equals("true")) {
-                    return new Finding(observable, true);
+                    return new Finding(suggestion, true);
                 } else if (answer.equals("false")) {
-                    return new Finding(observable, false);
+                    return new Finding(suggestion, false);
                 } else if (answer.equals("no")) {
                     break;
                 } else {
@@ -282,12 +283,11 @@ class View {
         return result;
     }
 
-    private void suggestObservable(Observable observable){
+    private void printSuggestObservable(Observable observable){
         c.printf("Do you want to observe if " +
             observable.name() +
             "? true/false/no\n"
         );
-        //TODO ask Control
     }
 
     private void printTryAgain(){

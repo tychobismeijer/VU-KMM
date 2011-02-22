@@ -162,6 +162,19 @@ public class Hypothesis {
     }
 
     /**
+     * true if the observable is essentialy the same as this hypothesis
+     */
+    public boolean isAlso(Observable o) {
+        for (ComponentState c : componentList) {
+            if (o.id().contains(c.id()) &&
+                o.id().contains(c.stateId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Indicates whether the other hypothesis is contained in the current hypothesis.
      * Note that an empty hypothesis is always contained in an other hypothesis.
      * @param otherHypothesis The hypothesis of which it is tested if it is contained whithin this hypothesis
