@@ -1,0 +1,140 @@
+;SUPPORT QUERIES
+(defquery search-observable
+    "Search for all the observables that can be observed"
+	(observable 
+		(id ?observable)
+		(name ?name)
+		(observed nil)
+		(could-be-observed TRUE)
+	)
+)
+
+(defquery search-likely-complaints
+    "Find all the complaint the user likely has."
+	(observable 
+		(id ?observable)
+		(name ?name)
+		(likely-as-complaint TRUE)
+	)
+)
+
+(defquery search-hypothesis
+    "Find all possible hypothesis"
+	(component 
+		(id ?component)
+		(name ?name)
+		(possible-states $? ?state $?)
+	)
+	(state
+		(id ?state)
+		(name ?stateName)
+		(broken TRUE)
+	)
+)
+
+(defquery search-components
+	"Find all components."
+	(component 
+		(id ?component)
+		(state ?state)
+		(possible-states $?possible-states)
+		(impossible-states $?impossible-states)
+	)
+)
+
+(defquery components-in-state
+	"Find all components that have a defined state."
+	(component 
+		(id ?component)
+		{state <> nill}
+	)
+)
+
+;SUPPORT RULES
+(defrule try-hypothesis
+    "If a certain hypothesis needs to be evaluated, realize it."
+	(hypothesis
+		?cid
+		?state
+	)
+	?c <- (component
+		(id ?cid)
+		(state nil)
+	)
+	=>
+	(modify ?c
+		(state ?state)
+	)
+)
+
+(defrule obtained-observation1
+	"If a positive observation is obtained, realize it."
+	(observed ?oid TRUE)
+	?o <- (observable
+		{id == ?oid}
+	)
+	=>
+	(modify ?o
+		(observed TRUE)
+	)
+)
+(defrule obtained-observation2
+	"If a negative observation is obtained, realize it."
+	(observed ?oid FALSE)
+	?o <- (observable
+		{id == ?oid}
+	)
+	=>
+	(modify ?o
+		(observed FALSE)
+	)
+)
+
+(defrule obtained-complaint
+	"If a positive complaint is reported, realize it."
+	(complaint ?oid TRUE)
+	?o <- (observable
+		{id == ?oid}
+	)
+	=>
+	(modify ?o
+		(observed TRUE)
+		(complaint TRUE)
+	)
+)
+
+(defrule check-direct-cause
+	"If the current hypothesis leads to the complaint then the current hypothesis is a direct cause for the complaint"
+ 	(causes-feature
+	 	(component ?cid)
+		(component-state ?cstate)
+		(observable ?oid)
+	)
+	(component
+	 	{id == ?cid && state == ?cstate}
+	)
+	(observable
+		{id == ?oid}
+		(complaint TRUE)
+	)
+	=>
+	(assert (direct-cause))
+)
+
+(defrule check-contradiction
+	"If the current hypothesis leads to a state that was observed to be false then we have a contradiction"
+ 	(causes-feature
+	 	(component ?cid)
+		(component-state ?cstate)
+		(observable ?oid)
+	)
+	(component
+	 	{id == ?cid && state == ?cstate}
+	)
+	(observable
+		{id == ?oid}
+		(observed FALSE)
+	)
+	=>
+	(assert (contradiction))
+)

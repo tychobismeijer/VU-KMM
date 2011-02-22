@@ -10,16 +10,18 @@ Most inferences use the causal-model knowledge base. This knowledge base is main
 )
 \end{verbatim}
 
-This fact should be interpreted as the rule: if a component is a battery and this battery is empty then any wire connected to it will have no power. For actual reasoning these facts are used by jess rules defined in other files. This approach was chosen because it grants flexibility. For example, the addition of one rule will enable all forward reasoning for causes-to-wire. The addition one additional rule will then enable all backward reasoning for causes-to-wire. If we implemented these rules directly as jess rules then we had to create two rules for every fact in this file.
+This fact should be interpreted as the rule: if a component is a battery and this battery is empty then any wire connected to it will have no power. For actual reasoning these facts are used by jess rules defined in other files. This approach was chosen because it grants flexibility. For example, the addition of one rule will enable all forward reasoning for causes-to-wire. The addition of one extra rule will then enable all backward reasoning for causes-to-wire. If we implemented these rules directly as jess rules then we had to create two rules for every fact in this file.
 
+\subsubsection{Forward reasoning}
+The forward reasoning rules are specified in \textbf{forward-reasoning-rules.jess} and work as follows. For every fact type in \textbf{car-rules.jess} there is one rule that specifies how forward reasoning is implemented. Reasoning starts with one or more components being in a certain state. These starting states are usually a hypothesis that is being tested. Next, the direct effects of these states are derived and connected components are set to the derived state. This process then propagates until the are no more new state that can be derived.	Forward reasoning is a deterministic process. Every state, or combination of states, causes only a single next state. 
 
-\subsubsection{Cover}
-The cover step has been divided into two parts. The first part creates a list of single component hypothesis, which we will call \emph{basic hypothesis}. The second part expands some of these basic hypothesis into multi component hypothesis, which we will call \emph{composed hypothesis}.
+\subsubsection{Backward reasoning}
+The backward reasoning rules are specified in \textbf{backward-reasoning-rules.jess}. As with the forward rules, there is a backward reasoning rule for every fact type in \textbf{car-rules.jess}, with the exception of causes-from-2wires. This fact type has two rules associated with it, one for each wire. Since the wires can be handled independently, these rules are simpler then trying to create one large rule to govern them both at the same time.
 
-The first part is implemented in jess, in the file \textbf{cover-rules.jess}, and uses the causal-model knowledge base. The reasoning process will start at a complaint and it will then reason backwards through the components listing all possible causes for the complaint. One of the rules used in this process is shown below.
+Backwards reasoning starts from an observable and propagates backward until there are no more inferences to be made. It reasons with possibilities, meaning that the observable \emph{left head light does not work} will result in the inferences that \emph{wire 17 might be broken} AND \emph{wire 17 might have no power}. For both these inferences it is then examined whether they could have been caused by one or more other malfunctions. One of the rules used in this process is shown below.
 
 \begin{verbatim}
-(defrule causes-feature-cover
+(defrule causes-feature-backward
 "If a faulty state of a component causes an observed complaint, 
 that component might be in that state"
    (observable
@@ -35,7 +37,6 @@ that component might be in that state"
    ?c <- (component
       {id == ?cid}
       (possible-states $?ps&~:(member$ ?cstate ?ps))
-      (impossible-states $?ips&~:(member$ ?cstate ?ips))
    )
    =>
    (modify ?c
@@ -46,11 +47,16 @@ that component might be in that state"
 
 The rule above has four parts. The first part triggers when there is an observable that was marked as a complaint. The second part triggers when there exists a `rule' (remember that these rules are implemented as jess facts) that links this observable with a component and a state. The third part checks whether this component already has this state as a possible or impossible state. The fourth part is the consequent and adds the state to the possible-states of the component.
 
-The other rules will propagate possible states in a similar manner such that, at the end of the reasoning process, every component that could potentially be the cause of the complaint has a possible state that would cause this component to malfunction. Then a query will collect all component-state combinations and each of these combinations becomes a hypothesis.
+The other rules will propagate possible states in a similar manner such that, at the end of the reasoning process, every component that could potentially be the cause of the complaint has a possible state that would cause this component to malfunction.
 
-While this seems to be a perfectly reasonable way to find hypothesis there is one problem: there might be a merge in the reasoning trace. A merge is a component that has two inputs and that gives power when one of its inputs provides power, functioning as a logical OR. If such a component has no power then this is because there are two components that do not provide power two the merge. As such, the hypothesis now involves two components. Because of implementation problems this issue has not been addressed in jess. Instead it has been solved in the java code and it comprises the second part of cover.
+\subsubsection{Cover}
+The cover step has been divided into two parts. The first part creates a list of single component hypothesis, which we will call \emph{basic hypothesis}. The second part expands some of these basic hypothesis into multi component hypothesis, which we will call \emph{composed hypothesis}.
 
-The second part of cover expands the basic hypothesis when the hypothesis alone is not enough to explain the complaint. This part has been coded in java and is shown below.
+The first part is done by marking an observable as a complaint, done via the support rule in \textbf{support.jess}, and then to run the backward reasoning.  When this process is finished, a query will collect all component-state combinations and each of these combinations becomes a hypothesis.
+
+The resulting set of hypothesis still has one problem, there might be basic hypothesis in this set that do not cause the inital complaint by themselves. The reason for this is that there could have been a merge in the backward reasoning trace. A merge is a component that has two inputs and that gives power when one of its inputs provides power, functioning as a logical OR. If such a component has no power then this is because there are two components that do not provide power two the merge. As such, the hypothesis should now involve two components. Because of implementation problems this issue has not been addressed in jess. Instead it has been solved in the java code and it comprises the second part of cover.
+
+The second part of cover expands the basic hypothesis when the hypothesis alone is not enough to explain the complaint. This part has been coded in the java function List and is shown below.
 
 \begin{lstlisting}[language=Java]
 private List<Hypothesis>
@@ -68,14 +74,18 @@ private List<Hypothesis>
             candidateHypothesis.add(currentHypothesis); 
         }
     }
+    ...
 \end{lstlisting}
 
-The first part creates a list of which hypothesis should be expanded, namely those that would not by themselves cause the complaint. Those that do cause the complaint by themselves are fine hypothesis and are immediatly added to the result. Note that, in order to find out if an hypothesis would cause the complaint, the causal model is used again, only 
+The first part of the List function creates a list containing those hypothesis that should be expanded, namely those that would not by themselves cause the complaint. Those that cause the complaint by themselves are already complete hypothesis and are immediately added to the result. 
+
+To check whether an hypothesis causes a complaint on its own forward reasoning is used. When the function currentHypothesis.directCause() is called, the currentHypothesis is asserted in jess, forward reasoning is performed, and a support rule then checks whether the complaint was reached. The result of this reasoning proces is then returned.
 
 The hypothesis that are selected for expansion are added to two different lists: the basic hypothesis list and the candidate hypothesis list. The basic hypothesis list will be used to expand other hypothesis. The candidate hypothesis list is the list of hypothesis to be expanded and it will grow when  hypothesis need to be expanded more then once.
 
 %TODO lange regels opbreken
 \begin{lstlisting}[language=Java]
+    ...
     //Expand the candidate hypothesis
     while(candidateHypothesis.peek() != null){
         //Get the first hypothesis
@@ -107,3 +117,15 @@ The hypothesis that are selected for expansion are added to two different lists:
     return result;
 }
 \end{lstlisting}
+
+\subsubsection{Select}
+The select step determines which hypothesis from the list generated in cover will be suggested to the user. At this point, select will always suggest the last hypothesis of the list and no reasoning is performed.
+
+\subsubsection{Specify}
+Once an hypothesis is selected the observables, that could be used to falsify the hypothesis, are generated in the specify step. For this task, the complete hypothesis is asserted in the jess reasoning engine. A support rule modifies the states of the components to match the hypothesis, and then the forward reasoning is applied. After this, a query is used to collect the observables that are affected by this hypothesis.
+
+\subsubsection{Verify}
+When a new observation is made by the user, and the results of this observation are communicated back to the car repair assistant, all hypothesis are tested to check whether they are consistent with the new observation. Thus, each hypothesis in our set of possible hypothesis is asserted to the jess rule engine, the forward reasoning is applied, and a query returns whether there was a contradiction caused by this hypothesis. In this manner, every hypothesis that causes a contradiction is removed.
+
+Note that the hypothesis that was being tested might be unaffected. In this case, the hypothesis remains in the list of possible hypothesis and it could be examined again.
+
