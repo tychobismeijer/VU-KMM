@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
 import jess.Rete;
+import jess.Fact;
 import jess.JessException;
 import jess.QueryResult;
 import jess.WorkingMemoryMarker;
@@ -247,6 +248,21 @@ class Model {
                 c.stateId() +
             ")"
         );
+    }
+
+    /*
+     **************************************************************************
+     * Debug methods
+     */
+
+    void dbPrintFacts() {
+        System.err.printf("DEBUG: print all facts in working memory\n");
+        Fact f;
+        Iterator<Fact> fi = jess.listFacts();
+        while (fi.hasNext()) {
+            f = fi.next();
+            System.err.printf(f.toString() + "\n");
+        }
     }
 
     /*

@@ -123,16 +123,8 @@
 
 (defrule check-contradiction
 	"If the current hypothesis leads to a state that was observed to be false then we have a contradiction"
- 	(causes-feature
-	 	(component ?cid)
-		(component-state ?cstate)
-		(observable ?oid)
-	)
-	(component
-	 	{id == ?cid && state == ?cstate}
-	)
 	(observable
-		{id == ?oid}
+		(could-be-observed TRUE)
 		(observed FALSE)
 	)
 	=>

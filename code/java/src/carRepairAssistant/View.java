@@ -113,7 +113,7 @@ class View {
             while (true) {
                 answer = c.readLine();
                 if (answer.equals("true")) {
-                    return new Finding(observable, false);
+                    return new Finding(observable, true);
                 } else if (answer.equals("false")) {
                     return new Finding(observable, false);
                 } else if (answer.equals("no")) {

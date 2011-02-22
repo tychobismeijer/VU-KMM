@@ -338,6 +338,7 @@
 	)
 	
 ;wires
+/*
 	(causes-feature
 	 	(component wire01)
 		(component-state broken)
@@ -478,7 +479,7 @@
 		(component-state broken)
 		(observable wire28-broken)
 	)
-	
+*/	
 ;switches
 	(causes-feature
 	 	(component ignition)

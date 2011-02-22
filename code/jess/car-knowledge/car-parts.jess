@@ -409,6 +409,7 @@
 		(likely-as-complaint FALSE)
 	)
 ;wires
+/* wires are not observable!
 	(observable 
 		(id wire01-broken)
 		(name "wire 1 is broken")
@@ -549,7 +550,7 @@
 		(name "wire 28 is broken")
 		(likely-as-complaint FALSE)
 	)
-	
+*/
 ;switches
 	(observable 
 		(id ignition-off)
