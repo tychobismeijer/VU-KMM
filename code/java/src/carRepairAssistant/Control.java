@@ -40,6 +40,7 @@ class Control {
                 if (!specifyObservable(currentHypothesis)) {
                     // If no observation was obtained, mark this having no
                     // observations
+                    //TODO add try to repair
                     allHypothesis.get(allHypothesis.indexOf(currentHypothesis)
                         ).setNoObservationsLeft();
                 } else {

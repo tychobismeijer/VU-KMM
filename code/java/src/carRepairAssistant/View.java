@@ -260,6 +260,7 @@ class View {
             observable.name() +
             "? true/false/no\n"
         );
+        //TODO ask Control
     }
 
     private void printTryAgain(){
