@@ -11,7 +11,11 @@ Component knowledge is contained in our knowledge base. These are the rules that
 Car repair knowledge is not present in our model. This is because our system does not use car repair knowledge for reasoning. Adding car repair knowledge could enhance the system by enabling it to propose observables that are easy to observe first.
 
 \subsubsection{Domain schema}
-The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' electrical parts and that these parts can be of several types. Connections are special because they are electrical components that connect other components. The rule types shown in figure~\ref{fig:IS} define the rules that exist between these concepts. 
+The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' electrical parts and that these parts can be of several types. Connections are special because they are electrical components that connect other components. The rule types shown in figure~\ref{fig:IS} define the rules that exist between these concepts.
+The direct causal dependendies, `causes to wire' and `causes from wire', can only exists between between a wire and a component.
+There are no direct causal dependencies between components.
+A causal dependency between two components always runs trough a wire.
+The manifestion rules tells that if a component is in a certain states a particular observation can be made.
 
 \begin{figure}[htbp]
 	\centering
@@ -22,7 +26,7 @@ The domain schema shown in figure~\ref{fig:DS} shows that a car `consists of' el
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=7cm]{rule-types.pdf}
+	\includegraphics[width=1.00\textwidth]{rule-types.pdf}
 	\caption{Rule types}
 	\label{fig:IS}
 \end{figure}
@@ -130,7 +134,7 @@ The task method we use to solve this task is in figure~\ref{fig:taskMethod} and
 ~\ref{txt:taskMethod}. Our method is inspired by the causal-covering method of
 CommonKADS. A major improvement is that we ask the user to repair his car directly if
 we cannot find any observables for an hypothesis. If we waited until it made all
-possible observations for all hypothesis we would focus to much on unlikely
+possible observations for all hypothesis we would focus too much on unlikely
 hypothesis. It's much better to ask the user to repair a likely fault.
 
 Now wefurther specify the inferences and transfer functions.
