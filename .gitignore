@@ -1,6 +1,7 @@
 *.swp
 *~
 *.autosave
+*.backup
 /build
 /lib
 /jess
