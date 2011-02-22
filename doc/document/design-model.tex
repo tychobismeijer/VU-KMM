@@ -1,28 +1,36 @@
 \section{Design Model}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Components and Overall Structure}
-Structural design model.
-see \ref{fig:dm:modules}. Application is in Java. Knowledge mostly in Jess and
-for a part in Java (see section on inferences). Java application starts jess
-engine with working memory.
+\label{sec:components}
 
-In the working memory are the domain rules, facts
-that represent inferential knowledge of car, and the domain parts, knowledge
-about the current status of parts of the car. Domain rules are not modified over
-a run of the program, domain parts are modified.
+In this section we show the overal structure of the design. The design is going
+to be implemented in Java and Jess. The inference knowledge and domain knowledge
+is mostly in the Jess part, while the task knowledge and user interaction is in
+the Java part.
 
-Information from the app goes to jess by asserting
-support facts, these are then interpeted as modifications of domain parts.
-Inferences made by Jess go to the app by queries made by the app.
+The modular structure can be seen in figure~\ref{fig:dm:modules}. The main
+applicaton is implemented in Java with a model-view-controller design, see
+section~\ref{sec:app}. The model part starts a Jess engine and loads facts and
+rules that implement the system model and inferences over it.
 
-The Jess parts is divided in a engine and a domain part. The domain rules and
-domain parts are implementations of templates supplied by the engine. The
-engines inferences makes forward and backward reasonings from these rules and
-parts. The domain rules and parts can be substituted by rules and parts from a
+In the working memory of the Jess engine are the domain rules, Jess facts
+that represent inferential knowledge of car, and the domain parts, Jess facts
+with knowledge about the current status of parts of the car.
+Domain rules are not modified over a run of the program, while domain parts are modified. 
+
+Information from the Java application goes to Jess by asserting support facts,
+these are then interpeted as modifications of domain parts by support rules.
+Information from Jess goes to the Java application by Jess queries made by that
+application. 
+
+The components in Jess are divided between a engine and a domain part. The
+domain parts consists of the domain rules and the domain parts, these are implementations
+of templates supplied by the engine. The engines Jess rules do forward and
+backward reasoning on these domain rules and domain parts, see section \ref{sec:inferences}.
+The domain rules and domain parts can be substituted by rules and parts from a
 different domain while keeping the engine. The rules might be understandable by an
-expert or user, our car repair hobbyist does. The complexity of the inferences
+expert or user, as our car repair hobbyist does. The complexity of the inferences
 made by the engine are not visible in the domain part.
 
 \begin{figure}[htbp]
@@ -34,6 +42,8 @@ made by the engine are not visible in the domain part.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The process flow}
+\label{sec:flow}
+
 The overall flow of the application can be seen in the activity diagram in
 figure~\ref{fig:dm:activity diagram}. It implements the communication, as
 modelled in figure~\ref{fig:communicationPlan}, and the task method, as seen in
@@ -61,6 +71,8 @@ impossible by the system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The application}
+\label{sec:app}
+
 class diagram in figure~\ref{fig:dm:class diagram}. %TODO
 \begin{figure}[htbp]
     \centering

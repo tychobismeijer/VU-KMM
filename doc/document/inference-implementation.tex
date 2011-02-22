@@ -1,4 +1,5 @@
 \subsection{Inferences}
+\label{sec:inferences}
 \subsubsection{Knowledge base}
 Most inferences use the causal-model knowledge base. This knowledge base is mainly implemented in the file \textbf{car-rules.jess}. In this file there is a list of facts. Every facts implements a rule from the causal-model knowledge base. There are four types of facts: causes-to-wire, causes-from-wire, causes-from-2wires and causes-feature. These types correspond to the rule type found in the causal model knowledge base with the exception of causes-from-2wires which is a special case of the causes-from-wire rule type. Below is an example of a causes-to-wire fact.
 
