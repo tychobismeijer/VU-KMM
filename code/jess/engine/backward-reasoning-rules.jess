@@ -83,9 +83,7 @@
 		{out == ?cid}
 		(possible-states $?fwps1)
 	)
-	(test (not
-		(member$ ?fwstate1 ?fwps1)
-	))
+	(test (not (member$ ?fwstate1 ?fwps1)))
 	=>
 	(modify ?fw1
 		(possible-states (create$ ?fwps1 ?fwstate1))
@@ -108,9 +106,7 @@
 		{out == ?cid}
 		(possible-states $?fwps2)
 	)
-	(test (not
-		(member$ ?fwstate2 ?fwps2)
-	))
+	(test (not (member$ ?fwstate2 ?fwps2)))
 	=>
 	(modify ?fw2
 		(possible-states (create$ ?fwps2 ?fwstate2))

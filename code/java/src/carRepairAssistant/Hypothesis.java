@@ -23,7 +23,7 @@ public class Hypothesis {
     private boolean testResultSet;
     // We assume there are observations left for this hypothesis until we
     // experience otherwise.
-    private boolean observationsLeft = true;
+    private boolean possible = true;
 
     /**
      * Construct an empty hypothesis
@@ -139,14 +139,15 @@ public class Hypothesis {
         this.nrStateChanges = nrStateChanges;
     }
 
-    public void setNoObservationsLeft() {
-        observationsLeft = false;
+    public void setImpossible() {
+        possible = false;
     }
 
     /*
      **************************************************************************
      * Predicates
      */
+
     public boolean containsWire() {
         for (ComponentState c : componentList) {
             if (Pattern.matches(".*wire.*", c.id())) {
@@ -156,8 +157,8 @@ public class Hypothesis {
         return false;
     }
 
-    public boolean observationsLeft() {
-        return observationsLeft;
+    public boolean possible() {
+        return possible;
     }
 
     /**
@@ -283,11 +284,6 @@ public class Hypothesis {
      * Methods for interaction with Model
      */
 
-    void assertImpossible() throws JessException {
-        for (ComponentState c : componentList) {
-            m.assertImpossible(c);
-        }
-    }
     void assertH() throws JessException {
         for (ComponentState c : componentList) {
             m.assertComponentState(c);
@@ -345,7 +341,7 @@ public class Hypothesis {
 
         //find all hypothesis that contain the current hypothesis and are not yet tested
         for(int i=0; i<hypothesis.size(); i++){
-            if(hypothesis.get(i).contains(this) && hypothesis.get(i).observationsLeft()) {
+            if (hypothesis.get(i).contains(this)) {
                 //If this hypothesis contains the filter hypothesis and is not yet tested
                 //Add it to the result
                 result.add(hypothesis.get(i));

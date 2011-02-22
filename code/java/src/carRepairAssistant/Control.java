@@ -32,24 +32,22 @@ class Control {
 
             reportComplaint();
             allHypothesis = m.allHypothesis();
-            while (hypothesisLeft(allHypothesis)) {
+            while (true) {
+                if (!hypothesisLeft(allHypothesis)) {
+                    reportResult(allHypothesis);
+                    break;
+                }
                 view.startSelectHypothesis();
                 // Select an hypothesis
                 currentHypothesis = view.askHypothesis(allHypothesis);
                 // Specify and obtain an observable for this hypothesis
                 if (!specifyObservable(currentHypothesis)) {
-                    // If no observation was obtained, mark this having no
-                    // observations
-                    //TODO add try to repair
-                    allHypothesis.get(allHypothesis.indexOf(currentHypothesis)
-                        ).setNoObservationsLeft();
-                } else {
-                    // If an observation was obtained, check all hypothesis
-                    // against this new observation
-                    allHypothesis = m.verify(allHypothesis);
+                    if (tryToRepair(currentHypothesis)) {
+                        break;
+                    }
                 }
+                allHypothesis = m.verify(allHypothesis);
             }
-            reportResult(allHypothesis);
         } catch (JessException ex) {
             System.err.println(ex);
         }
@@ -156,11 +154,29 @@ class Control {
      */
     private boolean hypothesisLeft(List<Hypothesis> hypothesis){
         for (Hypothesis h : hypothesis) {
-            if (h.observationsLeft()) {
+            if (h.possible()) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Try to repair the car.
+     *
+     * @param h The Hypothesis without observables that is going to be repaired.
+     */
+    private boolean tryToRepair(Hypothesis h) throws JessException {
+        boolean repairResult;
+
+        repairResult = view.askToRepair(h);
+        if (repairResult == true) {
+            view.printSucces();
+            return true;
+        } else {
+            m.assertImpossible(h);
+            return false;
+        }
     }
 }
 

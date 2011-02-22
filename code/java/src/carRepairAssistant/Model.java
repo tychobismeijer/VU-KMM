@@ -71,8 +71,7 @@ class Model {
      * @param h The hypothesis that is impossible.
      */
     public void assertImpossible(Hypothesis h) throws JessException {
-        // Calls back from Hypothesis to assertImpossible(ComponentState c);
-        h.assertImpossible();
+        h.setImpossible();
     }
 
 
@@ -168,7 +167,7 @@ class Model {
          * contradiction */
         for(Hypothesis h : hypothesis) {
             test(h);
-            if (!h.contradiction()) {
+            if (!h.contradiction() && h.possible()) {
                 result.add(h);
             }
         }
@@ -248,15 +247,6 @@ class Model {
                 c.stateId() +
             ")"
         );
-    }
-
-    void assertImpossible(ComponentState c) throws JessException {
-        jess.assertString(
-            "(impossible " +
-                c.id() + " " +
-                c.stateId() +
-            ")");
-        jess.run();
     }
 
     /*

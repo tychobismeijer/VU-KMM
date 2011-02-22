@@ -43,6 +43,25 @@ class View {
         return result;
     }
 
+    public boolean askToRepair(Hypothesis h) throws JessException {
+        String answer;
+
+        c.printf("There are no observables left to reject the hypothesis. Please try to repair:\n");
+        printHypothesis(h);
+        c.printf("Was this repair succesfull? If you answer no we consider this hypothesis impossible. yes/no\n");
+        while (true) {
+            answer = c.readLine();
+            if (answer.equals("yes")) {
+                return true;
+            } else if (answer.equals("no")) {
+                return false;
+            } else {
+                c.printf("Try again yes/no");
+                continue;
+            }
+        }
+    }
+
     public Hypothesis askHypothesis(List<Hypothesis> allHypothesis)
             throws JessException {
         List<Hypothesis> basicHypothesis;
@@ -78,7 +97,7 @@ class View {
             //Repeat until the hypothesis is a direct cause for the complaint
         } while(!hypothesis.directCause());
 
-        return hypothesis;
+        return allHypothesis.get(allHypothesis.indexOf(hypothesis));
     }
 
     public Finding askObservables(List<Observable> observables) {
@@ -160,6 +179,14 @@ class View {
     public void startReportResult(){
         c.printf("\n");
         c.printf("------------REPORT RESULT-------------\n");
+    }
+
+    /**
+     * Let the user the problem is considered solved.
+     */
+    public void printSucces(){
+        c.printf("\n");
+        c.printf("Thanks for succesfully using CRA. If some problems remain despite your succesfull repair, rerun the program.\n");
     }
 
     /*
